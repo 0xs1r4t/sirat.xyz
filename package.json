@@ -29,7 +29,7 @@
       "@prefresh/next": "^1.4.6",
       "canvas-sketch": "^0.7.4",
       "canvas-sketch-util": "^1.10.0",
-      "fastify": "^3.14.1",
+      "fastify": "^3.20.2",
       "fastify-compress": "^3.4.2",
       "gray-matter": "^4.0.2",
       "gsap": "^3.6.1",
