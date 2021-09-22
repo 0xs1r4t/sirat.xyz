@@ -40,7 +40,7 @@
       "next-pwa": "^5.0.6",
       "next-remote-watch": "^1.0.0",
       "next-transpile-modules": "^6.3.0",
-      "preact": "^10.5.13",
+      "preact": "^10.5.14",
       "preact-render-to-string": "^5.1.16",
       "react": "npm:@preact/compat@0.0.3",
       "react-dom": "npm:@preact/compat@0.0.3",

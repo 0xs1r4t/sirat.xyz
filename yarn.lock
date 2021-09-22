@@ -2671,7 +2671,7 @@ fast-safe-stringify@^2.0.8:
   resolved "https://registry.yarnpkg.com/fast-safe-stringify/-/fast-safe-stringify-2.1.1.tgz#c406a83b6e70d9e35ce3b30a81141df30aeba884"
   integrity sha512-W+KJc2dmILlPplD/H4K9l9LcAHAfPtP6BY84uVLXQ6Evcz9Lcg33Y2z1IVblT6xdY54PXYVHEv+0Wpq8Io6zkA==
 
-fastify-compress@^3.6.0:
+fastify-compress@^3.4.2:
   version "3.6.0"
   resolved "https://registry.yarnpkg.com/fastify-compress/-/fastify-compress-3.6.0.tgz#07acff3a7fe375434945c090a39bd72f5616487a"
   integrity sha512-K7GCSb8CMyhHKBhDcKzKQOpOj/5OUaaAEyBftBRDqoLdhgTsJr3syQ8Nk2u1TJDdqmx64bhAtj9Nr/BS3Ylueg==
@@ -3935,7 +3935,7 @@ next-plugin-preact@^3.0.4:
     "@prefresh/webpack" "^3.3.0"
     module-alias "^2.0.0"
 
-next-pwa@^5.3.1:
+next-pwa@^5.0.6:
   version "5.3.1"
   resolved "https://registry.yarnpkg.com/next-pwa/-/next-pwa-5.3.1.tgz#5bcd854422a452fd1fd56500d1c483664d9733d9"
   integrity sha512-Os6bf/lEYoztvsILYkAhDjiYfLNTprqEumxuv5DjhoFh4OpIzO7U0GKRI6MZluH4SfAoe0IdHz9knnZxybSnag==
@@ -4385,10 +4385,10 @@ preact-render-to-string@^5.1.16:
   dependencies:
     pretty-format "^3.8.0"
 
-preact@^10.5.13:
-  version "10.5.13"
-  resolved "https://registry.yarnpkg.com/preact/-/preact-10.5.13.tgz#85f6c9197ecd736ce8e3bec044d08fd1330fa019"
-  integrity sha512-q/vlKIGNwzTLu+jCcvywgGrt+H/1P/oIRSD6mV4ln3hmlC+Aa34C7yfPI4+5bzW8pONyVXYS7SvXosy2dKKtWQ==
+preact@^10.5.14:
+  version "10.5.14"
+  resolved "https://registry.yarnpkg.com/preact/-/preact-10.5.14.tgz#0b14a2eefba3c10a57116b90d1a65f5f00cd2701"
+  integrity sha512-KojoltCrshZ099ksUZ2OQKfbH66uquFoxHSbnwKbTJHeQNvx42EmC7wQVWNuDt6vC5s3nudRHFtKbpY4ijKlaQ==
 
 prettier@^2.2.1:
   version "2.2.1"
@@ -5422,7 +5422,7 @@ terser@^5.0.0:
     commander "^2.20.0"
     source-map "~0.7.2"
     source-map-support "~0.5.19"
-    
+
 terser@^5.7.2:
   version "5.9.0"
   resolved "https://registry.yarnpkg.com/terser/-/terser-5.9.0.tgz#47d6e629a522963240f2b55fcaa3c99083d2c351"
@@ -5436,7 +5436,6 @@ three@^0.132.2:
   version "0.132.2"
   resolved "https://registry.yarnpkg.com/three/-/three-0.132.2.tgz#95eb1856147237c03e887cbbe56f964b6fb40b5e"
   integrity sha512-0wcR7LxxkXMn6Gi58gEs3QvY8WpTVXA31L2VOvpjm4ZPYFRHCZC13UqynheFoS5OXDYgtBneN0dhbaNBE8iLhQ==
-
 
 through2@^2.0.3:
   version "2.0.5"
