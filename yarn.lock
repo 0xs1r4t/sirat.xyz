@@ -2342,6 +2342,11 @@ depd@~1.1.2:
   resolved "https://registry.yarnpkg.com/depd/-/depd-1.1.2.tgz#9bcd52e14c097763e749b274c4346ed2e560b5a9"
   integrity sha1-m81S4UwJd2PnSbJ0xDRu0uVgtak=
 
+dequal@2.0.2:
+  version "2.0.2"
+  resolved "https://registry.yarnpkg.com/dequal/-/dequal-2.0.2.tgz#85ca22025e3a87e65ef75a7a437b35284a7e319d"
+  integrity sha512-q9K8BlJVxK7hQYqa6XISGmBZbtQQWVXSrRrWreHC94rMt1QL/Impruc+7p2CYSYuVIUr+YCt6hjrs1kkdJRTug==
+
 des.js@^1.0.0:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/des.js/-/des.js-1.0.1.tgz#5382142e1bdc53f85d86d53e5f4aa7deb91e0843"
@@ -2671,7 +2676,7 @@ fast-safe-stringify@^2.0.8:
   resolved "https://registry.yarnpkg.com/fast-safe-stringify/-/fast-safe-stringify-2.1.1.tgz#c406a83b6e70d9e35ce3b30a81141df30aeba884"
   integrity sha512-W+KJc2dmILlPplD/H4K9l9LcAHAfPtP6BY84uVLXQ6Evcz9Lcg33Y2z1IVblT6xdY54PXYVHEv+0Wpq8Io6zkA==
 
-fastify-compress@^3.6.0:
+fastify-compress@^3.4.2:
   version "3.6.0"
   resolved "https://registry.yarnpkg.com/fastify-compress/-/fastify-compress-3.6.0.tgz#07acff3a7fe375434945c090a39bd72f5616487a"
   integrity sha512-K7GCSb8CMyhHKBhDcKzKQOpOj/5OUaaAEyBftBRDqoLdhgTsJr3syQ8Nk2u1TJDdqmx64bhAtj9Nr/BS3Ylueg==
@@ -3935,7 +3940,7 @@ next-plugin-preact@^3.0.4:
     "@prefresh/webpack" "^3.3.0"
     module-alias "^2.0.0"
 
-next-pwa@^5.3.1:
+next-pwa@^5.0.6:
   version "5.3.1"
   resolved "https://registry.yarnpkg.com/next-pwa/-/next-pwa-5.3.1.tgz#5bcd854422a452fd1fd56500d1c483664d9733d9"
   integrity sha512-Os6bf/lEYoztvsILYkAhDjiYfLNTprqEumxuv5DjhoFh4OpIzO7U0GKRI6MZluH4SfAoe0IdHz9knnZxybSnag==
@@ -5377,10 +5382,12 @@ svg-path-contours@^2.0.0:
     normalize-svg-path "^0.1.0"
     vec2-copy "^1.0.0"
 
-swr@^0.5.4:
-  version "0.5.4"
-  resolved "https://registry.yarnpkg.com/swr/-/swr-0.5.4.tgz#9516af6ffd84ba2c23a804ff771be2eb83ba8d46"
-  integrity sha512-TUSxxuC8uP/4JKV22ml91WQ0tbif+9HVhm683xm8KYfwZIW5ogwcnU634dg3x6N7azpIDIOLokoIi+z5vCz/yA==
+swr@^1.0.1:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/swr/-/swr-1.0.1.tgz#15f62846b87ee000e52fa07812bb65eb62d79483"
+  integrity sha512-EPQAxSjoD4IaM49rpRHK0q+/NzcwoT8c0/Ylu/u3/6mFj/CWnQVjNJ0MV2Iuw/U+EJSd2TX5czdAwKPYZIG0YA==
+  dependencies:
+    dequal "2.0.2"
 
 tapable@^2.2.0:
   version "2.2.0"
@@ -5422,7 +5429,7 @@ terser@^5.0.0:
     commander "^2.20.0"
     source-map "~0.7.2"
     source-map-support "~0.5.19"
-    
+
 terser@^5.7.2:
   version "5.9.0"
   resolved "https://registry.yarnpkg.com/terser/-/terser-5.9.0.tgz#47d6e629a522963240f2b55fcaa3c99083d2c351"
@@ -5436,7 +5443,6 @@ three@^0.132.2:
   version "0.132.2"
   resolved "https://registry.yarnpkg.com/three/-/three-0.132.2.tgz#95eb1856147237c03e887cbbe56f964b6fb40b5e"
   integrity sha512-0wcR7LxxkXMn6Gi58gEs3QvY8WpTVXA31L2VOvpjm4ZPYFRHCZC13UqynheFoS5OXDYgtBneN0dhbaNBE8iLhQ==
-
 
 through2@^2.0.3:
   version "2.0.5"

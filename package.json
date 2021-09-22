@@ -50,7 +50,7 @@
       "react-syntax-highlighter": "^15.4.3",
       "react-three-fiber": "^5.3.19",
       "styled-components": "^5.2.1",
-      "swr": "^0.5.4",
+      "swr": "^1.0.1",
       "three": "^0.132.2",
       "use-sound": "^2.0.1"
    },
