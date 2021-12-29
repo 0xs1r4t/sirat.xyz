@@ -1,4 +1,4 @@
-import Meta from "@components/Meta";
+import Meta from "@components/layout/Meta";
 
 const Home = () => {
    return (
