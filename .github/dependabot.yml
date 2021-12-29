@@ -1,0 +1,12 @@
+version: 2
+updates:
+   - package-ecosystem: "npm"
+     directory: "/"
+     schedule:
+        interval: "monthly"
+        day: "thursday"
+        time: "17:30"
+        timezone: "Asia/Kolkata"
+     reviewers:
+        - "sBx99"
+     open-pull-requests-limit: 2
