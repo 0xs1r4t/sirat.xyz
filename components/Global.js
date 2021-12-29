@@ -29,10 +29,6 @@ const Global = createGlobalStyle`
         -moz-osx-font-smoothing: grayscale;
     }
 
-    p {
-      font-family: "W95FA", monospace;
-    }
-
     a {
         color: inherit;
         text-decoration: none;

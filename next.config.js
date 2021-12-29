@@ -1,5 +1,6 @@
 module.exports = {
    reactStrictMode: true,
+   swcMinify: true,
    styledComponent: true,
    images: {
       domains: ["i.imgur.com", "media.giphy.com", "i.scdn.co", "cdn.glitch.com"],
