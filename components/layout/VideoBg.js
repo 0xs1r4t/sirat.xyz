@@ -21,6 +21,7 @@ const VideoBg = () => {
 
    return (
       <Video ref={videoRef} loop autoPlay muted>
+         <source src="/media/clouds.webm" type="video/webm" />
          <source src="/media/clouds.mp4" type="video/mp4" />
       </Video>
    );
