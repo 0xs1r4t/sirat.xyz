@@ -7,7 +7,10 @@ const Video = styled.video`
    height: 100%;
    position: fixed;
    z-index: -1;
-   /* filter: contrast(2) brightness(0.35); */
+   /*
+   @media (prefers-color-scheme: dark) {
+      filter: contrast(2) brightness(0.35);
+   } */
 `;
 
 const VideoBg = () => {

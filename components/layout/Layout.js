@@ -15,6 +15,18 @@ const Main = styled.main`
    }
 `;
 
+/*
+const Bg = styled.span`
+   padding: 5em;
+   background: #ffc;
+   min-height: 90vh;
+
+   @media (max-width: 768px) {
+      min-height: 85vh;
+   }
+`;
+*/
+
 const Layout = ({ children }) => {
    return (
       <>
