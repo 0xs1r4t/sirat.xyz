@@ -1,6 +1,10 @@
 import { createGlobalStyle } from "styled-components";
 
 const Global = createGlobalStyle`
+    * {
+        box-sizing: border-box;
+    }
+
     @font-face {
         font-family: "W95FA";
         src: url("/fonts/W95FA/w95fa.woff") format("woff"),
@@ -27,6 +31,11 @@ const Global = createGlobalStyle`
         -webkit-font-smoothing: antialiased;
         -webkit-text-size-adjust: 100%;
         -moz-osx-font-smoothing: grayscale;
+
+        color: #000;
+        @media (prefers-color-scheme: dark) {
+            color: #fff;
+        }
     }
 
     a {
@@ -34,8 +43,13 @@ const Global = createGlobalStyle`
         text-decoration: none;
     }
 
-    * {
-        box-sizing: border-box;
+    canvas {
+        height: 100vh;
+        width: 30vw;
+        @media (max-width: 768px) {
+            height: 30vh;
+            width: 100vw;
+        }
     }
 `;
 

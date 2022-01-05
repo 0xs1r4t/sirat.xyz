@@ -25,71 +25,46 @@ const Model = ({ ...props }) => {
    const group = useRef();
    const { nodes, materials, animations } = useGLTF("/models/house.glb");
    const { actions } = useAnimations(animations, group);
+
+   useEffect(() => {
+      console.log(actions);
+      actions.open.play();
+   });
+
    return (
       <group ref={group} {...props} dispose={null}>
          <group name="Scene">
-            <group
-               name="Camera"
-               position={[-4.73, 1.45, 7.82]}
-               rotation={[1.51, -0.03, 0.51]}
-               userData={{ name: "Camera" }}
-            />
-            <group
-               name="Light"
-               position={[4.08, 5.9, -1.01]}
-               rotation={[1.89, 0.88, -2.05]}
-               userData={{ name: "Light" }}
-            />
-            <group
-               name="Light001"
-               position={[4.08, 2.91, 9.39]}
-               rotation={[1.89, 0.88, -2.05]}
-               userData={{ name: "Light.001" }}
-            />
-            <group
-               name="Light002"
-               position={[-2.18, 3.44, 9.05]}
-               rotation={[1.89, 0.88, -2.05]}
-               userData={{ name: "Light.002" }}
-            />
-            <group
-               name="house_light001"
-               position={[0, 0.6, 1.49]}
-               rotation={[1.89, 0.88, -2.05]}
-               userData={{ name: "house light.001" }}
-            />
-            <group name="Sun" rotation={[-0.49, 0.47, 1.45]} userData={{ name: "Sun" }} />
             <mesh
-               name="house_structure"
-               geometry={nodes.house_structure.geometry}
+               name="houseStructure"
+               geometry={nodes.houseStructure.geometry}
                material={materials["house structure"]}
                scale={[2, 1, 1]}
-               userData={{ name: "house structure" }}
+               userData={{ name: "houseStructure" }}
             />
             <mesh
-               name="arched_door"
-               geometry={nodes.arched_door.geometry}
+               name="archedDoor"
+               geometry={nodes.archedDoor.geometry}
                material={materials.door}
                position={[0.4, -0.27, 1.01]}
                rotation={[Math.PI / 2, 0, -Math.PI / 2]}
                scale={[0.4, 1, 0.67]}
-               userData={{ name: "arched door" }}
+               userData={{ name: "archedDoor" }}
             />
             <mesh
-               name="roof_behind"
-               geometry={nodes.roof_behind.geometry}
+               name="roofBehind"
+               geometry={nodes.roofBehind.geometry}
                material={materials["ceramic roof wide"]}
                position={[0, 0.31, 0]}
                scale={[2.17, 1, 1]}
-               userData={{ name: "roof behind" }}
+               userData={{ name: "roofBehind" }}
             />
             <mesh
-               name="roof_front"
-               geometry={nodes.roof_front.geometry}
+               name="roofFront"
+               geometry={nodes.roofFront.geometry}
                material={materials["ceramic roof narrow"]}
                position={[0, 0.21, 0]}
                scale={[2, 1, 1]}
-               userData={{ name: "roof front" }}
+               userData={{ name: "roofFront" }}
             />
             <mesh
                name="chimney"
@@ -100,56 +75,56 @@ const Model = ({ ...props }) => {
                userData={{ name: "chimney" }}
             />
             <mesh
-               name="front_window"
-               geometry={nodes.front_window.geometry}
-               material={nodes.front_window.material}
-               position={[0, 0, -0.61]}
-               scale={[2, 1, 2.06]}
-               userData={{ name: "front window" }}
-            />
-            <mesh
-               name="side_window"
-               geometry={nodes.side_window.geometry}
-               material={nodes.side_window.material}
-               position={[-0.02, 0, 0]}
-               rotation={[0, Math.PI / 2, 0]}
-               scale={[2, 1, 2.06]}
-               userData={{ name: "side window" }}
-            />
-            <mesh
-               name="middle"
-               geometry={nodes.middle.geometry}
-               material={nodes.middle.material}
+               name="paneMiddle"
+               geometry={nodes.paneMiddle.geometry}
+               material={nodes.paneMiddle.material}
                position={[0, 1, 0.92]}
                scale={[0.03, 0.29, 0.03]}
-               userData={{ name: "middle" }}
+               userData={{ name: "paneMiddle" }}
             />
             <mesh
-               name="RT_LB"
-               geometry={nodes.RT_LB.geometry}
-               material={nodes.RT_LB.material}
+               name="paneRTtoLB"
+               geometry={nodes.paneRTtoLB.geometry}
+               material={nodes.paneRTtoLB.material}
                position={[0, 1, 0.92]}
                rotation={[0, 0, -Math.PI / 3]}
                scale={[0.03, 0.4, 0.03]}
-               userData={{ name: "RT LB" }}
+               userData={{ name: "paneRTtoLB" }}
             />
             <mesh
-               name="LT_RB"
-               geometry={nodes.LT_RB.geometry}
-               material={nodes.LT_RB.material}
+               name="paneLTtoRB"
+               geometry={nodes.paneLTtoRB.geometry}
+               material={nodes.paneLTtoRB.material}
                position={[0, 1, 0.92]}
                rotation={[0, 0, -2.09]}
                scale={[0.03, 0.4, 0.03]}
-               userData={{ name: "LT RB" }}
+               userData={{ name: "paneLTtoRB" }}
             />
             <mesh
-               name="heart_window"
-               geometry={nodes.heart_window.geometry}
-               material={materials.None}
+               name="heartWindow"
+               geometry={nodes.heartWindow.geometry}
+               material={nodes.heartWindow.material}
                position={[0, 1.08, 0.99]}
                rotation={[Math.PI / 2, 0, 0]}
                scale={0.31}
-               userData={{ name: "heart window" }}
+               userData={{ name: "heartWindow" }}
+            />
+            <mesh
+               name="frontWindow"
+               geometry={nodes.frontWindow.geometry}
+               material={nodes.frontWindow.material}
+               position={[0, 0, -0.61]}
+               scale={[2, 1, 2.06]}
+               userData={{ name: "frontWindow" }}
+            />
+            <mesh
+               name="sideWindow"
+               geometry={nodes.sideWindow.geometry}
+               material={nodes.sideWindow.material}
+               position={[-0.02, 0, 0]}
+               rotation={[0, Math.PI / 2, 0]}
+               scale={[2, 1, 2.06]}
+               userData={{ name: "sideWindow" }}
             />
          </group>
       </group>
@@ -159,13 +134,13 @@ const Model = ({ ...props }) => {
 useGLTF.preload("/models/house.glb");
 
 // the canvas -- rough
-function House() {
+const House = () => {
    return (
       <Canvas concurrent>
          <ambientLight />
          <directionalLight position={[20, 10, 20]} color="white" />
          <Suspense fallback={null}>
-            {/* <Environment background={false} files="textures/cloudsss-pink.hdr" /> */}
+            <Environment background={false} files="textures/holographic.hdr" />
             <Model />
 
             {/* filters */}
@@ -175,10 +150,10 @@ function House() {
                <Preload all />
             </EffectComposer>
          </Suspense>
-         <OrbitControls enablePan={true} enableZoom={true} enableRotate={true} autoRotate />
+         <OrbitControls regress />
          <Stats />
       </Canvas>
    );
-}
+};
 
 export default House;

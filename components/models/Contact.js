@@ -25,55 +25,49 @@ const Model = ({ ...props }) => {
    const group = useRef();
    const { nodes, materials, animations } = useGLTF("/models/contact.glb");
    const { actions } = useAnimations(animations, group);
+
+   useEffect(() => {
+      console.log(actions);
+      actions.flip.play();
+   });
+
    return (
       <group ref={group} {...props} dispose={null}>
          <group name="Scene">
-            <group
-               name="Light"
-               position={[4.08, 4.9, -1.01]}
-               rotation={[1.89, 0.88, -2.05]}
-               userData={{ name: "Light" }}
-            />
-            <group
-               name="Camera"
-               position={[6.34, 5.81, 7.26]}
-               rotation={[1.17, 0.35, -0.69]}
-               userData={{ name: "Camera" }}
-            />
             <mesh
-               name="phone_bottom"
-               geometry={nodes.phone_bottom.geometry}
+               name="phoneBottom"
+               geometry={nodes.phoneBottom.geometry}
                material={materials["phone metal"]}
                position={[0, -0.64, 0.35]}
                rotation={[-Math.PI / 2, 0, 0]}
                scale={[1, 1, 0.16]}
-               userData={{ name: "phone bottom" }}
+               userData={{ name: "phoneBottom" }}
             />
             <mesh
-               name="phone_top"
-               geometry={nodes.phone_top.geometry}
+               name="phoneTop"
+               geometry={nodes.phoneTop.geometry}
                material={materials["phone top metal"]}
                position={[0, -0.46, -0.66]}
                rotation={[2.09, 0, 0]}
                scale={[0.97, 0.89, 0.16]}
-               userData={{ name: "phone top" }}
+               userData={{ name: "phoneTop" }}
             />
             <mesh
-               name="Cylinder"
-               geometry={nodes.Cylinder.geometry}
-               material={nodes.Cylinder.material}
+               name="phoneButton"
+               geometry={nodes.phoneButton.geometry}
+               material={nodes.phoneButton.material}
+               position={[0, -0.48, 0.57]}
+               scale={[0.36, 0.08, 0.36]}
+               userData={{ name: "phoneButton" }}
+            />
+            <mesh
+               name="phoneMiddle"
+               geometry={nodes.phoneMiddle.geometry}
+               material={nodes.phoneMiddle.material}
                position={[0, -0.62, -0.66]}
                rotation={[-Math.PI / 2, 0, -Math.PI / 2]}
                scale={[0.25, 0.74, 0.25]}
-               userData={{ name: "Cylinder" }}
-            />
-            <mesh
-               name="Cylinder001"
-               geometry={nodes.Cylinder001.geometry}
-               material={nodes.Cylinder001.material}
-               position={[0, -0.48, 0.57]}
-               scale={[0.36, 0.08, 0.36]}
-               userData={{ name: "Cylinder.001" }}
+               userData={{ name: "phoneMiddle" }}
             />
          </group>
       </group>
@@ -83,13 +77,13 @@ const Model = ({ ...props }) => {
 useGLTF.preload("/models/contact.glb");
 
 // the canvas -- rough
-function Contact() {
+const Contact = () => {
    return (
       <Canvas concurrent>
          <ambientLight />
          <directionalLight position={[20, 10, 20]} color="white" />
          <Suspense fallback={null}>
-            {/* <Environment background={false} files="textures/cloudsss-pink.hdr" /> */}
+            <Environment background={false} files="textures/holographic.hdr" />
             <Model />
 
             {/* filters */}
@@ -99,10 +93,10 @@ function Contact() {
                <Preload all />
             </EffectComposer>
          </Suspense>
-         <OrbitControls enablePan={true} enableZoom={true} enableRotate={true} autoRotate />
+         <OrbitControls regress />
          <Stats />
       </Canvas>
    );
-}
+};
 
 export default Contact;

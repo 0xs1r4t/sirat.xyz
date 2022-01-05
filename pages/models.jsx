@@ -1,6 +1,7 @@
 import Meta from "@components/layout/Meta";
-import CanvasContact from "@components/models/Contact";
-import CanvasHouse from "@components/models/House";
+import Models from "@components/models/Models";
+import Contact from "@components/models/Contact";
+import House from "@components/models/House";
 
 const Home = () => {
    return (
@@ -12,8 +13,9 @@ const Home = () => {
             is under construction. this won't take too long, and my previous website was cute but
             incomplete, so i really need to do this.
          </p>
-         <CanvasHouse />
-         <CanvasContact />
+         <Models />
+         {/* <Contact />
+         <House /> */}
       </>
    );
 };
