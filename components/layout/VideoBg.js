@@ -7,9 +7,10 @@ const Video = styled.video`
    height: 100%;
    position: fixed;
    z-index: -1;
+   filter: hue-rotate(-45deg) contrast(2) brightness(0.75);
 
    @media (prefers-color-scheme: dark) {
-      filter: contrast(2) brightness(0.35);
+      filter: hue-rotate(-45deg) contrast(2) brightness(0.35);
       /* filter: invert(1) hue-rotate(280deg) contrast(0.75) brightness(1.35); */
    }
 `;
@@ -20,6 +21,7 @@ const VideoBg = () => {
    useEffect(() => {
       setTimeout(() => {
          videoRef.current.play();
+         videoRef.defaultPlaybackRate = 0.5;
       }, 5000);
    }, []);
 
