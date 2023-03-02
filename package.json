@@ -30,7 +30,7 @@
       "react-dom": "18.1.0",
       "slugify": "^1.6.5",
       "styled-components": "^5.3.5",
-      "three": "^0.139.2"
+      "three": "^0.150.1"
    },
    "devDependencies": {
       "eslint": "8.14.0",
