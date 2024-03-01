@@ -1,6 +1,6 @@
 import localFont from "next/font/local";
 
-export const authenticSans = localFont({
+export const AuthenticSans = localFont({
   src: [
     {
       path: "./authentic-sans/AUTHENTICSans-60.woff",
@@ -25,7 +25,7 @@ export const authenticSans = localFont({
   ],
 });
 
-export const authenticSansCondensed = localFont({
+export const AuthenticSansCondensed = localFont({
   src: [
     {
       path: "./authentic-sans/AUTHENTICSans-Condensed-60.woff",

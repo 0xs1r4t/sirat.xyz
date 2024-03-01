@@ -14,11 +14,13 @@
     "@notion-render/hljs-plugin": "^0.0.2",
     "@notionhq/client": "^2.2.14",
     "@spotify/web-api-ts-sdk": "^1.2.0",
+    "clsx": "^2.1.0",
     "framer-motion": "^11.0.7",
     "next": "14.1.0",
     "react": "^18",
     "react-dom": "^18",
-    "swr": "^2.2.5"
+    "swr": "^2.2.5",
+    "tailwind-merge": "^2.2.1"
   },
   "devDependencies": {
     "@commitlint/cli": "^19.0.3",

@@ -1,6 +1,9 @@
-import type { Metadata } from "next";
+import { type Metadata } from "next";
 import "./globals.css";
-import { authenticSans } from "@/fonts/font-config";
+import { AuthenticSans } from "@/fonts/font-config";
+
+import { cn } from "@/lib/utils";
+import SpotifyPlayer from "@/components/SpotifyPlayer";
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -14,7 +17,15 @@ const RootLayout = ({
 }>) => {
   return (
     <html lang="en">
-      <body className={authenticSans.className}>{children}</body>
+      <body
+        className={cn(
+          "min-h-screen bg-background font-sans antialiased",
+          AuthenticSans.className
+        )}
+      >
+        {children}
+        <SpotifyPlayer />
+      </body>
     </html>
   );
 };
