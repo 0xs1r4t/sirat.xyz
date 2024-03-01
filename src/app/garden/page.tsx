@@ -1,6 +1,7 @@
 import React from "react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import type { Metadata } from "next";
 
 import { NotionRenderer } from "@notion-render/client";
 import hljsPlugin from "@notion-render/hljs-plugin";
@@ -8,6 +9,10 @@ import bookmarkPlugin from "@notion-render/bookmark-plugin";
 
 import { notion, getAllPages, getPublishedPages } from "@/lib/notion";
 import { plants } from "@/lib/types";
+
+export const metadata: Metadata = {
+  title: "🌐🌼 digital garden",
+};
 
 const GardenPage = async () => {
   const pages = await getAllPages();

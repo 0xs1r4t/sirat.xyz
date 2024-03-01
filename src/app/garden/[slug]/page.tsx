@@ -1,5 +1,6 @@
 import React from "react";
 import { notFound } from "next/navigation";
+import { Metadata, ResolvingMetadata } from "next";
 
 import { NotionRenderer } from "@notion-render/client";
 import hljsPlugin from "@notion-render/hljs-plugin";
@@ -7,7 +8,25 @@ import bookmarkPlugin from "@notion-render/bookmark-plugin";
 
 import { notion, getPageBySlug, getPageContent } from "@/lib/notion";
 
-const GardenSlug = async ({ params }: { params: { slug: string } }) => {
+type Props = {
+  params: { slug: string };
+  searchParams: { [key: string]: string | string[] | undefined };
+};
+
+export const generateMetadata = async (
+  { params, searchParams }: Props,
+  parent: ResolvingMetadata
+): Promise<Metadata> => {
+  const slug = params.slug;
+  const gardenPatch = await getPageBySlug(slug);
+  if (!gardenPatch) notFound();
+
+  return {
+    title: "🌐🌼 " + (gardenPatch.properties.title as any).title[0].plain_text,
+  };
+};
+
+const GardenSlug = async ({ params, searchParams }: Props) => {
   const gardenPatch = await getPageBySlug(params.slug);
   if (!gardenPatch) notFound();
 
