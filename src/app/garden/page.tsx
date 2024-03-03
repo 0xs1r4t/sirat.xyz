@@ -9,6 +9,8 @@ import bookmarkPlugin from "@notion-render/bookmark-plugin";
 
 import { notion, getAllPages, getPublishedPages } from "@/lib/notion";
 import { plants } from "@/lib/types";
+import { AuthenticSansCondensed } from "@/fonts/font-config";
+import { cn } from "@/lib/utils";
 
 export const metadata: Metadata = {
   title: "🌐🌼 digital garden",
@@ -33,11 +35,18 @@ const GardenPage = async () => {
   }));
 
   return (
-    <main className="flex flex-col items-center justify-center min-h-screen">
+    <main className="flex flex-col items-center justify-between p-10">
       <Link aria-label="home" href="/">
         🏡
       </Link>
-      <h1 className="text-3xl text-center">my digital garden</h1>
+      <h1
+        className={cn(
+          "text-5xl text-center font-bold",
+          AuthenticSansCondensed.className
+        )}
+      >
+        MY DIGITAL GARDEN
+      </h1>
       <section role="feed">
         {garden.map(({ title, description, tags, slug }, index) => (
           <section
@@ -47,12 +56,26 @@ const GardenPage = async () => {
             aria-setsize={garden.length}
             tabIndex={0}
             aria-labelledby={slug}
+            className="px-4 py-2 my-4"
           >
-            <h3>{title}</h3>
+            <h2
+              className={cn(
+                "text-xl font-bold",
+                AuthenticSansCondensed.className
+              )}
+            >
+              {title}
+            </h2>
             <p>{description}</p>
             <ul className="flex flex-row">
               {tags.map((tag: string) => (
-                <li className="tags" key={tag}>
+                <li
+                  className={cn(
+                    "tags list-none px-2 mr-3 py-0.5 bg-neutral-950 dark:bg-neutral-50 text-white dark:text-black rounded-md",
+                    AuthenticSansCondensed.className
+                  )}
+                  key={tag}
+                >
                   {tag}
                 </li>
               ))}

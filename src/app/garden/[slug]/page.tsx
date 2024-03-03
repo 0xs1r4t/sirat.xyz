@@ -8,6 +8,8 @@ import hljsPlugin from "@notion-render/hljs-plugin";
 import bookmarkPlugin from "@notion-render/bookmark-plugin";
 
 import { notion, getPageBySlug, getPageContent } from "@/lib/notion";
+import { AuthenticSansCondensed } from "@/fonts/font-config";
+import { cn } from "@/lib/utils";
 
 type Props = {
   params: { slug: string };
@@ -46,17 +48,36 @@ const GardenSlug = async ({ params, searchParams }: Props) => {
   const html = await notionRenderer.render(...content);
 
   return (
-    <main className="flex flex-col items-center justify-center min-h-screen">
+    <main className="flex flex-col items-center justify-between p-10">
       <Link aria-label="home" href="/">
         🏡
       </Link>
       <Link aria-label="garden" href="/garden">
         🌐🌼
       </Link>
-      <article>
-        <h1 className="text-3xl text-center">{title}</h1>
+      <article className="prose prose-neutral dark:prose-invert lg:prose-xl">
+        <h1
+          className={cn(
+            "text-5xl text-center font-bold uppercase",
+            AuthenticSansCondensed.className
+          )}
+        >
+          {title}
+        </h1>
         <p>{description}</p>
-        <ul className="flex flex-row">{tags}</ul>
+        <ul className="flex flex-row">
+          {tags.map((tag: string) => (
+            <li
+              className={cn(
+                "tags list-none px-2 mr-3  bg-neutral-950 dark:bg-neutral-50 text-white dark:text-black rounded-md",
+                AuthenticSansCondensed.className
+              )}
+              key={tag}
+            >
+              {tag}
+            </li>
+          ))}
+        </ul>
         <div dangerouslySetInnerHTML={{ __html: html }} />
       </article>
     </main>
