@@ -34,6 +34,9 @@ const GardenPage = async () => {
 
   return (
     <main className="flex flex-col items-center justify-center min-h-screen">
+      <Link aria-label="home" href="/">
+        🏡
+      </Link>
       <h1 className="text-3xl text-center">my digital garden</h1>
       <section role="feed">
         {garden.map(({ title, description, tags, slug }, index) => (

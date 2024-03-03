@@ -1,0 +1,23 @@
+{
+    "redirects": [
+        {
+            "source": "/github",
+            "destination": "https://github.com/0xs1r4t"
+        },
+        {
+            "source": "/git",
+            "destination": "https://git.sirat.xyz"
+        },
+        {
+            "source": "/:path*",
+            "has": [
+                {
+                    "type": "host",
+                    "value": "garden.sirat.xyz"
+                }
+            ],
+            "destination": "/garden/:path*"
+        }
+    ],
+    "cleanUrls": "true"
+}

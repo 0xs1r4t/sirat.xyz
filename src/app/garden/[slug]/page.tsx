@@ -1,6 +1,7 @@
 import React from "react";
 import { notFound } from "next/navigation";
 import { Metadata, ResolvingMetadata } from "next";
+import Link from "next/link";
 
 import { NotionRenderer } from "@notion-render/client";
 import hljsPlugin from "@notion-render/hljs-plugin";
@@ -46,6 +47,12 @@ const GardenSlug = async ({ params, searchParams }: Props) => {
 
   return (
     <main className="flex flex-col items-center justify-center min-h-screen">
+      <Link aria-label="home" href="/">
+        🏡
+      </Link>
+      <Link aria-label="garden" href="/garden">
+        🌐🌼
+      </Link>
       <article>
         <h1 className="text-3xl text-center">{title}</h1>
         <p>{description}</p>
