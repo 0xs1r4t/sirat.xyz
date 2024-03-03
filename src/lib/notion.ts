@@ -54,3 +54,20 @@ export const getPageBySlug = cache((slug: string) => {
     })
     .then((res) => res.results[0] as PageObjectResponse);
 });
+
+export const searchPageByContent = cache((content: string) => {
+  const searchQuery = content.replace(/ /g, "+");
+  return notion
+    .search({
+      query: searchQuery,
+      filter: {
+        value: "database",
+        property: "object",
+      },
+      sort: {
+        direction: "ascending",
+        timestamp: "last_edited_time",
+      },
+    })
+    .then((res) => res.results as Array<DatabaseObjectResponse>);
+});
