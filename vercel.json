@@ -19,5 +19,5 @@
             "destination": "/garden/:path*"
         }
     ],
-    "cleanUrls": "true"
+    "cleanUrls": true
 }
