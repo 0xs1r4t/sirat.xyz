@@ -7,6 +7,18 @@
         {
             "source": "/git",
             "destination": "https://git.sirat.xyz"
+        }
+    ],
+    "rewrites": [
+        {
+            "source": "/",
+            "has": [
+                {
+                    "type": "host",
+                    "value": "garden.sirat.xyz"
+                }
+            ],
+            "destination": "/garden"
         },
         {
             "source": "/:path*",
