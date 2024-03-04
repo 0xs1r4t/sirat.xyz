@@ -55,13 +55,13 @@ export const getPageBySlug = cache((slug: string) => {
     .then((res) => res.results[0] as PageObjectResponse);
 });
 
-export const searchPageByContent = cache((content: string) => {
-  const searchQuery = content.replace(/ /g, "+");
+// search content by a page's title
+export const searchPagesByContent = cache((content: string) => {
   return notion
     .search({
-      query: searchQuery,
+      query: content,
       filter: {
-        value: "database",
+        value: "page",
         property: "object",
       },
       sort: {
@@ -69,5 +69,5 @@ export const searchPageByContent = cache((content: string) => {
         timestamp: "last_edited_time",
       },
     })
-    .then((res) => res.results as Array<DatabaseObjectResponse>);
+    .then((res) => res.results as Array<PageObjectResponse>);
 });
