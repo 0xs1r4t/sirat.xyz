@@ -7,18 +7,31 @@ import { NotionRenderer } from "@notion-render/client";
 import hljsPlugin from "@notion-render/hljs-plugin";
 import bookmarkPlugin from "@notion-render/bookmark-plugin";
 
-import { notion, getAllPages, getPublishedPages } from "@/lib/notion";
+import { notion, searchPagesByContent, getAllPages } from "@/lib/notion";
 import { plants } from "@/lib/types";
 import { AuthenticSansCondensed } from "@/fonts/font-config";
 import { cn } from "@/lib/utils";
+
+import Search from "@/components/Search";
 
 export const metadata: Metadata = {
   title: "🌐🌼 digital garden",
 };
 
-const GardenPage = async () => {
-  const pages = await getAllPages();
-  // const pages = await getPublishedPages();
+const GardenPage = async ({
+  searchParams,
+}: {
+  searchParams?: {
+    q?: string;
+  };
+}) => {
+  let pages = await getAllPages();
+
+  const content: string = searchParams?.q || "";
+  if (content != "") {
+    pages = await searchPagesByContent(content);
+  }
+
   if (!pages) notFound();
 
   const notionRenderer = new NotionRenderer({ client: notion });
@@ -47,6 +60,7 @@ const GardenPage = async () => {
       >
         MY DIGITAL GARDEN
       </h1>
+      <Search placeholder="🔍 Search this garden 🦗" />
       <section role="feed">
         {garden.map(({ title, description, tags, slug }, index) => (
           <section
