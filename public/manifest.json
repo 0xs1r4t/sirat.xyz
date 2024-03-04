@@ -1,0 +1,17 @@
+{
+  "name": "Sirat Baweja's 🎨 portfolio, 🌐🌼 digital garden and 📂 repository of important projects",
+  "short_name": "Sirat Baweja",
+  "theme_color": "#000000",
+  "background_color": "#000000",
+  "display": "browser",
+  "orientation": "any",
+  "scope": "/",
+  "start_url": "/",
+  "icons": [
+    { "src": "/icons/sirat-xyz-icon-16.png", "type": "image/png", "sizes": "16x16" },
+    { "src": "/icons/sirat-xyz-icon-32.png", "type": "image/png", "sizes": "32x32" },
+    { "src": "/icons/sirat-xyz-icon-192.png", "type": "image/png", "sizes": "192x192" },
+    { "src": "/icons/sirat-xyz-icon-256.png", "type": "image/png", "sizes": "256x256" },
+    { "src": "/icons/sirat-xyz-icon-512.png", "type": "image/png", "sizes": "512x512" }
+  ]
+}

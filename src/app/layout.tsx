@@ -26,6 +26,7 @@ export const metadata: Metadata = {
     "design",
   ],
   referrer: "origin",
+  icons: "./favicon.ico",
 };
 
 export const viewport: Viewport = {
