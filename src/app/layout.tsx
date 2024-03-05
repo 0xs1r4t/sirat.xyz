@@ -1,5 +1,5 @@
 import "./globals.css";
-import { AuthenticSans } from "@/fonts/font-config";
+import { AuthenticSans, AuthenticSansCondensed } from "@/fonts/font-config";
 
 import { cn } from "@/lib/utils";
 import SpotifyPlayer from "@/components/SpotifyPlayer";
@@ -51,7 +51,8 @@ const RootLayout = ({
       <body
         className={cn(
           "min-h-screen bg-background font-sans antialiased",
-          AuthenticSans.className
+          AuthenticSans.className,
+          AuthenticSansCondensed.variable
         )}
       >
         {children}
