@@ -23,6 +23,7 @@ export const AuthenticSans = localFont({
       style: "normal",
     },
   ],
+  variable: "--font-authentic-sans",
 });
 
 export const AuthenticSansCondensed = localFont({
@@ -48,4 +49,5 @@ export const AuthenticSansCondensed = localFont({
       style: "normal",
     },
   ],
+  variable: "--font-authentic-sans-condensed",
 });
