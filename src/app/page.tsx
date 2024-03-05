@@ -1,9 +1,7 @@
 import React from "react";
 import Link from "next/link";
 
-import { AuthenticSansCondensed } from "@/fonts/font-config";
-import { cn } from "@/lib/utils";
-
+import Stack from "@/components/ui/Stack";
 const Home = () => {
   return (
     <main className="flex flex-col items-center justify-center p-10">
@@ -15,6 +13,7 @@ const Home = () => {
       <Link aria-label="garden" href="/garden">
         digital garden <span aria-hidden="true">🌐🌼↗️</span>
       </Link>
+      <Stack />
     </main>
   );
 };
