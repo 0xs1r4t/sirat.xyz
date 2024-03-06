@@ -4,6 +4,7 @@ export type Song = {
   isPlaying: boolean;
   songUrl: string;
   title: string;
+  message: string;
 };
 
 export type Garden = {

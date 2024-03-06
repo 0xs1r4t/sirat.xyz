@@ -23,6 +23,7 @@ export async function GET(request: NextRequest) {
     .join(", ");
   const albumImageUrl = track.album.images[0].url;
   const songUrl = track.external_urls.spotify;
+  const message = "is playing now";
 
   if (isPlaying === false) {
     return NextResponse.json({ isPlaying });
@@ -35,5 +36,6 @@ export async function GET(request: NextRequest) {
     artist,
     albumImageUrl,
     songUrl,
+    message,
   });
 }
