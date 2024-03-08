@@ -1,19 +1,16 @@
 import React from "react";
 
 const Box = ({
-  row,
-  col,
+  css,
   children,
 }: {
-  row?: number;
-  col?: number;
+  css?: string;
   children?: React.ReactNode;
 }) => {
-  row ||= 1;
-  col ||= 1;
+  css = css || "";
   return (
     <div
-      className={`row-span-${row} col-span-${col} rounded-xl border-2 border-neutral-400/10 bg-neutral-100 p-4 dark:bg-neutral-900`}
+      className={`p-4 rounded-xl place-content-center border-2 dark:bg-neutral-900 bg-neutral-200 border-neutral-300 dark:border-neutral-800 ${css}`}
     >
       {children || "🌐"}
     </div>
@@ -22,13 +19,12 @@ const Box = ({
 
 const Stack = () => {
   return (
-    <div className="w-full mt-10 grid auto-rows-[192px] grid-cols-3 gap-4">
-      <Box row={2}>hello world.</Box>
-      <Box />
-      <Box />
-      <Box col={2} />
-      <Box col={2} />
-      <Box />
+    <div className="mt-10 w-full grid grid-rows-3 grid-cols-4 grid-flow-col gap-4">
+      <Box css="row-span-3">01</Box>
+      <Box css="col-span-2">02</Box>
+      <Box css="row-span-2 col-span-2">03</Box>
+      <Box css="row-span-2">04</Box>
+      <Box>05</Box>
     </div>
   );
 };

@@ -10,6 +10,13 @@ const config: Config = {
     "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
   ],
   theme: {
+    darkMode: [
+      "variant",
+      [
+        "@media (prefers-color-scheme: dark) { &:not(.light *) }",
+        "&:is(.dark *)",
+      ],
+    ],
     screens: {
       sm: "480px",
       md: "768px",
