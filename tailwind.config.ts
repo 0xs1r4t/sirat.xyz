@@ -9,14 +9,8 @@ const config: Config = {
     "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
     "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
   ],
+  darkMode: "class",
   theme: {
-    darkMode: [
-      "variant",
-      [
-        "@media (prefers-color-scheme: dark) { &:not(.light *) }",
-        "&:is(.dark *)",
-      ],
-    ],
     screens: {
       sm: "480px",
       md: "768px",
@@ -27,8 +21,14 @@ const config: Config = {
       heading: ["var(--font-authentic-sans-condensed)", "sans-serif"],
       serif: ["serif"],
     },
-    extend: {},
+    extend: {
+      colors: {
+        background: "rgb(var(--background-rgb))",
+        foreground: "rgb(var(--foreground-rgb))",
+      },
+    },
   },
+  variants: { extend: {} },
   plugins: [
     require("@tailwindcss/typography"),
     require("@tailwindcss/forms"),

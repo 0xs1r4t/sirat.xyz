@@ -56,7 +56,7 @@ const RootLayout = ({
           AuthenticSansCondensed.variable
         )}
       >
-        <ThemeProvider attribute="variant" defaultTheme="system" enableSystem>
+        <ThemeProvider>
           {children}
           <SpotifyPlayer />
         </ThemeProvider>
