@@ -20,7 +20,7 @@ const Spotify = ({ song }: { song: Song | null }) => {
           height={150}
         />
         <span>
-          {song.title} by {song.artist} is playing
+          {song.title} by {song.artist} {song.message}
         </span>
       </div>
     );

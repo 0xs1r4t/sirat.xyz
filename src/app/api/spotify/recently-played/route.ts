@@ -17,6 +17,7 @@ export async function GET(request: NextRequest) {
     .join(", ");
   const albumImageUrl = track.album.images[0].url;
   const songUrl = track.external_urls.spotify;
+  const message = "was just played";
 
   return NextResponse.json({
     revalidated: true,
@@ -25,5 +26,6 @@ export async function GET(request: NextRequest) {
     artist,
     albumImageUrl,
     songUrl,
+    message,
   });
 }

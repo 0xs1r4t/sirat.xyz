@@ -1,9 +1,11 @@
 import "./globals.css";
+import type { Metadata, Viewport } from "next";
+import ThemeProvider from "@/components/ThemeProvider";
+import ThemeToggle from "@/components/ThemeToggle";
 import { AuthenticSans, AuthenticSansCondensed } from "@/fonts/font-config";
 
 import { cn } from "@/lib/utils";
 import SpotifyPlayer from "@/components/SpotifyPlayer";
-import type { Metadata, Viewport } from "next";
 
 export const metadata: Metadata = {
   title: "sirat.xyz",
@@ -47,7 +49,7 @@ const RootLayout = ({
   children: React.ReactNode;
 }>) => {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body
         className={cn(
           "min-h-screen bg-background font-sans antialiased",
@@ -55,8 +57,11 @@ const RootLayout = ({
           AuthenticSansCondensed.variable
         )}
       >
-        {children}
-        <SpotifyPlayer />
+        <ThemeProvider>
+          <ThemeToggle />
+          {children}
+          <SpotifyPlayer />
+        </ThemeProvider>
       </body>
     </html>
   );
