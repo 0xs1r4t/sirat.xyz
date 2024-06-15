@@ -7,7 +7,11 @@ import { NotionRenderer } from "@notion-render/client";
 import hljsPlugin from "@notion-render/hljs-plugin";
 import bookmarkPlugin from "@notion-render/bookmark-plugin";
 
-import { notion, searchPagesByContent, getAllPages } from "@/lib/notion";
+import {
+  notion,
+  searchPagesByContent,
+  getPublishedPages /* getAllPages */,
+} from "@/lib/notion";
 import { type Garden } from "@/lib/types";
 
 import Search from "@/components/Search";
@@ -24,7 +28,11 @@ const GardenPage = async ({
     q?: string;
   };
 }) => {
-  let pages = await getAllPages();
+  let pages = await getPublishedPages();
+
+  // If no blogs are published, then display a message??
+  // if (pages.length == 0) {
+  // }
 
   const content: string = searchParams?.q || "";
   if (content != "") {
