@@ -12,7 +12,6 @@ import {
   searchPagesByContent,
   getPublishedPages /* getAllPages */,
 } from "@/lib/notion";
-import { type Garden } from "@/lib/types";
 
 import Search from "@/components/Search";
 import Tags from "@/components/ui/Tags";
