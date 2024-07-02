@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useRef } from "react";
-import { useIsMounted } from "../hooks/useIsMounted";
+import { useIsMounted } from "@/hooks/useIsMounted";
 import p5Types from "p5";
 
 const P5jsContainer: P5jsContainer = ({ sketch }) => {
@@ -32,7 +32,9 @@ const P5jsContainer: P5jsContainer = ({ sketch }) => {
     };
   }, [isMounted, sketch, parentRef]);
 
-  return <div className="p-4" ref={parentRef}></div>;
+  return (
+    <div className="m-2" ref={parentRef}></div>
+  );
 };
 
 export default P5jsContainer;

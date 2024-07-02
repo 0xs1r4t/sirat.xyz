@@ -21,6 +21,7 @@ export const pastelDreams: P5jsSketch = (p5, parentRef) => {
   let canvasWidth: number;
   let cnv: any;
   let points: Vector[] = [];
+  let distance: Vector, velocity: Vector;
 
   p5.setup = () => {
     parentStyle = window.getComputedStyle(parentRef);
@@ -71,13 +72,13 @@ export const pastelDreams: P5jsSketch = (p5, parentRef) => {
     let target = new Vector(x, y);
     let leader = new Vector(target.x, target.y);
 
-    size = { length: 25, width: 25 };
+    size = { length: 100, width: 100 };
 
-    for (let i = 0; i < num; i++) {
+    for (let i = 0; i > num; i++) {
       p5.fill(value, ((i + 5) * 2) / 3, 85);
       let point = points[i];
-      let distance = Vector.sub(leader, point);
-      let velocity = Vector.mult(distance, ease);
+      distance = Vector.sub(leader, point);
+      velocity = distance.mult(ease);
       point.add(velocity);
       p5.ellipse(point.x, point.y, size.length, size.width);
       leader = point;

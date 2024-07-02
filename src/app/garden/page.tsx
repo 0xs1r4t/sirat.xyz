@@ -14,7 +14,7 @@ import {
 } from "@/lib/notion";
 
 import Search from "@/components/Search";
-import Tags from "@/components/ui/Tags";
+import Tags from "@/components/Tags";
 
 export const metadata: Metadata = {
   title: "🌐🌼 digital garden",

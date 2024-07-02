@@ -9,7 +9,7 @@ import bookmarkPlugin from "@notion-render/bookmark-plugin";
 
 import { notion, getPageBySlug, getPageContent } from "@/lib/notion";
 
-import Tags from "@/components/ui/Tags";
+import Tags from "@/components/Tags";
 
 type Props = {
   params: { slug: string };

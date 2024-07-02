@@ -1,6 +1,6 @@
 import React from "react";
 import P5jsContainer from "@/components/P5jsContainer";
-import { pastelDreams } from "@/components/sketches/pastel-dreams";
+import { pastelDreams } from "@/sketches/pastel-dreams";
 
 const Canvas = () => {
   return (
