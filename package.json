@@ -13,6 +13,8 @@
     "@notion-render/client": "^0.0.2",
     "@notion-render/hljs-plugin": "^0.0.2",
     "@notionhq/client": "^2.2.14",
+    "@p5-wrapper/next": "^1.0.3",
+    "@p5-wrapper/react": "^4.4.2",
     "@spotify/web-api-ts-sdk": "^1.2.0",
     "clsx": "^2.1.0",
     "framer-motion": "^11.0.7",

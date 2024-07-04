@@ -1,11 +1,10 @@
 import React from "react";
-import P5jsContainer from "@/components/P5jsContainer";
-import { pastelDreams } from "@/sketches/pastel-dreams";
+import { PastelDreams } from "@/sketches/PastelDreams";
 
 const Canvas = () => {
   return (
-    <div>
-      <P5jsContainer sketch={pastelDreams} />
+    <div className="relative w-3/5 h-full overflow-hidden rounded-md">
+      <PastelDreams></PastelDreams>
     </div>
   );
 };
