@@ -4,7 +4,6 @@ import React from "react";
 import Image from "next/image";
 import useSWR from "swr";
 import fetcher from "@/lib/fetcher";
-import { type Song } from "@/lib/types";
 
 const refresh: number = 216000;
 
