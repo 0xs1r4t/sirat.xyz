@@ -1,26 +1,19 @@
 "use client";
 
-import { Vector } from "p5";
-import { useRef, useCallback } from "react";
+import p5, { Vector } from "p5";
 import { P5CanvasInstance, type Sketch } from "@p5-wrapper/react";
 import { NextReactP5Wrapper } from "@p5-wrapper/next";
 
 export const PastelDreams = () => {
-  const stageRef = useRef<HTMLDivElement>(null);
+  const sketch: Sketch = (p5: P5CanvasInstance) => {
+    // p5.disableFriendlyErrors = true;
 
-  const sketch: Sketch = useCallback((p5: P5CanvasInstance) => {
-    const stage = stageRef.current;
-
-    if (!stage) return;
-
-    // let parentStyle: CSSStyleDeclaration;
-    // let windowHeight: number = 250;
-    //   let windowWidth: number = 250;
-    // let canvasHeight: stage.clientWidth;
-    // let canvasWidth: stage.clientHeight;
+    let cnv: any;
+    let windowWidth: number, windowHeight: number;
 
     let x: number, y: number;
     let size: { length: number; width: number };
+    size = { length: 100, width: 100 };
     let width: number, height: number;
     let i: number;
     let value = 300,
@@ -30,31 +23,27 @@ export const PastelDreams = () => {
     let deg: Array<number> = []; // degrees
     //   let easing = true, frames = 700, count = 0;
 
-    let cnv: any;
-    let windowWidth: number, windowHeight: number;
-    let points: Vector[] = [];
-    let distance: Vector, velocity: Vector;
-
-    p5.disableFriendlyErrors = true;
+    let points: p5.Vector[] = [],
+      distance: p5.Vector,
+      velocity: p5.Vector;
 
     p5.setup = () => {
-      cnv = p5.createCanvas(
-        stage.clientWidth,
-        stage.clientHeight /*, p5.WEBGL */
-      );
+      width = p5.windowWidth;
+      height = p5.windowHeight;
+      cnv = p5.createCanvas(width, height /*, p5.WEBGL */);
 
       addDegrees(); // add degrees 0 - 360 in deg
       cnv.mouseClicked(chooseRandColor);
       p5.colorMode(p5.HSB, 360, 100, 100);
 
       for (i = 0; i < num; i++) {
-        points[i] = new Vector(width / 2, height / 2);
+        points[i] = new Vector(size.length / 2, size.width / 2);
       }
     };
 
     p5.windowResized = () => {
-      windowWidth = stage.clientWidth;
-      windowHeight = stage.clientHeight;
+      windowWidth = p5.windowWidth;
+      windowHeight = p5.windowHeight;
       p5.resizeCanvas(windowWidth, windowHeight);
     };
 
@@ -79,15 +68,14 @@ export const PastelDreams = () => {
 
     p5.draw = () => {
       p5.background(back, 25, 100);
-      // p5.background(parentStyle.backgroundColor);
       p5.noStroke();
       x = p5.mouseX;
       y = p5.mouseY;
 
+      console.log("window.innerHeight in p5.draw", window.innerHeight);
+
       let target = new Vector(x, y);
       let leader = new Vector(target.x, target.y);
-
-      size = { length: 100, width: 100 };
 
       for (let i = 0; i < num; i++) {
         p5.fill(value, ((i + 5) * 2) / 3, 85);
@@ -99,11 +87,7 @@ export const PastelDreams = () => {
         leader = point;
       }
     };
-  }, []);
+  };
 
-  return (
-    <div className="w-full h-full" ref={stageRef}>
-      <NextReactP5Wrapper sketch={sketch} />
-    </div>
-  );
+  return <NextReactP5Wrapper sketch={sketch} />;
 };
