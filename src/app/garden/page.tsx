@@ -64,6 +64,7 @@ const GardenPage = async ({
       </Link>
       <h1>MY DIGITAL GARDEN</h1>
       <Search placeholder="🔍 Search this garden 🦗" />
+
       <section role="feed" className="w-full max-w-2xl">
         {garden.map(({ title, description, tags, slug }, index) => (
           <section

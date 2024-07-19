@@ -4,13 +4,13 @@
 
 @layer base {
   :root {
-    --foreground-rgb: 0, 0, 0;
-    --background-rgb: 255, 255, 255;
+    --foreground-rgb: 154, 89, 227;
+    --background-rgb: 255, 233, 255;
   }
 
   .dark {
-    --foreground-rgb: 255, 255, 255;
-    --background-rgb: 0, 0, 0;
+    --foreground-rgb: 233, 223, 246;
+    --background-rgb: 16, 7, 26;
   }
 
   /* @media (prefers-color-scheme: dark) {
@@ -23,7 +23,9 @@
 
   * {
     box-sizing: border-box;
+    cursor: url("https://cur.cursors-4u.net/symbols/sym-7/sym629.ani"), url("https://cur.cursors-4u.net/symbols/sym-7/sym629.png"), auto !important;
   }
+
   html {
     padding: 0;
     margin: 0;
@@ -39,6 +41,14 @@
     color: inherit;
     text-decoration: none;
   }
+
+  ::selection {
+    background-color: rgba(201, 133, 235, 0.5);
+}
+
+::-moz-selection {
+    background-color: rgba(201, 133, 235, 0.5);
+}
 }
 
 @layer utilities {

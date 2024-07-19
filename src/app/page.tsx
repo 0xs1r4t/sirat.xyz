@@ -8,6 +8,10 @@ const Home = () => {
       <Link aria-label="garden" href="/garden">
         digital garden <span aria-hidden="true">🌐🌼↗️</span>
       </Link>
+      <Link aria-label="graphics" href="/graphics">
+        visual experiments <span aria-hidden="true">🎨🖌️🖼️</span>
+      </Link>
+      <p>a work in progress 🪛🖥️🔖</p>
     </main>
   );
 };
