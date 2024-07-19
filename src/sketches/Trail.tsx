@@ -18,10 +18,6 @@ export const Trail = () => {
     num: number = 80;
   let degrees: number[] = [];
 
-  let parentStyle: CSSStyleDeclaration;
-  parentStyle = window.getComputedStyle(document.body);
-  console.log(`background color: ${parentStyle.backgroundColor}`);
-
   const sketch: Sketch = (p: P5CanvasInstance) => {
     class Point {
       distance: Vector;
