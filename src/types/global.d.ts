@@ -17,6 +17,13 @@ declare global {
     slug: string;
   };
 
+  type Blog = {
+    title: string;
+    description: string;
+    tags: string[];
+    html: string;
+  };
+
   type P5jsContainerRef = HTMLDivElement;
 
   type P5jsSketch = (p: p5Types, parentRef: P5jsContainerRef) => void;

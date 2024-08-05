@@ -24,7 +24,18 @@ const Spotify = ({ song }: { song: Song | null }) => {
       </div>
     );
   } else {
-    return <div>{`No song is playing :(`}</div>;
+    return (
+      <div className="flex flex-col items-center justify-center">
+        <Image
+          src="https://media1.giphy.com/media/v1.Y2lkPTc5MGI3NjExZHM4c3pqZmdrd2J3b2EwcG0wNnB6dW5yZXlmdDk4anFqaW11dWt0OSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/njLGU6UWncDC1o7QX3/giphy.webp"
+          alt="album cover"
+          width={150}
+          height={150}
+          unoptimized
+        />
+        <span>{`There is no song playing right now :(`}</span>
+      </div>
+    );
   }
 };
 

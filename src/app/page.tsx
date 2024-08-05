@@ -5,12 +5,18 @@ const Home = () => {
   return (
     <main className="flex flex-col items-center justify-center p-10">
       <h1>0XS1R4T</h1>
-      <Link aria-label="garden" href="/garden">
-        digital garden <span aria-hidden="true">🌐🌼↗️</span>
-      </Link>
-      <Link aria-label="graphics" href="/graphics">
-        visual experiments <span aria-hidden="true">🎨🖌️🖼️</span>
-      </Link>
+      <p>
+        <Link aria-label="garden" href="/garden" className="underline">
+          digital garden
+        </Link>{" "}
+        <span aria-hidden="true">🌐🌼↗️</span>
+      </p>
+      <p>
+        <Link aria-label="graphics" href="/graphics" className="underline">
+          visual experiments
+        </Link>{" "}
+        <span aria-hidden="true">🎨🖌️🖼️</span>
+      </p>
       <p>a work in progress 🪛🖥️🔖</p>
     </main>
   );

@@ -8,7 +8,7 @@ const Canvas = () => {
       <Link aria-label="home" href="/">
         🏡
       </Link>
-      <div className="relative w-full max-h-96 overflow-hidden ">
+      <div className="m-10 aspect-square overflow-hidden max-h-[75vh] rounded-lg">
         <Trail />
       </div>
     </main>

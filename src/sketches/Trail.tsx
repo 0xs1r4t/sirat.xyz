@@ -15,7 +15,8 @@ export const Trail = () => {
 
   let value: number = 300,
     back: number = 120,
-    num: number = 80;
+    num: number = 80,
+    radius: number = 150;
   let degrees: number[] = [];
 
   const sketch: Sketch = (p: P5CanvasInstance) => {
@@ -46,16 +47,17 @@ export const Trail = () => {
         // brightness = 90
         // alpha = (num - i) * 1.25
         p.fill(value, (num - i + 5) / 3, 90, (num - i) * 1.25);
-        p.ellipse(this.points[i].x, this.points[i].y, 25, 25);
+        p.ellipse(this.points[i].x, this.points[i].y, radius, radius);
         this.velocity.lerp(this.distance, this.ease);
       }
     }
 
     p.setup = () => {
       p.disableFriendlyErrors = true;
-      windowSize = p.min(p.windowWidth, p.windowHeight);
+      // windowSize = p.min(p.windowWidth, p.windowHeight);
 
-      let myCanvas = p.createCanvas(windowSize, windowSize, "p2d");
+      // let myCanvas = p.createCanvas(windowSize, windowSize, "p2d");
+      let myCanvas = p.createCanvas(p.windowWidth, p.windowHeight, "p2d");
       addDegrees(); // add degrees 0 - 360 in degrees
       myCanvas.mouseClicked(chooseRandColor);
       p.colorMode(p.HSB, 360, 100, 100, 100); // with alpha (transparency)
@@ -67,7 +69,7 @@ export const Trail = () => {
     };
 
     p.windowResized = () => {
-      p.resizeCanvas(windowSize, windowSize);
+      p.resizeCanvas(p.windowWidth, p.windowHeight);
     };
 
     const addDegrees = () => {

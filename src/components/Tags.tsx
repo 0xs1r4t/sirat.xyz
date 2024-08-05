@@ -8,7 +8,7 @@ const Tags = ({ tags }: { tags: string[] }) => {
       {tags.map((tag: string) => (
         <li
           className={cn(
-            "tags list-none px-2 mr-3 mb-2 py-0.5 bg-neutral-950 dark:bg-neutral-50 text-white dark:text-black rounded-md",
+            "tags list-none px-2 mr-3 mb-2 py-0.5 bg-foreground text-background rounded-md",
             AuthenticSansCondensed.className
           )}
           key={tag}
