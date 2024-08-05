@@ -9,7 +9,7 @@ import bookmarkPlugin from "@notion-render/bookmark-plugin";
 
 import { notion, getPageBySlug, getPageContent } from "@/lib/notion";
 
-import Tags from "@/components/Tags";
+import Blog from "@/components/Blog";
 
 type Props = {
   params: { slug: string };
@@ -56,12 +56,14 @@ const GardenSlug = async ({ params, searchParams }: Props) => {
       <Link aria-label="garden" href="/garden">
         🌐🌼
       </Link>
-      <article className="prose prose-neutral dark:prose-invert lg:prose-xl">
-        <h1>{title}</h1>
-        <p>{description}</p>
-        <Tags tags={tags} />
-        <div dangerouslySetInnerHTML={{ __html: html }} />
-      </article>
+      <Blog
+        blog={{
+          title,
+          description,
+          tags,
+          html,
+        }}
+      />
     </main>
   );
 };

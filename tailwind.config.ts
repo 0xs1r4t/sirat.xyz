@@ -31,6 +31,9 @@ const config: Config = {
       colors: {
         background: "rgb(var(--background-rgb))",
         foreground: "rgb(var(--foreground-rgb))",
+        "muted-100": "rgb(var(--search-bar-background-rgb))",
+        "muted-200": "rgb(var(--search-bar-border-rgb))",
+        scroll: "rgba(var(--scroll-rgba))",
       },
     },
   },

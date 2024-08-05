@@ -4,13 +4,22 @@
 
 @layer base {
   :root {
+    /* https://coolors.co/9a59e3-c985eb-ffe9ff */
     --foreground-rgb: 154, 89, 227;
+    /* --foreground-rgb: 152, 98, 186; */
     --background-rgb: 255, 233, 255;
+
+    --search-bar-background-rgb: 235, 196, 248;
+    --search-bar-border-rgb: 228, 183, 245;
   }
 
   .dark {
+    /* https://coolors.co/e9dff6-c985eb-10071a */
     --foreground-rgb: 233, 223, 246;
     --background-rgb: 16, 7, 26;
+
+    --search-bar-background-rgb: 40, 23, 53;
+    --search-bar-border-rgb: 63, 39, 79;
   }
 
   /* @media (prefers-color-scheme: dark) {
@@ -23,6 +32,7 @@
 
   * {
     box-sizing: border-box;
+    --scroll-rgba: 201, 133, 235, 0.5;
     cursor: url("https://cur.cursors-4u.net/symbols/sym-7/sym629.ani"), url("https://cur.cursors-4u.net/symbols/sym-7/sym629.png"), auto !important;
   }
 
@@ -39,15 +49,14 @@
 
   a {
     color: inherit;
-    text-decoration: none;
   }
 
   ::selection {
-    background-color: rgba(201, 133, 235, 0.5);
+    background-color: rgba(var(--scroll-rgba));
 }
 
 ::-moz-selection {
-    background-color: rgba(201, 133, 235, 0.5);
+    background-color: rgba(var(--scroll-rgba));
 }
 }
 
