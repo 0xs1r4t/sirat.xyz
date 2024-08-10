@@ -3,7 +3,7 @@ import React from "react";
 
 const Blog = ({ blog }: { blog: Blog }) => {
   return (
-    <article className="prose prose-neutral dark:prose-invert lg:prose-xl">
+    <article className="prose prose-fuchsia dark:prose-invert lg:prose-xl">
       <h1>{blog.title}</h1>
       {/* <p>{blog.description}</p>
         <Tags tags={blog.tags} /> */}

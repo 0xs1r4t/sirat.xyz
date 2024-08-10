@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { type SimplifiedArtist } from "@spotify/web-api-ts-sdk";
 import { getSpotifyApi } from "@/lib/spotify";
 
-export async function GET(request: NextRequest) {
+export const GET = async (request: NextRequest) => {
   const path = request.nextUrl.searchParams.get("path") || "/";
   revalidatePath(path);
 
@@ -28,4 +28,4 @@ export async function GET(request: NextRequest) {
     songUrl,
     message,
   });
-}
+};

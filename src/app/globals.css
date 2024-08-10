@@ -29,11 +29,17 @@
     }
   } */
 
-
+/*
+*********************************************************************
+This cursor is from https://cur.cursors-4u.net/
+Animated Cursor - https://cur.cursors-4u.net/symbols/sym-7/sym629.ani
+Static Cursor - https://cur.cursors-4u.net/symbols/sym-7/sym629.png
+*********************************************************************
+*/
   * {
     box-sizing: border-box;
     --scroll-rgba: 201, 133, 235, 0.5;
-    cursor: url("https://cur.cursors-4u.net/symbols/sym-7/sym629.ani"), url("https://cur.cursors-4u.net/symbols/sym-7/sym629.png"), auto !important;
+    cursor: url("../../public/cursors/sym629.ani"), url("../../public/cursors/sym629.png"), auto !important;
   }
 
   html {

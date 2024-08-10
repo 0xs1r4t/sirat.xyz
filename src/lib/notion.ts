@@ -13,6 +13,7 @@ export const notion = new Client({
   auth: NOTION_API_KEY,
 });
 
+// get all pages, whether they are published or not
 export const getAllPages = cache(() => {
   return notion.databases
     .query({
@@ -21,6 +22,7 @@ export const getAllPages = cache(() => {
     .then((res) => res.results as Array<DatabaseObjectResponse>);
 });
 
+// get all published pages
 export const getPublishedPages = cache(() => {
   return notion.databases
     .query({
@@ -35,7 +37,9 @@ export const getPublishedPages = cache(() => {
     .then((res) => res.results as Array<DatabaseObjectResponse>);
 });
 
-// search content by a page's title
+// search content by a page's content
+// https://developers.notion.com/reference/post-search
+// notion searches all parent or child pages and databases that have been shared with an integration.
 export const searchPagesByContent = cache((content: string) => {
   return notion
     .search({
@@ -45,19 +49,48 @@ export const searchPagesByContent = cache((content: string) => {
         property: "object",
       },
       sort: {
-        direction: "ascending",
+        direction: "descending",
         timestamp: "last_edited_time",
       },
     })
     .then((res) => res.results as Array<DatabaseObjectResponse>);
 });
 
-export const getPageContent = cache((pageId: string) => {
-  return notion.blocks.children
-    .list({ block_id: pageId })
-    .then((res) => res.results as BlockObjectResponse[]);
+// search for pages by their title, description, and tags
+export const getPagesByProps = cache((q: string) => {
+  return notion.databases
+    .query({
+      // filter_properties: ["title", "description", "tags"],
+      filter: {
+        or: [
+          {
+            property: "title",
+            title: {
+              contains: q,
+            },
+          },
+          {
+            property: "description",
+            rich_text: {
+              contains: q,
+            },
+          },
+          {
+            property: "tags",
+            multi_select: {
+              contains: q,
+            },
+          },
+        ],
+      },
+      sorts: [{ direction: "descending", timestamp: "created_time" }],
+
+      database_id: NOTION_DATABASE_ID!,
+    })
+    .then((res) => res.results as Array<DatabaseObjectResponse>);
 });
 
+// query a page by its slug
 export const getPageBySlug = cache((slug: string) => {
   return notion.databases
     .query({
@@ -70,4 +103,11 @@ export const getPageBySlug = cache((slug: string) => {
       database_id: NOTION_DATABASE_ID!,
     })
     .then((res) => res.results[0] as PageObjectResponse);
+});
+
+// get a page's content
+export const getPageContent = cache((pageId: string) => {
+  return notion.blocks.children
+    .list({ block_id: pageId })
+    .then((res) => res.results as BlockObjectResponse[]);
 });

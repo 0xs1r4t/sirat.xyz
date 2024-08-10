@@ -11,6 +11,7 @@ import {
   notion,
   searchPagesByContent,
   getPublishedPages /* getAllPages */,
+  getPagesByProps,
 } from "@/lib/notion";
 
 import Search from "@/components/Search";
@@ -35,7 +36,7 @@ const GardenPage = async ({
 
   const content: string = searchParams?.q || "";
   if (content != "") {
-    pages = await searchPagesByContent(content);
+    pages = await getPagesByProps(content);
   }
 
   if (!pages) notFound();
