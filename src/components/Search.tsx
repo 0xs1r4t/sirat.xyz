@@ -29,7 +29,7 @@ const Search = ({ placeholder }: { placeholder: string }) => {
     <form className="relative flex flex-row">
       <input
         type="text"
-        className="peer bg-muted-100 border-muted-200 block w-full self-stretch my-5 px-4 py-2 p-4 text-inherit rounded-md border-2"
+        className="peer bg-muted-100 border-muted-200 focus:outline-none focus:border-fuchsia-500 focus:ring-fuchsia-500 focus:ring-1 caret-fuchsia-500 block w-full self-stretch my-5 px-4 py-2 p-4 text-inherit rounded-md border-2"
         placeholder={placeholder}
         onChange={(e) => {
           handleSearch(e.target.value);
