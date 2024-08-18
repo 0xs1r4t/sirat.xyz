@@ -1,0 +1,11 @@
+/* @import "prismjs/themes/prism-okaidia.css"; */
+/* @import "prismjs/themes/prism-coy.css"; */
+@import "prismjs/themes/prism-tomorrow.css";
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+    /**/
+}

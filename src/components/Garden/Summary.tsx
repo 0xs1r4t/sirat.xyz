@@ -1,16 +1,16 @@
 import React from "react";
 import Link from "next/link";
-import Tags from "@/components/Tags";
+import Tags from "@/components/Garden/Tags";
 
-const Garden = ({ garden }: { garden: Garden[] }) => {
+const Summary = ({ summary }: { summary: PostSummary[] }) => {
   return (
     <section role="feed" className="w-full max-w-2xl">
-      {garden.map(({ title, description, tags, slug }, index) => (
+      {summary.map(({ title, description, tags, slug }, index) => (
         <section
           key={slug}
           role="article"
           aria-posinset={index + 1}
-          aria-setsize={garden.length}
+          aria-setsize={summary.length}
           tabIndex={0}
           aria-labelledby={slug}
           className="px-4 py-2 my-4"
@@ -26,8 +26,8 @@ const Garden = ({ garden }: { garden: Garden[] }) => {
   );
 };
 
-export const NoGarden = () => {
-  return <div>no blog posts here</div>;
+export const NoPostSummary = () => {
+  return <div>no posts here</div>;
 };
 
-export default Garden;
+export default Summary;

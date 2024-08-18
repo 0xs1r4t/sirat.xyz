@@ -10,18 +10,22 @@ declare global {
     message: string;
   };
 
-  type Garden = {
+  type PostSummary = {
     title: string;
     description: string;
     tags: string[];
     slug: string;
+    created_at: string;
+    updated_at: string;
   };
 
-  type Blog = {
+  type Post = {
     title: string;
     description: string;
     tags: string[];
     html: string;
+    created_at: string;
+    updated_at: string;
   };
 
   type P5jsContainerRef = HTMLDivElement;

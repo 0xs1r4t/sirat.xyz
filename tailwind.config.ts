@@ -23,19 +23,20 @@ const config: Config = {
       lg: "976px",
       xl: "1440px",
     },
+    colors: {
+      background: "rgb(var(--background-rgb))",
+      foreground: "rgb(var(--foreground-rgb))",
+      "muted-100": "rgb(var(--search-bar-background-rgb))",
+      "muted-200": "rgb(var(--search-bar-border-rgb))",
+      scroll: "rgba(var(--scroll-rgba))",
+    },
+    // spacing: {},
+    // fontSize: {},
     fontFamily: {
       heading: ["var(--font-authentic-sans-condensed)", "sans-serif"],
       serif: ["serif"],
     },
-    extend: {
-      colors: {
-        background: "rgb(var(--background-rgb))",
-        foreground: "rgb(var(--foreground-rgb))",
-        "muted-100": "rgb(var(--search-bar-background-rgb))",
-        "muted-200": "rgb(var(--search-bar-border-rgb))",
-        scroll: "rgba(var(--scroll-rgba))",
-      },
-    },
+    extend: {},
   },
   variants: { extend: {} },
   plugins: [

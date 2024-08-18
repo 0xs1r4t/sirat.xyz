@@ -3,25 +3,19 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 
-import { NotionRenderer } from "@notion-render/client";
-import hljsPlugin from "@notion-render/hljs-plugin";
-import bookmarkPlugin from "@notion-render/bookmark-plugin";
-
 import {
-  notion,
-  searchPagesByContent,
   getPublishedPages /* getAllPages */,
   getPagesByProps,
 } from "@/lib/notion";
 
-import Search from "@/components/Search";
-import Garden from "@/components/Garden";
+import Search from "@/components/Garden/Search";
+import Summary from "@/components/Garden/Summary";
 
 export const metadata: Metadata = {
   title: "🌐🌼 digital garden",
 };
 
-const GardenPage = async ({
+const Page = async ({
   searchParams,
 }: {
   searchParams?: {
@@ -32,6 +26,7 @@ const GardenPage = async ({
 
   // If no blogs are published, then display a message??
   // if (pages.length == 0) {
+  // return <NoPostSummary />;
   // }
 
   const content: string = searchParams?.q || "";
@@ -40,10 +35,6 @@ const GardenPage = async ({
   }
 
   if (!pages) notFound();
-
-  const notionRenderer = new NotionRenderer({ client: notion });
-  notionRenderer.use(hljsPlugin({}));
-  notionRenderer.use(bookmarkPlugin(undefined));
 
   const garden = pages.map(
     (page) =>
@@ -55,7 +46,7 @@ const GardenPage = async ({
           (tag: any) => tag.name
         ),
         slug: (page.properties.slug as any).rich_text[0]?.plain_text,
-      } as Garden)
+      } as PostSummary)
   );
 
   return (
@@ -66,9 +57,9 @@ const GardenPage = async ({
       <h1>MY DIGITAL GARDEN</h1>
       <Search placeholder="🔍 Search this garden 🦗" />
 
-      <Garden garden={garden} />
+      <Summary summary={garden} />
     </main>
   );
 };
 
-export default GardenPage;
+export default Page;

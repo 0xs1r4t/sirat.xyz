@@ -56,7 +56,8 @@ export const searchPagesByContent = cache((content: string) => {
     .then((res) => res.results as Array<DatabaseObjectResponse>);
 });
 
-// search for pages by their title, description, and tags
+// search for pages that are published
+// by their title, description, and tags
 export const getPagesByProps = cache((q: string) => {
   return notion.databases
     .query({
@@ -79,6 +80,14 @@ export const getPagesByProps = cache((q: string) => {
             property: "tags",
             multi_select: {
               contains: q,
+            },
+          },
+        ],
+        and: [
+          {
+            property: "status",
+            select: {
+              equals: "published",
             },
           },
         ],
