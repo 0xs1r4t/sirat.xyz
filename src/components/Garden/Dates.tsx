@@ -13,7 +13,7 @@ const Dates = ({
     <ul className="flex flex-row flex-wrap items-center justify-center gap-2">
       <li
         className={cn(
-          "Dates list-none px-2 mr-3 mb-2 py-0.5 bg-foreground text-background text-sm rounded-md",
+          "Dates list-none px-2 mr-3 mb-2 py-0.5 bg-muted-100 border-2 border-muted-200 text-foreground rounded-md",
           AuthenticSansCondensed.className
         )}
         key={created_at}
@@ -22,7 +22,7 @@ const Dates = ({
       </li>
       <li
         className={cn(
-          "Dates list-none px-2 mr-3 mb-2 py-0.5 bg-foreground text-background text-sm rounded-md",
+          "Dates list-none px-2 mr-3 mb-2 py-0.5 bg-muted-100 border-2 border-muted-200 text-foreground rounded-md",
           AuthenticSansCondensed.className
         )}
         key={updated_at}

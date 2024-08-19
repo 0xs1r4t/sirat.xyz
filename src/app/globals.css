@@ -5,12 +5,12 @@
 @layer base {
   :root {
     /* https://coolors.co/9a59e3-c985eb-ffe9ff */
-    --foreground-rgb: 154, 89, 227;
-    /* --foreground-rgb: 152, 98, 186; */
+    --foreground-rgb: 16, 7, 26; /* 154, 89, 227;
+    --foreground-rgb: 152, 98, 186; */
     --background-rgb: 255, 233, 255;
 
-    --search-bar-background-rgb: 235, 196, 248;
-    --search-bar-border-rgb: 228, 183, 245;
+    --search-bar-background-rgb: 246, 215, 252;
+    --search-bar-border-rgb: 235, 196, 248;
   }
 
   .dark {

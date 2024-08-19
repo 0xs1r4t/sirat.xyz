@@ -1,5 +1,4 @@
 import React from "react";
-import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 
@@ -50,10 +49,7 @@ const Page = async ({
   );
 
   return (
-    <main className="flex flex-col items-center justify-between p-10">
-      <Link aria-label="home" href="/">
-        🏡
-      </Link>
+    <main className="flex flex-col items-center justify-between px-10">
       <h1>MY DIGITAL GARDEN</h1>
       <Search placeholder="🔍 Search this garden 🦗" />
 

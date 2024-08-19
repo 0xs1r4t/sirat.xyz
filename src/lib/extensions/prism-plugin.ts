@@ -8,6 +8,9 @@ import "prismjs/components/prism-typescript";
 import "prismjs/components/prism-python";
 import "prismjs/components/prism-bash";
 
+// Styles
+import "prismjs/themes/prism-tomorrow.css";
+
 // Optional configuration for future enhancements
 type Config = Record<string, unknown>;
 

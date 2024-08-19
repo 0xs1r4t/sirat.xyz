@@ -5,6 +5,7 @@ import ThemeToggle from "@/components/ThemeToggle";
 import { AuthenticSans, AuthenticSansCondensed } from "@/fonts/font-config";
 
 import { cn } from "@/lib/utils";
+import Breadcrumb from "@/components/Breadcrumb";
 import SpotifyPlayer from "@/components/SpotifyPlayer";
 
 export const metadata: Metadata = {
@@ -43,11 +44,7 @@ export const viewport: Viewport = {
   colorScheme: "normal",
 };
 
-const RootLayout = ({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) => {
+const RootLayout = ({ children }: Readonly<{ children: React.ReactNode }>) => {
   return (
     <html lang="en" suppressHydrationWarning>
       <body
@@ -58,7 +55,10 @@ const RootLayout = ({
         )}
       >
         <ThemeProvider>
-          <ThemeToggle />
+          <div className="flex justify-between">
+            <Breadcrumb />
+            <ThemeToggle />
+          </div>
           {children}
           <SpotifyPlayer />
         </ThemeProvider>

@@ -9,13 +9,34 @@ const ThemeToggle = () => {
 
   useEffect(() => setMounted(true), []);
 
-  if (!mounted) return <button aria-label="toggle dark/light theme">🔦</button>;
+  if (!mounted)
+    return (
+      <button aria-label="toggle dark/light theme" className="pr-3">
+        ❔
+      </button>
+    );
 
   if (resolvedTheme === "dark") {
-    return <button onClick={() => setTheme("light")}>🏙️</button>;
+    return (
+      <button
+        aria-label="light theme"
+        className="pr-3"
+        onClick={() => setTheme("light")}
+      >
+        🏙️
+      </button>
+    );
   }
   if (resolvedTheme === "light") {
-    return <button onClick={() => setTheme("dark")}>🌃</button>;
+    return (
+      <button
+        aria-label="dark theme"
+        className="pr-3"
+        onClick={() => setTheme("dark")}
+      >
+        🌃
+      </button>
+    );
   }
 };
 

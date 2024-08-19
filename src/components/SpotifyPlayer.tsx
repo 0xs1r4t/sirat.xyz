@@ -11,29 +11,29 @@ const Spotify = ({ song }: { song: Song | null }) => {
   if (song != null) {
     console.log(song.albumImageUrl);
     return (
-      <div className="flex flex-col items-center justify-center w-44 p-2">
+      <div className="flex flex-col items-center justify-center p-2">
         <Image
           src={song.albumImageUrl}
           alt="album cover"
-          width={150}
-          height={150}
+          width={112}
+          height={112}
         />
-        <span className="text-wrap">
+        <span className="text-wrap w-28 text-sm">
           {song.title} by {song.artist} {song.message}
         </span>
       </div>
     );
   } else {
     return (
-      <div className="flex flex-col items-center justify-center w-44 p-2">
+      <div className="flex flex-col items-center justify-center p-2">
         <Image
-          src="https://media1.giphy.com/media/v1.Y2lkPTc5MGI3NjExZHM4c3pqZmdrd2J3b2EwcG0wNnB6dW5yZXlmdDk4anFqaW11dWt0OSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/njLGU6UWncDC1o7QX3/giphy.webp"
+          src="https://i.giphy.com/FCYLrRJciiY6a1NdTD.webp"
           alt="album cover"
-          width={150}
-          height={150}
+          width={112}
+          height={112}
           unoptimized
         />
-        <span className="text-wrap">{`There is no song playing right now :(`}</span>
+        <span className="text-wrap w-28 text-sm">{`There is no song playing right now :(`}</span>
       </div>
     );
   }

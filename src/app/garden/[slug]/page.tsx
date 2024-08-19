@@ -1,7 +1,6 @@
 import React from "react";
 import { notFound } from "next/navigation";
 import { Metadata, ResolvingMetadata } from "next";
-import Link from "next/link";
 
 import { NotionRenderer } from "@notion-render/client";
 import prismPlugin from "@/lib/extensions/prism-plugin";
@@ -11,8 +10,6 @@ import isoToNormalDate from "@/lib/date";
 
 import Post from "@/components/Garden/Post";
 import ProgressBar from "@/components/Garden/ProgressBar";
-
-import "./styles.css";
 
 type Props = {
   params: { slug: string };
@@ -28,7 +25,7 @@ export const generateMetadata = async (
   if (!post) notFound();
 
   return {
-    title: "🌐🌼 " + (post.properties.title as any).title[0].plain_text,
+    title: (post.properties.title as any).title[0].plain_text,
   };
 };
 
@@ -52,14 +49,8 @@ const Page = async ({ params, searchParams }: Props) => {
   const updated_at: string = isoToNormalDate(post.last_edited_time as any);
 
   return (
-    <main className="flex flex-col items-center justify-between p-10">
+    <main className="flex flex-col items-center justify-between px-10">
       <ProgressBar />
-      <Link aria-label="home" href="/">
-        🏡
-      </Link>
-      <Link aria-label="garden" href="/garden">
-        🌐🌼
-      </Link>
       <Post
         post={{
           title,
