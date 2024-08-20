@@ -6,7 +6,7 @@ import { AuthenticSans, AuthenticSansCondensed } from "@/fonts/font-config";
 
 import { cn } from "@/lib/utils";
 import Breadcrumb from "@/components/Breadcrumb";
-import SpotifyPlayer from "@/components/SpotifyPlayer";
+import Sidebar from "@/components/Sidebar";
 
 export const metadata: Metadata = {
   title: "sirat.xyz",
@@ -55,12 +55,14 @@ const RootLayout = ({ children }: Readonly<{ children: React.ReactNode }>) => {
         )}
       >
         <ThemeProvider>
-          <div className="flex justify-between">
+          <div className="flex justify-between w-full">
             <Breadcrumb />
             <ThemeToggle />
           </div>
-          {children}
-          <SpotifyPlayer />
+          <div className="flex flex-row">
+            <Sidebar />
+            {children}
+          </div>
         </ThemeProvider>
       </body>
     </html>

@@ -1,11 +1,11 @@
 import React from "react";
-import { Trail } from "@/sketches/Trail";
+import { Snake } from "@/graphics/Snake";
 
 const Canvas = () => {
   return (
-    <main className="flex flex-col items-center justify-between px-10">
-      <div className="m-10 aspect-square overflow-hidden max-h-[75vh] max-w-[75vw] rounded-lg">
-        <Trail />
+    <main className="flex flex-col items-center justify-center px-10 w-full">
+      <div className="overflow-hidden max-w-screen-sm max-h-screen-lg rounded-lg">
+        <Snake />
       </div>
     </main>
   );

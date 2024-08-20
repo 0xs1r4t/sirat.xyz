@@ -14,7 +14,6 @@ const Search = ({ placeholder }: { placeholder: string }) => {
 
   const handleSearch = useDebouncedCallback((content: string) => {
     const params = new URLSearchParams(searchParams);
-    console.log(`searching for content with ${content}...`);
 
     if (content) {
       params.set("q", content);

@@ -49,7 +49,7 @@ const Page = async ({
   );
 
   return (
-    <main className="flex flex-col items-center justify-between px-10">
+    <main className="flex flex-col items-center justify-between px-10 w-full">
       <h1>MY DIGITAL GARDEN</h1>
       <Search placeholder="🔍 Search this garden 🦗" />
 

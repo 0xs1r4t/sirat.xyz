@@ -49,7 +49,7 @@ const Page = async ({ params, searchParams }: Props) => {
   const updated_at: string = isoToNormalDate(post.last_edited_time as any);
 
   return (
-    <main className="flex flex-col items-center justify-between px-10">
+    <main className="flex flex-col items-center justify-between px-10 w-full">
       <ProgressBar />
       <Post
         post={{

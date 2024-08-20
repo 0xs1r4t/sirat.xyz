@@ -7,8 +7,8 @@ const Post = ({ post }: { post: Post }) => {
     <article className="prose prose-fuchsia dark:prose-invert lg:prose-lg">
       <h1>{post.title}</h1>
       {/* <p>{post.description}</p>
-        <Tags tags={post.tags} /> */}
-      <Dates created_at={post.created_at} updated_at={post.updated_at} />
+          <Tags tags={post.tags} />
+          <Dates created_at={post.created_at} updated_at={post.updated_at} />*/}
       <div dangerouslySetInnerHTML={{ __html: post.html }} />
     </article>
   );

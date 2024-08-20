@@ -1,6 +1,5 @@
 "use client";
 
-import hljsPlugin from "@notion-render/hljs-plugin";
 import { motion, useScroll, useSpring, useTransform } from "framer-motion";
 
 // type ScrollingAnimationProps = {

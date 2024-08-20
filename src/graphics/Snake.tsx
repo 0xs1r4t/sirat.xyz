@@ -4,14 +4,20 @@ import { Vector } from "p5";
 import { P5CanvasInstance, Sketch } from "@p5-wrapper/react";
 import { NextReactP5Wrapper } from "@p5-wrapper/next";
 
-export const Trail = () => {
+/***
+ * A slight modification of my original sketch, "Pastel Dreams"
+ * You can play around with the parameters of the sketch here:
+ * https://editor.p5js.org/0xS1R4T/sketches/VnkFAP_oN
+ ***/
+
+export const Snake = () => {
   let x: number,
     y: number,
     points: Vector[],
     target: Vector,
     leader: Vector,
-    i: number,
-    windowSize: number;
+    i: number;
+  // windowSize: number;
 
   let value: number = 300,
     back: number = 120,
@@ -20,7 +26,7 @@ export const Trail = () => {
   let degrees: number[] = [];
 
   const sketch: Sketch = (p: P5CanvasInstance) => {
-    class Point {
+    class Circle {
       distance: Vector;
       velocity: Vector;
       ease: number;
@@ -37,7 +43,7 @@ export const Trail = () => {
         this.ease = 0.5;
       }
 
-      public createTrail(i: number, leader: Vector) {
+      public createSnake(i: number, leader: Vector) {
         this.distance.x = leader.x - this.points[i].x;
         this.distance.y = leader.y - this.points[i].y;
         this.velocity = this.distance.mult(this.ease);
@@ -98,10 +104,10 @@ export const Trail = () => {
       target = p.createVector(x, y);
       leader = p.createVector(target.x, target.y);
 
-      let point = new Point(points, num, x, y);
+      let point = new Circle(points, num, x, y);
 
       for (i = 0; i < num; i++) {
-        point.createTrail(i, leader);
+        point.createSnake(i, leader);
         leader = points[i];
       }
     };

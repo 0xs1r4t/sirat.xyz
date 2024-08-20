@@ -3,68 +3,57 @@
 @tailwind utilities;
 
 @layer base {
+  /* light theme */
   :root {
-    /* https://coolors.co/9a59e3-c985eb-ffe9ff */
-    --foreground-rgb: 16, 7, 26; /* 154, 89, 227;
-    --foreground-rgb: 152, 98, 186; */
-    --background-rgb: 255, 233, 255;
-
-    --search-bar-background-rgb: 246, 215, 252;
-    --search-bar-border-rgb: 235, 196, 248;
+    --foreground-rgb: 16, 7, 26;
+    --background-rgb: 252, 242, 252;
+    --muted-100-rgb: 246, 215, 252;
+    --muted-200-rgb: 235, 196, 248;
   }
-
+  /* dark theme */
   .dark {
-    /* https://coolors.co/e9dff6-c985eb-10071a */
     --foreground-rgb: 233, 223, 246;
     --background-rgb: 16, 7, 26;
-
-    --search-bar-background-rgb: 40, 23, 53;
-    --search-bar-border-rgb: 63, 39, 79;
+    --muted-100-rgb: 86, 40, 110;
+    --muted-200-rgb: 132, 71, 162;
   }
 
-  /* @media (prefers-color-scheme: dark) {
-    :root {
-      --foreground-rgb: 255, 255, 255;
-      --background-rgb: 0, 0, 0;
-    }
-  } */
+  /*
+  *********************************************************************
+  This cursor is from https://cur.cursors-4u.net/
+  https://www.cursors-4u.com/cursor/2011/11/26/shiny-violet-star.html
+  Animated Cursor - https://cur.cursors-4u.net/symbols/sym-7/sym629.ani
+  Static Cursor - https://cur.cursors-4u.net/symbols/sym-7/sym629.png
+  *********************************************************************
+  */
+  * {
+    box-sizing: border-box;
+    --scroll-rgba: 201, 133, 235, 0.5;
+    cursor: url("https://cur.cursors-4u.net/symbols/sym-7/sym629.ani"), url("../../public/cursors/sym629.ani"), url("../../public/cursors/sym629.png"), auto !important;
+  }
 
-/*
-*********************************************************************
-This cursor is from https://cur.cursors-4u.net/
-https://www.cursors-4u.com/cursor/2011/11/26/shiny-violet-star.html
-Animated Cursor - https://cur.cursors-4u.net/symbols/sym-7/sym629.ani
-Static Cursor - https://cur.cursors-4u.net/symbols/sym-7/sym629.png
-*********************************************************************
-*/
-* {
-  box-sizing: border-box;
-  --scroll-rgba: 201, 133, 235, 0.5;
-  cursor: url("https://cur.cursors-4u.net/symbols/sym-7/sym629.ani"), url("../../public/cursors/sym629.ani"), url("../../public/cursors/sym629.png"), auto !important;
-}
+  html {
+    padding: 0;
+    margin: 0;
+  }
 
-html {
-  padding: 0;
-  margin: 0;
-}
+  body {
+    /* color: rgb(var(--foreground-rgb));
+    background: rgb(var(--background-rgb)); */
+    @apply bg-background text-foreground;
+  }
 
-body {
-  /* color: rgb(var(--foreground-rgb));
-  background: rgb(var(--background-rgb)); */
-  @apply bg-background text-foreground;
-}
+  a {
+    color: inherit;
+  }
 
-a {
-  color: inherit;
-}
+    ::selection {
+      background-color: rgba(var(--scroll-rgba));
+  }
 
-  ::selection {
-    background-color: rgba(var(--scroll-rgba));
-}
-
-::-moz-selection {
-    background-color: rgba(var(--scroll-rgba));
-}
+  ::-moz-selection {
+      background-color: rgba(var(--scroll-rgba));
+  }
 }
 
 

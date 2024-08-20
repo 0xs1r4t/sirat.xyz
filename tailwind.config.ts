@@ -17,17 +17,11 @@ const config: Config = {
     ],
   ],
   theme: {
-    screens: {
-      sm: "480px",
-      md: "768px",
-      lg: "976px",
-      xl: "1440px",
-    },
     colors: {
       background: "rgb(var(--background-rgb))",
       foreground: "rgb(var(--foreground-rgb))",
-      "muted-100": "rgb(var(--search-bar-background-rgb))",
-      "muted-200": "rgb(var(--search-bar-border-rgb))",
+      "muted-100": "rgb(var(--muted-100-rgb))",
+      "muted-200": "rgb(var(--muted-200-rgb))",
       scroll: "rgba(var(--scroll-rgba))",
     },
     // spacing: {},

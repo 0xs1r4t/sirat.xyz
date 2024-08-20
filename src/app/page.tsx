@@ -3,7 +3,7 @@ import Link from "next/link";
 
 const Home = () => {
   return (
-    <main className="flex flex-col items-center justify-center px-10">
+    <main className="flex flex-col items-center justify-center px-10 w-full">
       <h1>0XS1R4T</h1>
       <p>
         <Link

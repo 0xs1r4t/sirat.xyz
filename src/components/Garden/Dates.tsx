@@ -12,19 +12,13 @@ const Dates = ({
   return (
     <ul className="flex flex-row flex-wrap items-center justify-center gap-2">
       <li
-        className={cn(
-          "Dates list-none px-2 mr-3 mb-2 py-0.5 bg-muted-100 border-2 border-muted-200 text-foreground rounded-md",
-          AuthenticSansCondensed.className
-        )}
+        className={cn("Dates list-none", AuthenticSansCondensed.className)}
         key={created_at}
       >
         Created on {created_at}
       </li>
       <li
-        className={cn(
-          "Dates list-none px-2 mr-3 mb-2 py-0.5 bg-muted-100 border-2 border-muted-200 text-foreground rounded-md",
-          AuthenticSansCondensed.className
-        )}
+        className={cn("Dates list-none", AuthenticSansCondensed.className)}
         key={updated_at}
       >
         Last edited on {updated_at}
