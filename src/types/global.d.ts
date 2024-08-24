@@ -24,8 +24,8 @@ declare global {
     description: string;
     tags: string[];
     html: string;
-    created_at: string;
-    updated_at: string;
+    created_at?: string;
+    updated_at?: string;
   };
 
   type P5jsContainerRef = HTMLDivElement;

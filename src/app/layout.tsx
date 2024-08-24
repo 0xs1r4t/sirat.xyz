@@ -46,7 +46,11 @@ export const viewport: Viewport = {
 
 const RootLayout = ({ children }: Readonly<{ children: React.ReactNode }>) => {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html
+      lang="en"
+      className="transition-colors duration-400 ease-in-out"
+      suppressHydrationWarning
+    >
       <body
         className={cn(
           "min-h-screen bg-background font-sans antialiased",
@@ -55,13 +59,15 @@ const RootLayout = ({ children }: Readonly<{ children: React.ReactNode }>) => {
         )}
       >
         <ThemeProvider>
-          <div className="flex justify-between w-full">
+          <div className="fixed z-10 flex justify-between w-full bg-background shadow-background shadow-md">
             <Breadcrumb />
             <ThemeToggle />
           </div>
           <div className="flex flex-row">
             <Sidebar />
-            {children}
+            <main className="container relative flex flex-col items-center justify-between w-full top-10 px-5">
+              {children}
+            </main>
           </div>
         </ThemeProvider>
       </body>

@@ -1,13 +1,14 @@
 import React from "react";
 import { Snake } from "@/graphics/Snake";
+import { Fragment } from "react";
 
 const Canvas = () => {
   return (
-    <main className="flex flex-col items-center justify-center px-10 w-full">
-      <div className="overflow-hidden max-w-screen-sm max-h-screen-lg rounded-lg">
+    <Fragment>
+      <div className="overflow-hidden aspect-square max-w-[95vw] max-h-[86svh] mt-2 rounded-lg">
         <Snake />
       </div>
-    </main>
+    </Fragment>
   );
 };
 

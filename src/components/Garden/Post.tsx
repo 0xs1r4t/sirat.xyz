@@ -1,14 +1,16 @@
 import React from "react";
-import Dates from "@/components/Garden/Dates";
+
+import Heading from "@/components/Heading";
 // import Tags from "@/components/Garden/Tags";
+
+// import "./Post.styles.css";
 
 const Post = ({ post }: { post: Post }) => {
   return (
-    <article className="prose prose-fuchsia dark:prose-invert lg:prose-lg">
-      <h1>{post.title}</h1>
+    <article className="max-w-[65ch] text-foreground prose dark:prose-invert prose-fuchsia lg:prose-lg prose-pre:border-2 prose-pre:border-muted-200">
+      <Heading title={post.title} />
       {/* <p>{post.description}</p>
-          <Tags tags={post.tags} />
-          <Dates created_at={post.created_at} updated_at={post.updated_at} />*/}
+          <Tags tags={post.tags} /> */}
       <div dangerouslySetInnerHTML={{ __html: post.html }} />
     </article>
   );

@@ -17,12 +17,17 @@ const config: Config = {
     ],
   ],
   theme: {
+    container: {
+      center: true,
+    },
     colors: {
-      background: "rgb(var(--background-rgb))",
-      foreground: "rgb(var(--foreground-rgb))",
-      "muted-100": "rgb(var(--muted-100-rgb))",
-      "muted-200": "rgb(var(--muted-200-rgb))",
-      scroll: "rgba(var(--scroll-rgba))",
+      background: "rgba(var(--background-rgba))",
+      foreground: "rgba(var(--foreground-rgba))",
+      "muted-100": "rgba(var(--muted-100-rgba))",
+      "muted-200": "rgba(var(--muted-200-rgba))",
+      "bright-100": "rgba(var(--bright-100-rgba))",
+      "music-pink": "rgba(var(--pink-music-rgba))",
+      "music-purple": "rgba(var(--purple-music-rgba))",
     },
     // spacing: {},
     // fontSize: {},
@@ -39,10 +44,8 @@ const config: Config = {
     plugin(function ({ addBase, theme }: PluginAPI & PluginUtils) {
       addBase({
         h1: {
-          fontSize: theme("fontSize.5xl"),
+          fontSize: theme("fontSize.3xl"),
           fontFamily: theme("fontFamily.heading"),
-          textTransform: "uppercase",
-          textAlign: "center",
           fontWeight: "700",
         },
         h2: {

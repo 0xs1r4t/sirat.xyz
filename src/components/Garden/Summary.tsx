@@ -1,27 +1,34 @@
 import React from "react";
 import Link from "next/link";
 import Tags from "@/components/Garden/Tags";
+import Date from "@/components/Garden/Date";
 
 const Summary = ({ summary }: { summary: PostSummary[] }) => {
   return (
     <section role="feed" className="w-full max-w-2xl">
-      {summary.map(({ title, description, tags, slug }, index) => (
-        <section
-          key={slug}
-          role="article"
-          aria-posinset={index + 1}
-          aria-setsize={summary.length}
-          tabIndex={0}
-          aria-labelledby={slug}
-          className="px-4 py-2 my-4"
-        >
-          <Link aria-label="patch" href={`/garden/${slug}`}>
-            <h2>{title}</h2>
-            <p>{description}</p>
-            <Tags tags={tags} />
-          </Link>
-        </section>
-      ))}
+      {summary.map(
+        ({ title, description, tags, slug, created_at, updated_at }, index) => (
+          <section
+            key={slug}
+            role="article"
+            aria-posinset={index + 1}
+            aria-setsize={summary.length}
+            tabIndex={0}
+            aria-labelledby={slug}
+            className="px-4 py-2 my-4 flex flex-row justify-between items-center max-w-[ch65]"
+          >
+            <Link aria-label="patch" href={`/garden/${slug}`}>
+              <h1>{title}</h1>
+              <p>{description}</p>
+              <Tags tags={tags} />
+            </Link>
+            <span>
+              <Date date={created_at} label="Created on" />
+              <Date date={updated_at} label="Updated on" />
+            </span>
+          </section>
+        )
+      )}
     </section>
   );
 };

@@ -26,6 +26,8 @@ const Breadcrumb = () => {
               ? "🌼 garden"
               : crumb == "graphics"
               ? "🎨 graphics"
+              : crumb == "not-found"
+              ? "404 :("
               : crumb.replace("-", " ")}
           </Link>
         </div>

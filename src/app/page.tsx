@@ -1,10 +1,12 @@
-import React from "react";
+import React, { Fragment } from "react";
 import Link from "next/link";
+
+import Heading from "@/components/Heading";
 
 const Home = () => {
   return (
-    <main className="flex flex-col items-center justify-center px-10 w-full">
-      <h1>0XS1R4T</h1>
+    <Fragment>
+      <Heading title="0XS1R4T" />
       <p>
         <Link
           aria-label="garden"
@@ -24,7 +26,7 @@ const Home = () => {
           <span aria-hidden="true">{"🎨 "}</span>visual experiments
         </Link>{" "}
       </p>
-    </main>
+    </Fragment>
   );
 };
 

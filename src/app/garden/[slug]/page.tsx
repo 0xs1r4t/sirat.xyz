@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Fragment } from "react";
 import { notFound } from "next/navigation";
 import { Metadata, ResolvingMetadata } from "next";
 
@@ -9,7 +9,7 @@ import { notion, getPageBySlug, getPageContent } from "@/lib/notion";
 import isoToNormalDate from "@/lib/date";
 
 import Post from "@/components/Garden/Post";
-import ProgressBar from "@/components/Garden/ProgressBar";
+// import ProgressBar from "@/components/Garden/ProgressBar";
 
 type Props = {
   params: { slug: string };
@@ -45,23 +45,18 @@ const Page = async ({ params, searchParams }: Props) => {
     (tag: any) => tag.name
   );
   const html: string = await notionRenderer.render(...content);
-  const created_at: string = isoToNormalDate(post.created_time as any);
-  const updated_at: string = isoToNormalDate(post.last_edited_time as any);
 
   return (
-    <main className="flex flex-col items-center justify-between px-10 w-full">
-      <ProgressBar />
+    <Fragment>
       <Post
         post={{
           title,
           description,
           tags,
           html,
-          created_at,
-          updated_at,
         }}
       />
-    </main>
+    </Fragment>
   );
 };
 

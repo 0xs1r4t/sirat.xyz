@@ -13,15 +13,16 @@ const ProgressBar = () => {
     damping: 50,
   });
 
-  const hue = useTransform(scrollYProgress, [0, 1], [291, 293]); //[290, 306]
+  const hue = useTransform(scrollYProgress, [0, 1], [0.95, 1]); //[290, 306]
 
-  const progressBarColor = (hue: number) => {
-    return `hsl(${hue}, 84%, 61%)`; // hue = 292
+  const progressBarColor = (alpha: number) => {
+    // return `hsl(${hue}, 84%, 61%)`; // hue = 292
+    return `rgba(31, 41, 55, ${alpha})`;
   };
 
   return (
     <motion.div
-      className="fixed w-full top-0 left-0 h-2 origin-left"
+      className="fixed w-full top-0 right-0 h-1 origin-top-right bg-muted-100"
       animate={{
         backgroundColor: progressBarColor(hue.get()),
       }}

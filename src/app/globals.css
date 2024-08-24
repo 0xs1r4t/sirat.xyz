@@ -5,17 +5,25 @@
 @layer base {
   /* light theme */
   :root {
-    --foreground-rgb: 16, 7, 26;
-    --background-rgb: 252, 242, 252;
-    --muted-100-rgb: 246, 215, 252;
-    --muted-200-rgb: 235, 196, 248;
+    --foreground-rgba: 16, 7, 26, 1;
+    --background-rgba: 252, 242, 252, 1;
+    --muted-100-rgba: 246, 215, 252, 1;
+    --muted-200-rgba: 235, 196, 248, 1;
+    --bright-100-rgba: 207, 131, 232, 1;
+
+    --highlight-font-rgba: 201, 133, 235, 1;
+    --highlight-background-rgba: 201, 133, 235, 0.25;
+
+    --purple-music-rgba: 111,56,255, 1;
+    --pink-music-rgba: 232,56,255, 1;
   }
   /* dark theme */
   .dark {
-    --foreground-rgb: 233, 223, 246;
-    --background-rgb: 16, 7, 26;
-    --muted-100-rgb: 86, 40, 110;
-    --muted-200-rgb: 132, 71, 162;
+    --foreground-rgba: 233, 223, 246, 1;
+    --background-rgba: 16, 7, 26, 1;
+    --muted-100-rgba: 86, 40, 110, 1;
+    --muted-200-rgba: 132, 71, 162, 1;
+    --bright-100-rgba: 162, 38, 229, 1;
   }
 
   /*
@@ -28,7 +36,6 @@
   */
   * {
     box-sizing: border-box;
-    --scroll-rgba: 201, 133, 235, 0.5;
     cursor: url("https://cur.cursors-4u.net/symbols/sym-7/sym629.ani"), url("../../public/cursors/sym629.ani"), url("../../public/cursors/sym629.png"), auto !important;
   }
 
@@ -38,8 +45,8 @@
   }
 
   body {
-    /* color: rgb(var(--foreground-rgb));
-    background: rgb(var(--background-rgb)); */
+    /* color: rgba(var(--foreground-rgba));
+    background: rgba(var(--background-rgba)); */
     @apply bg-background text-foreground;
   }
 
@@ -48,11 +55,13 @@
   }
 
     ::selection {
-      background-color: rgba(var(--scroll-rgba));
+      color: rgba(var(--highlight-font-rgba));
+      background-color: rgba(var(--highlight-background-rgba));
   }
 
   ::-moz-selection {
-      background-color: rgba(var(--scroll-rgba));
+      color: rgba(var(--highlight-font-rgba));
+      background-color: rgba(var(--highlight-background-rgba));
   }
 }
 

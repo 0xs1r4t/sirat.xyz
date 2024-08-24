@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Fragment } from "react";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 
@@ -6,7 +6,9 @@ import {
   getPublishedPages /* getAllPages */,
   getPagesByProps,
 } from "@/lib/notion";
+import isoToNormalDate from "@/lib/date";
 
+import Heading from "@/components/Heading";
 import Search from "@/components/Garden/Search";
 import Summary from "@/components/Garden/Summary";
 
@@ -45,16 +47,17 @@ const Page = async ({
           (tag: any) => tag.name
         ),
         slug: (page.properties.slug as any).rich_text[0]?.plain_text,
+        created_at: isoToNormalDate(page.created_time as any),
+        updated_at: isoToNormalDate(page.last_edited_time as any),
       } as PostSummary)
   );
 
   return (
-    <main className="flex flex-col items-center justify-between px-10 w-full">
-      <h1>MY DIGITAL GARDEN</h1>
+    <Fragment>
+      <Heading title="MY DIGITAL GARDEN" />{" "}
       <Search placeholder="🔍 Search this garden 🦗" />
-
       <Summary summary={garden} />
-    </main>
+    </Fragment>
   );
 };
 
