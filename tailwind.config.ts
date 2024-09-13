@@ -46,6 +46,18 @@ const config: Config = {
       animation: {
         marquee: "marquee 15s linear infinite",
       },
+      typography: {
+        DEFAULT: {
+          css: {
+            pre: {
+              fontFamily: "var(--font-monaco), monospace !important",
+            },
+            code: {
+              fontFamily: "var(--font-monaco), monospace !important",
+            },
+          },
+        },
+      },
     },
   },
   variants: { extend: {} },
@@ -73,4 +85,5 @@ const config: Config = {
     }),
   ],
 };
+
 export default config;

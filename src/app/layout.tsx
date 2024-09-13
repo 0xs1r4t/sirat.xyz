@@ -3,7 +3,11 @@ import type { Metadata, Viewport } from "next";
 import Image from "next/image";
 import ThemeProvider from "@/components/ThemeProvider";
 import ThemeToggle from "@/components/ThemeToggle";
-import { AuthenticSans, AuthenticSansCondensed } from "@/fonts/font-config";
+import {
+  AuthenticSans,
+  AuthenticSansCondensed,
+  Monaco,
+} from "@/fonts/font-config";
 
 import { cn } from "@/lib/utils";
 import Breadcrumb from "@/components/Breadcrumb";
@@ -56,7 +60,8 @@ const RootLayout = ({ children }: Readonly<{ children: React.ReactNode }>) => {
         className={cn(
           "min-h-screen bg-background font-sans antialiased overflow-x-clip",
           AuthenticSans.className,
-          AuthenticSansCondensed.variable
+          AuthenticSansCondensed.variable,
+          Monaco.variable
         )}
       >
         <ThemeProvider>

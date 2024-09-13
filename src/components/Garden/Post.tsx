@@ -12,7 +12,7 @@ const Post = ({ post }: { post: Post }) => {
         <span className="p-4">{""}</span>
         <div
           dangerouslySetInnerHTML={{ __html: post.html }}
-          className="text-foreground prose dark:prose-invert prose-fuchsia lg:prose-lg prose-pre:border-2 prose-pre:border-muted-200 prose-pre:font-code"
+          className="text-foreground prose dark:prose-invert prose-fuchsia lg:prose-lg prose-pre:border-2 prose-pre:border-muted-200"
         />
       </article>
       <span className="p-4">{""}</span>

@@ -55,7 +55,7 @@ export const AuthenticSansCondensed = localFont({
 export const Monaco = localFont({
   src: [
     {
-      path: "./monaco/monaco.woff",
+      path: "./monaco/Monaco.woff",
       weight: "400",
       style: "normal",
     },
