@@ -99,6 +99,37 @@ export const getPagesByProps = cache((q: string) => {
     .then((res) => res.results as Array<DatabaseObjectResponse>);
 });
 
+// search for pages that are published
+// by their tag
+export const getPagesByTag = cache((tag: string) => {
+  return notion.databases
+    .query({
+      // filter_properties: ["title", "description", "tags"],
+      filter: {
+        or: [
+          {
+            property: "tags",
+            multi_select: {
+              contains: tag,
+            },
+          },
+        ],
+        and: [
+          {
+            property: "status",
+            select: {
+              equals: "published",
+            },
+          },
+        ],
+      },
+      sorts: [{ direction: "descending", timestamp: "created_time" }],
+
+      database_id: NOTION_DATABASE_ID!,
+    })
+    .then((res) => res.results as Array<DatabaseObjectResponse>);
+});
+
 // query a page by its slug
 export const getPageBySlug = cache((slug: string) => {
   return notion.databases

@@ -1,18 +1,22 @@
-import React from "react";
+import React, { Fragment } from "react";
 
 import Heading from "@/components/Heading";
-// import Tags from "@/components/Garden/Tags";
-
-// import "./Post.styles.css";
 
 const Post = ({ post }: { post: Post }) => {
   return (
-    <article className="max-w-[65ch] text-foreground prose dark:prose-invert prose-fuchsia lg:prose-lg prose-pre:border-2 prose-pre:border-muted-200">
-      <Heading title={post.title} />
-      {/* <p>{post.description}</p>
-          <Tags tags={post.tags} /> */}
-      <div dangerouslySetInnerHTML={{ __html: post.html }} />
-    </article>
+    <Fragment>
+      <article>
+        <div className="flex flex-col items-center justify-center h-[calc(100vh-48px)]">
+          <Heading title={post.title} />
+        </div>
+        <span className="p-4">{""}</span>
+        <div
+          dangerouslySetInnerHTML={{ __html: post.html }}
+          className="text-foreground prose dark:prose-invert prose-fuchsia lg:prose-lg prose-pre:border-2 prose-pre:border-muted-200 prose-pre:font-code"
+        />
+      </article>
+      <span className="p-4">{""}</span>
+    </Fragment>
   );
 };
 

@@ -1,5 +1,6 @@
 import "./globals.css";
 import type { Metadata, Viewport } from "next";
+import Image from "next/image";
 import ThemeProvider from "@/components/ThemeProvider";
 import ThemeToggle from "@/components/ThemeToggle";
 import { AuthenticSans, AuthenticSansCondensed } from "@/fonts/font-config";
@@ -53,14 +54,16 @@ const RootLayout = ({ children }: Readonly<{ children: React.ReactNode }>) => {
     >
       <body
         className={cn(
-          "min-h-screen bg-background font-sans antialiased",
+          "min-h-screen bg-background font-sans antialiased overflow-x-clip",
           AuthenticSans.className,
           AuthenticSansCondensed.variable
         )}
       >
         <ThemeProvider>
           <div className="fixed z-10 flex justify-between w-full bg-background shadow-background shadow-md">
-            <Breadcrumb />
+            <span className="flex flex-row justify-start">
+              <Breadcrumb />
+            </span>
             <ThemeToggle />
           </div>
           <div className="flex flex-row">

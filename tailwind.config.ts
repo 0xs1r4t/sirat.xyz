@@ -32,10 +32,21 @@ const config: Config = {
     // spacing: {},
     // fontSize: {},
     fontFamily: {
+      normal: ["var(--font-authentic-sans)", "sans-serif"],
       heading: ["var(--font-authentic-sans-condensed)", "sans-serif"],
-      serif: ["serif"],
+      code: ["var(--font-monaco)"],
     },
-    extend: {},
+    extend: {
+      keyframes: {
+        marquee: {
+          "0%": { transform: "translateX(0%)" },
+          "100%": { transform: "translateX(-100%)" },
+        },
+      },
+      animation: {
+        marquee: "marquee 15s linear infinite",
+      },
+    },
   },
   variants: { extend: {} },
   plugins: [

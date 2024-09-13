@@ -15,17 +15,16 @@ const Summary = ({ summary }: { summary: PostSummary[] }) => {
             aria-setsize={summary.length}
             tabIndex={0}
             aria-labelledby={slug}
-            className="px-4 py-2 my-4 flex flex-row justify-between items-center max-w-[ch65]"
+            className="px-4 py-2 my-4 max-w-[ch65] rounded-lg"
           >
             <Link aria-label="patch" href={`/garden/${slug}`}>
               <h1>{title}</h1>
+              <span aria-label="hidden">{""}</span>
               <p>{description}</p>
-              <Tags tags={tags} />
+              <Date date={created_at} />
             </Link>
-            <span>
-              <Date date={created_at} label="Created on" />
-              <Date date={updated_at} label="Updated on" />
-            </span>
+            <Tags tags={tags} />
+            <span aria-label="hidden">{""}</span>
           </section>
         )
       )}

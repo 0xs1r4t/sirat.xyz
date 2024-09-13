@@ -35,7 +35,7 @@ const Breadcrumb = () => {
     });
 
   return (
-    <nav aria-label="breadcrumb" className="flex flex-wrap p-2">
+    <div aria-label="breadcrumb" className="flex flex-wrap p-2">
       <Link
         href="/"
         className="cursor-pointer hover:bg-muted-100 hover:rounded-md px-1"
@@ -43,7 +43,7 @@ const Breadcrumb = () => {
         <span>🏡&nbsp;home</span>
       </Link>
       {crumbs}
-    </nav>
+    </div>
   );
 };
 

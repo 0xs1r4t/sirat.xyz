@@ -6,7 +6,7 @@ import { NotionRenderer } from "@notion-render/client";
 import prismPlugin from "@/lib/extensions/prism-plugin";
 
 import { notion, getPageBySlug, getPageContent } from "@/lib/notion";
-import isoToNormalDate from "@/lib/date";
+import { isoToNormalDate } from "@/lib/date";
 
 import Post from "@/components/Garden/Post";
 // import ProgressBar from "@/components/Garden/ProgressBar";
@@ -44,6 +44,8 @@ const Page = async ({ params, searchParams }: Props) => {
   const tags: string[] = (post.properties.tags as any).multi_select.map(
     (tag: any) => tag.name
   );
+  const created_at = isoToNormalDate(post.created_time as any);
+  const updated_at = isoToNormalDate(post.last_edited_time as any);
   const html: string = await notionRenderer.render(...content);
 
   return (
@@ -54,6 +56,8 @@ const Page = async ({ params, searchParams }: Props) => {
           description,
           tags,
           html,
+          created_at,
+          updated_at,
         }}
       />
     </Fragment>

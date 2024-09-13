@@ -1,12 +1,26 @@
 import React from "react";
+import { cn } from "@/lib/utils";
 
-const Heading = ({ title }: { title: string }) => {
+const Heading = ({
+  title,
+  children,
+  styles,
+}: {
+  title: string;
+  children?: React.ReactNode;
+  styles?: string;
+}) => {
   return (
     <div
       role="title"
-      className="text-5xl font-bold text-center uppercase font-heading p-4 pb-4 not-prose"
+      className={cn(
+        `text-6xl font-bold text-center font-heading p-4 pb-4 not-prose ${
+          styles ? styles : ""
+        }`
+      )}
     >
       {title}
+      {children ? children : <span aria-label="hidden">{""}</span>}
     </div>
   );
 };
