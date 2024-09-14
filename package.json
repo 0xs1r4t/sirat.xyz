@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@floating-ui/react": "^0.26.23",
     "@notion-render/client": "^0.0.2",
     "@notionhq/client": "^2.2.14",
     "@p5-wrapper/next": "^1.0.3",
