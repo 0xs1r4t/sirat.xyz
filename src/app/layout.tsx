@@ -51,21 +51,17 @@ export const viewport: Viewport = {
 
 const RootLayout = ({ children }: Readonly<{ children: React.ReactNode }>) => {
   return (
-    <html
-      lang="en"
-      className="transition-colors duration-400 ease-in-out"
-      suppressHydrationWarning
-    >
+    <html lang="en" suppressHydrationWarning>
       <body
         className={cn(
-          "min-h-screen bg-background font-sans antialiased overflow-x-clip",
+          "min-h-screen bg-background font-sans antialiased overflow-x-clip transition-all duration-500 ease-in-out",
           AuthenticSans.className,
           AuthenticSansCondensed.variable,
           Monaco.variable
         )}
       >
         <ThemeProvider>
-          <div className="fixed z-10 flex justify-between w-full bg-background shadow-background shadow-md">
+          <div className="fixed top-0 z-10 flex justify-between w-full">
             <span className="flex flex-row justify-start">
               <Breadcrumb />
             </span>

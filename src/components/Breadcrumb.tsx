@@ -20,7 +20,7 @@ const Breadcrumb = () => {
           <span>&nbsp;{"/"}&nbsp;</span>
           <Link
             href={currentLink}
-            className="cursor-pointer hover:bg-muted-100 hover:rounded-md px-1 py-0.5"
+            className="cursor-pointer hover:bg-muted-100 hover:rounded-md px-1 py-0.5 lg:text-lg"
           >
             {crumb == "garden"
               ? "🌼 garden"
@@ -38,7 +38,7 @@ const Breadcrumb = () => {
     <div aria-label="breadcrumb" className="flex flex-wrap p-2">
       <Link
         href="/"
-        className="cursor-pointer hover:bg-muted-100 hover:rounded-md px-1"
+        className="cursor-pointer hover:bg-muted-100 hover:rounded-md px-1 lg:text-lg"
       >
         <span>🏡&nbsp;home</span>
       </Link>

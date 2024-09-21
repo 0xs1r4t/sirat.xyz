@@ -4,7 +4,10 @@ import { AuthenticSansCondensed } from "@/fonts/font-config";
 
 const Date = ({ date, label }: { date: string; label?: string }) => (
   <div
-    className={cn("Dates list-none text-sm", AuthenticSansCondensed.className)}
+    className={cn(
+      "Dates list-none text-sm lg:text-base",
+      AuthenticSansCondensed.className
+    )}
   >
     {label ? <span>{label}&nbsp;</span> : ""}
     <time>{date}</time>

@@ -15,12 +15,12 @@ const Sidebar = () => {
       {/* Button to toggle the sidebar */}
       <Tooltip
         label={`click to ${isOpen ? "close" : "expand"} sidebar`}
-        placement="bottom"
+        placement="right"
       >
         <button
           onClick={() => setIsOpen(!isOpen)}
           className={`fixed z-20 flex justify-center items-center p-1 h-max top-14 rounded-e-md bg-muted-100 border-2 border-muted-200 transition-all duration-500 ease-in-out
-          ${isOpen ? "left-[10.75rem]" : "left-0"}`}
+          ${isOpen ? "left-[11.75rem]" : "left-0"}`}
         >
           <span
             aria-label="hidden"
@@ -28,7 +28,7 @@ const Sidebar = () => {
               isOpen ? "rotate-0" : "rotate-180"
             } transition-transform duration-500 ease-in-out`}
           >
-            <Icons.chevron />
+            <Icons.chevron className="w-4 h-4 lg:w-5 lg:h-5" />
           </span>
         </button>
       </Tooltip>
@@ -36,8 +36,8 @@ const Sidebar = () => {
       {/* Sidebar navigation */}
       <nav
         aria-label="sidebar"
-        className={`flex flex-col fixed z-30 items-center justify-between top-12 left-4 p-2 w-40 min-h-96 max-h-[90%] bg-muted-100 border-2 border-muted-200 rounded-lg overflow-y-scroll transition-transform duration-500 ease-in-out
-          ${isOpen ? "translate-x-0" : "-translate-x-44"}`}
+        className={`flex flex-col fixed z-30 items-center justify-between top-12 left-4 py-1.5 lg:py-2 w-44 max-h-96 min-h-[85%] bg-muted-100 border-2 border-muted-200 rounded-lg overflow-hidden transition-transform duration-500 ease-in-out
+          ${isOpen ? "translate-x-0" : "-translate-x-48"}`}
         aria-hidden={!isOpen}
       >
         <SpotifyPlayer />
@@ -51,7 +51,7 @@ const Sidebar = () => {
             <Link
               aria-label="home"
               href="/"
-              className="cursor-pointer hover:bg-muted-200 hover:rounded-md px-1 py-0.5 transition-colors duration-500"
+              className="cursor-pointer rounded-md hover:bg-muted-200 lg:text-lg px-1 py-0.5 transition-colors duration-500"
             >
               <span aria-hidden="true">{"🏡 "}</span>
               home
@@ -61,7 +61,7 @@ const Sidebar = () => {
             <Link
               aria-label="garden"
               href="/garden"
-              className="cursor-pointer hover:bg-muted-200 hover:rounded-md px-1 py-0.5 transition-colors duration-500"
+              className="cursor-pointer rounded-md hover:bg-muted-200 lg:text-lg px-1 py-0.5 transition-colors duration-500"
             >
               <span aria-hidden="true">{"🌼 "}</span>
               garden
@@ -71,7 +71,7 @@ const Sidebar = () => {
             <Link
               aria-label="graphics"
               href="/graphics"
-              className="cursor-pointer hover:bg-muted-200 hover:rounded-md px-1 py-0.5 transition-colors duration-500"
+              className="cursor-pointer rounded-md hover:bg-muted-200 lg:text-lg px-1 py-0.5 transition-colors duration-500"
             >
               <span aria-hidden="true">{"🎨 "}</span>
               graphics

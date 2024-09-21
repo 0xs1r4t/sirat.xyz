@@ -18,7 +18,7 @@ const Summary = ({ summary }: { summary: PostSummary[] }) => {
             className="px-4 py-2 my-4 max-w-[ch65] rounded-lg"
           >
             <Link aria-label="patch" href={`/garden/${slug}`}>
-              <h1>{title}</h1>
+              <h1 className="lg:text-4xl">{title}</h1>
               <span aria-label="hidden">{""}</span>
               <p>{description}</p>
               <Date date={created_at} />

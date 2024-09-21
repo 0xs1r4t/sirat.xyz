@@ -21,14 +21,12 @@
     --muted-200-rgba: 132, 71, 162, 1;
   }
 
-  /*
-  *********************************************************************
+  /* *******************************************************************
   This cursor is from https://cur.cursors-4u.net/
   https://www.cursors-4u.com/cursor/2011/11/26/shiny-violet-star.html
-  Animated Cursor - https://cur.cursors-4u.net/symbols/sym-7/sym629.ani
-  Static Cursor - https://cur.cursors-4u.net/symbols/sym-7/sym629.png
-  *********************************************************************
-  */
+  - Animated Cursor - https://cur.cursors-4u.net/symbols/sym-7/sym629.ani
+  - Static Cursor - https://cur.cursors-4u.net/symbols/sym-7/sym629.png
+  ******************************************************************* */
   * {
     box-sizing: border-box;
     cursor: url("https://cur.cursors-4u.net/symbols/sym-7/sym629.ani"), url("../../public/cursors/sym629.ani"), url("../../public/cursors/sym629.png"), auto !important;
@@ -40,8 +38,6 @@
   }
 
   body {
-    /* color: rgba(var(--foreground-rgba));
-    background: rgba(var(--background-rgba)); */
     @apply bg-background text-foreground;
   }
 
@@ -49,7 +45,8 @@
     color: inherit;
   }
 
-    ::selection {
+  /* selection styles */
+  ::selection {
       color: rgba(var(--highlight-font-rgba));
       background-color: rgba(var(--highlight-background-rgba));
   }
@@ -57,6 +54,20 @@
   ::-moz-selection {
       color: rgba(var(--highlight-font-rgba));
       background-color: rgba(var(--highlight-background-rgba));
+  }
+
+  /* scrollbar styles */
+  body::-webkit-scrollbar {
+    width: 1em;
+  }
+
+  body::-webkit-scrollbar-track {
+    -webkit-box-shadow: inset 0 0 3px rgba(0,0,0,0.3);
+  }
+
+  body::-webkit-scrollbar-thumb {
+    background-color: darkgrey;
+    outline: 1px solid slategrey;
   }
 }
 
@@ -68,5 +79,9 @@
 
   .animate-paused {
     animation-play-state: paused;
+  }
+
+  .font-zoom {
+    font-size: 120%;
   }
 }

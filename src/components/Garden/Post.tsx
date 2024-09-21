@@ -5,10 +5,11 @@ import Heading from "@/components/Heading";
 const Post = ({ post }: { post: Post }) => {
   return (
     <Fragment>
-      <article>
-        <div className="flex flex-col items-center justify-center h-[calc(100vh-48px)]">
-          <Heading title={post.title} />
-        </div>
+      <article className="fixed flex flex-col items-center top-10 bottom-0 pb-4 px-4 w-full overflow-y-auto">
+        <Heading
+          title={post.title}
+          styles="flex items-center min-h-[calc(100vh-3rem)]"
+        />
         <span className="p-4">{""}</span>
         <div
           dangerouslySetInnerHTML={{ __html: post.html }}

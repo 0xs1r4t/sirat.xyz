@@ -6,7 +6,7 @@ import Link from "next/link";
 import useSWR from "swr";
 import fetcher from "@/lib/fetcher";
 
-const refresh: number = 216000;
+const refresh: number = 214400;
 
 const Spotify = ({ song }: { song: Song | null }) => {
   if (song != null) {
@@ -17,20 +17,20 @@ const Spotify = ({ song }: { song: Song | null }) => {
         target="_blank"
         className="flex flex-col items-center justify-center p-2"
       >
-        <div className="rounded-md w-28 h-28 bg-muted-200 border-2 border-muted-200 z-30">
+        <div className="rounded-md w-36 h-36 bg-muted-200 border-2 border-muted-200 z-30">
           <Image
             src={song.albumImageUrl}
             alt="album cover"
-            width={112}
-            height={112}
+            width={144}
+            height={144}
             unoptimized={true}
             objectFit="cover"
             loading="lazy"
-            className="rounded-md grayscale contrast-75 mix-blend-luminosity z-40"
+            className="rounded-md grayscale mix-blend-hard-light dark:mix-blend-luminosity z-40"
           />
         </div>
-        <span className="w-28 overflow-x-hidden">
-          <p className="animate-marquee self-center text-nowrap text-sm whitespace-nowrap hover:animate-paused">
+        <span className="w-36 overflow-x-hidden">
+          <p className="animate-marquee self-center text-nowrap text-sm lg:text-base whitespace-nowrap hover:animate-paused">
             {song.title} by {song.artist} {song.message}
           </p>
         </span>
@@ -39,20 +39,20 @@ const Spotify = ({ song }: { song: Song | null }) => {
   } else {
     return (
       <div className="flex flex-col items-center justify-center p-2">
-        <div className="rounded-md w-28 h-28 bg-muted-200 border-2 border-muted-200 z-30">
+        <div className="rounded-md w-36 h-36 bg-muted-200 border-2 border-muted-200 z-30">
           <Image
             src="https://i.giphy.com/FCYLrRJciiY6a1NdTD.webp"
             alt="album cover"
-            width={112}
-            height={112}
+            width={144}
+            height={144}
             unoptimized={true}
             objectFit="cover"
             loading="lazy"
-            className="rounded-md grayscale contrast-75 mix-blend-luminosity z-40"
+            className="rounded-md grayscale contrast-75 mix-blend-hard-light dark:mix-blend-luminosity z-40"
           />
         </div>
-        <span className="w-28 overflow-x-hidden">
-          <p className="animate-marquee self-center text-nowrap text-sm whitespace-nowrap hover:animate-paused">{`There is no song playing right now :(`}</p>
+        <span className="w-36 overflow-x-hidden">
+          <p className="animate-marquee self-center text-nowrap text-sm lg:text-base whitespace-nowrap hover:animate-paused">{`There is no song playing right now :(`}</p>
         </span>
       </div>
     );

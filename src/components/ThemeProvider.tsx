@@ -7,12 +7,7 @@ type ThemeProviderProps = Parameters<typeof NextThemesProvider>[0];
 
 const ThemeProvider = ({ children }: ThemeProviderProps) => {
   return (
-    <NextThemesProvider
-      attribute="class"
-      defaultTheme="system"
-      enableSystem
-      disableTransitionOnChange
-    >
+    <NextThemesProvider attribute="class" defaultTheme="system" enableSystem>
       {children}
     </NextThemesProvider>
   );

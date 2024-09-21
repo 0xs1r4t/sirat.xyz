@@ -14,7 +14,7 @@ const Heading = ({
     <div
       role="title"
       className={cn(
-        `text-6xl font-bold text-center font-heading p-4 pb-4 not-prose ${
+        `text-6xl font-bold text-center font-heading p-4 pb-4 not-prose lg:text-7xl ${
           styles ? styles : ""
         }`
       )}

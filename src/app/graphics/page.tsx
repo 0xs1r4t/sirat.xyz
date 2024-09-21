@@ -5,7 +5,7 @@ import { Fragment } from "react";
 const Canvas = () => {
   return (
     <Fragment>
-      <div className="overflow-hidden aspect-square max-w-[95vw] max-h-[86svh] mt-2 rounded-lg">
+      <div className="overflow-hidden max-h-[85svh] w-full mx-2 mt-2 rounded-lg">
         <Snake />
       </div>
     </Fragment>

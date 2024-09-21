@@ -10,7 +10,7 @@ const Home = () => {
         <Link
           aria-label="garden"
           href="/garden"
-          className="cursor-pointer text-lg hover:bg-muted-100 hover:rounded-md px-1 py-0.5"
+          className="cursor-pointer text-lg lg:text-xl hover:bg-muted-100 hover:rounded-md px-1 py-0.5"
         >
           <span aria-hidden="true">{"🌼 "}</span>
           digital garden
@@ -20,7 +20,7 @@ const Home = () => {
         <Link
           aria-label="graphics"
           href="/graphics"
-          className="cursor-pointer text-lg hover:bg-muted-100 hover:rounded-md px-1 py-0.5"
+          className="cursor-pointer text-lg lg:text-xl hover:bg-muted-100 hover:rounded-md px-1 py-0.5"
         >
           <span aria-hidden="true">{"🎨 "}</span>visual experiments
         </Link>{" "}
