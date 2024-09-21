@@ -12,6 +12,11 @@ const nextConfig = {
         hostname: "media1.giphy.com",
         pathname: "/**",
       },
+      {
+        protocol: "https",
+        hostname: "i.giphy.com",
+        pathname: "/**",
+      },
     ],
   },
 };

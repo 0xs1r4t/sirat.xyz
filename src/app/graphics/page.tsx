@@ -1,17 +1,14 @@
 import React from "react";
-import Link from "next/link";
-import { Trail } from "@/sketches/Trail";
+import { Snake } from "@/graphics/Snake";
+import { Fragment } from "react";
 
 const Canvas = () => {
   return (
-    <main className="flex flex-col items-center justify-between p-10">
-      <Link aria-label="home" href="/">
-        🏡
-      </Link>
-      <div className="m-10 aspect-square overflow-hidden max-h-[75vh] max-w-[75vw] rounded-lg">
-        <Trail />
+    <Fragment>
+      <div className="overflow-hidden max-h-[85svh] w-full mx-2 mt-2 rounded-lg">
+        <Snake />
       </div>
-    </main>
+    </Fragment>
   );
 };
 

@@ -2,38 +2,58 @@
 
 import React from "react";
 import Image from "next/image";
+import Link from "next/link";
 import useSWR from "swr";
 import fetcher from "@/lib/fetcher";
 
-const refresh: number = 216000;
+const refresh: number = 214400;
 
 const Spotify = ({ song }: { song: Song | null }) => {
   if (song != null) {
     console.log(song.albumImageUrl);
     return (
-      <div className="flex flex-col items-center justify-center">
-        <Image
-          src={song.albumImageUrl}
-          alt="album cover"
-          width={150}
-          height={150}
-        />
-        <span>
-          {song.title} by {song.artist} {song.message}
+      <Link
+        href={song.songUrl}
+        target="_blank"
+        className="flex flex-col items-center justify-center p-2"
+      >
+        <div className="rounded-md w-36 h-36 bg-muted-200 border-2 border-muted-200 z-30">
+          <Image
+            src={song.albumImageUrl}
+            alt="album cover"
+            width={144}
+            height={144}
+            unoptimized={true}
+            objectFit="cover"
+            loading="lazy"
+            className="rounded-md grayscale mix-blend-hard-light dark:mix-blend-luminosity z-40"
+          />
+        </div>
+        <span className="w-36 overflow-x-hidden">
+          <p className="animate-marquee self-center text-nowrap text-sm lg:text-base whitespace-nowrap hover:animate-paused">
+            {song.title} by {song.artist} {song.message}
+          </p>
         </span>
-      </div>
+      </Link>
     );
   } else {
     return (
-      <div className="flex flex-col items-center justify-center">
-        <Image
-          src="https://media1.giphy.com/media/v1.Y2lkPTc5MGI3NjExZHM4c3pqZmdrd2J3b2EwcG0wNnB6dW5yZXlmdDk4anFqaW11dWt0OSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/njLGU6UWncDC1o7QX3/giphy.webp"
-          alt="album cover"
-          width={150}
-          height={150}
-          unoptimized
-        />
-        <span>{`There is no song playing right now :(`}</span>
+      <div className="flex flex-col items-center justify-center p-2">
+        <div className="rounded-md w-36 h-36 bg-muted-200 border-2 border-muted-200 z-30">
+          <Image
+            src="https://i.giphy.com/FCYLrRJciiY6a1NdTD.webp"
+            alt="album cover"
+            width={144}
+            height={144}
+            unoptimized={true}
+            objectFit="cover"
+            loading="lazy"
+            className="rounded-md grayscale contrast-75 mix-blend-hard-light dark:mix-blend-luminosity z-40"
+          />
+        </div>
+        <span className="w-36 overflow-x-hidden">
+          <p className="animate-marquee self-center text-nowrap text-sm lg:text-base whitespace-nowrap hover:animate-paused">{`There is no song playing right now :(`}</p>
+        </span>
       </div>
     );
   }

@@ -1,15 +1,15 @@
-import React from "react";
+import React, { Fragment } from "react";
 import { notFound } from "next/navigation";
 import { Metadata, ResolvingMetadata } from "next";
-import Link from "next/link";
 
 import { NotionRenderer } from "@notion-render/client";
-import hljsPlugin from "@notion-render/hljs-plugin";
-import bookmarkPlugin from "@notion-render/bookmark-plugin";
+import prismPlugin from "@/lib/extensions/prism-plugin";
 
 import { notion, getPageBySlug, getPageContent } from "@/lib/notion";
+import { isoToNormalDate } from "@/lib/date";
 
-import Blog from "@/components/Blog";
+import Post from "@/components/Garden/Post";
+// import ProgressBar from "@/components/Garden/ProgressBar";
 
 type Props = {
   params: { slug: string };
@@ -21,51 +21,47 @@ export const generateMetadata = async (
   parent: ResolvingMetadata
 ): Promise<Metadata> => {
   const slug = params.slug;
-  const gardenPatch = await getPageBySlug(slug);
-  if (!gardenPatch) notFound();
+  const post = await getPageBySlug(slug);
+  if (!post) notFound();
 
   return {
-    title: "🌐🌼 " + (gardenPatch.properties.title as any).title[0].plain_text,
+    title: (post.properties.title as any).title[0].plain_text,
   };
 };
 
-const GardenSlug = async ({ params, searchParams }: Props) => {
-  const gardenPatch = await getPageBySlug(params.slug);
-  if (!gardenPatch) notFound();
+const Page = async ({ params, searchParams }: Props) => {
+  const post = await getPageBySlug(params.slug);
+  if (!post) notFound();
 
-  const content = await getPageContent(gardenPatch.id);
+  const content = await getPageContent(post.id);
 
   const notionRenderer = new NotionRenderer({ client: notion });
-  notionRenderer.use(hljsPlugin({}));
-  notionRenderer.use(bookmarkPlugin(undefined));
+  notionRenderer.use(prismPlugin({})); // custom plugin for code syntax highlighting
 
-  const title: string = (gardenPatch.properties.title as any).title[0]
-    .plain_text;
-  const description: string = (gardenPatch.properties.description as any)
-    .rich_text[0]?.plain_text;
-  const tags: string[] = (gardenPatch.properties.tags as any).multi_select.map(
+  const title: string = (post.properties.title as any).title[0].plain_text;
+  const description: string = (post.properties.description as any).rich_text[0]
+    ?.plain_text;
+  const tags: string[] = (post.properties.tags as any).multi_select.map(
     (tag: any) => tag.name
   );
+  const created_at = isoToNormalDate(post.created_time as any);
+  const updated_at = isoToNormalDate(post.last_edited_time as any);
   const html: string = await notionRenderer.render(...content);
 
   return (
-    <main className="flex flex-col items-center justify-between p-10">
-      <Link aria-label="home" href="/">
-        🏡
-      </Link>
-      <Link aria-label="garden" href="/garden">
-        🌐🌼
-      </Link>
-      <Blog
-        blog={{
+    <Fragment>
+      <Post
+        post={{
           title,
           description,
           tags,
           html,
+          created_at,
+          updated_at,
         }}
       />
-    </main>
+    </Fragment>
   );
 };
 
-export default GardenSlug;
+export default Page;

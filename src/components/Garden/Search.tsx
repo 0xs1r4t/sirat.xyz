@@ -14,7 +14,6 @@ const Search = ({ placeholder }: { placeholder: string }) => {
 
   const handleSearch = useDebouncedCallback((content: string) => {
     const params = new URLSearchParams(searchParams);
-    console.log(`searching for content with ${content}...`);
 
     if (content) {
       params.set("q", content);
@@ -29,7 +28,7 @@ const Search = ({ placeholder }: { placeholder: string }) => {
     <form className="relative flex flex-row">
       <input
         type="text"
-        className="peer bg-muted-100 border-muted-200 focus:outline-none focus:border-fuchsia-500 focus:ring-fuchsia-500 focus:ring-1 caret-fuchsia-500 block w-full self-stretch my-5 px-4 py-2 p-4 text-inherit rounded-md border-2"
+        className="peer block bg-muted-100 border-2 border-muted-200 rounded-md focus:outline-none focus:border-2 focus:rounded-lg focus:border-muted-200 focus:ring-2 focus:ring-muted-200 focus:shadow-sm focus:shadow-muted-200 placeholder:text-foreground placeholder:opacity-80 w-full self-stretch my-5 px-4 py-2 p-4 text-inherit"
         placeholder={placeholder}
         onChange={(e) => {
           handleSearch(e.target.value);

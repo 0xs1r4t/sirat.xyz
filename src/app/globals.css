@@ -3,43 +3,33 @@
 @tailwind utilities;
 
 @layer base {
+  /* light theme */
   :root {
-    /* https://coolors.co/9a59e3-c985eb-ffe9ff */
-    --foreground-rgb: 154, 89, 227;
-    /* --foreground-rgb: 152, 98, 186; */
-    --background-rgb: 255, 233, 255;
+    --foreground-rgba: 16, 7, 26, 1;
+    --background-rgba: 252, 242, 252, 1;
+    --muted-100-rgba: 246, 215, 252, 1;
+    --muted-200-rgba: 235, 196, 248, 1;
 
-    --search-bar-background-rgb: 235, 196, 248;
-    --search-bar-border-rgb: 228, 183, 245;
+    --highlight-font-rgba: 201, 133, 235, 1;
+    --highlight-background-rgba: 201, 133, 235, 0.25;
   }
-
+  /* dark theme */
   .dark {
-    /* https://coolors.co/e9dff6-c985eb-10071a */
-    --foreground-rgb: 233, 223, 246;
-    --background-rgb: 16, 7, 26;
-
-    --search-bar-background-rgb: 40, 23, 53;
-    --search-bar-border-rgb: 63, 39, 79;
+    --foreground-rgba: 233, 223, 246, 1;
+    --background-rgba: 16, 7, 26, 1;
+    --muted-100-rgba: 86, 40, 110, 1;
+    --muted-200-rgba: 132, 71, 162, 1;
   }
 
-  /* @media (prefers-color-scheme: dark) {
-    :root {
-      --foreground-rgb: 255, 255, 255;
-      --background-rgb: 0, 0, 0;
-    }
-  } */
-
-/*
-*********************************************************************
-This cursor is from https://cur.cursors-4u.net/
-Animated Cursor - https://cur.cursors-4u.net/symbols/sym-7/sym629.ani
-Static Cursor - https://cur.cursors-4u.net/symbols/sym-7/sym629.png
-*********************************************************************
-*/
+  /* *******************************************************************
+  This cursor is from https://cur.cursors-4u.net/
+  https://www.cursors-4u.com/cursor/2011/11/26/shiny-violet-star.html
+  - Animated Cursor - https://cur.cursors-4u.net/symbols/sym-7/sym629.ani
+  - Static Cursor - https://cur.cursors-4u.net/symbols/sym-7/sym629.png
+  ******************************************************************* */
   * {
     box-sizing: border-box;
-    --scroll-rgba: 201, 133, 235, 0.5;
-    cursor: url("../../public/cursors/sym629.ani"), url("../../public/cursors/sym629.png"), auto !important;
+    cursor: url("https://cur.cursors-4u.net/symbols/sym-7/sym629.ani"), url("../../public/cursors/sym629.ani"), url("../../public/cursors/sym629.png"), auto !important;
   }
 
   html {
@@ -48,8 +38,6 @@ Static Cursor - https://cur.cursors-4u.net/symbols/sym-7/sym629.png
   }
 
   body {
-    /* color: rgb(var(--foreground-rgb));
-    background: rgb(var(--background-rgb)); */
     @apply bg-background text-foreground;
   }
 
@@ -57,17 +45,43 @@ Static Cursor - https://cur.cursors-4u.net/symbols/sym-7/sym629.png
     color: inherit;
   }
 
+  /* selection styles */
   ::selection {
-    background-color: rgba(var(--scroll-rgba));
+      color: rgba(var(--highlight-font-rgba));
+      background-color: rgba(var(--highlight-background-rgba));
+  }
+
+  ::-moz-selection {
+      color: rgba(var(--highlight-font-rgba));
+      background-color: rgba(var(--highlight-background-rgba));
+  }
+
+  /* scrollbar styles */
+  body::-webkit-scrollbar {
+    width: 1em;
+  }
+
+  body::-webkit-scrollbar-track {
+    -webkit-box-shadow: inset 0 0 3px rgba(0,0,0,0.3);
+  }
+
+  body::-webkit-scrollbar-thumb {
+    background-color: darkgrey;
+    outline: 1px solid slategrey;
+  }
 }
 
-::-moz-selection {
-    background-color: rgba(var(--scroll-rgba));
-}
-}
 
 @layer utilities {
   .text-balance {
     text-wrap: balance;
+  }
+
+  .animate-paused {
+    animation-play-state: paused;
+  }
+
+  .font-zoom {
+    font-size: 120%;
   }
 }

@@ -17,23 +17,49 @@ const config: Config = {
     ],
   ],
   theme: {
-    screens: {
-      sm: "480px",
-      md: "768px",
-      lg: "976px",
-      xl: "1440px",
+    container: {
+      center: true,
     },
+    colors: {
+      background: "rgba(var(--background-rgba))",
+      foreground: "rgba(var(--foreground-rgba))",
+      "muted-100": "rgba(var(--muted-100-rgba))",
+      "muted-200": "rgba(var(--muted-200-rgba))",
+      "bright-100": "rgba(var(--bright-100-rgba))",
+      "music-pink": "rgba(var(--pink-music-rgba))",
+      "music-purple": "rgba(var(--purple-music-rgba))",
+    },
+    // spacing: {},
+    // fontSize: {},
     fontFamily: {
+      normal: ["var(--font-authentic-sans)", "sans-serif"],
       heading: ["var(--font-authentic-sans-condensed)", "sans-serif"],
-      serif: ["serif"],
+      code: ["var(--font-monaco)"],
     },
     extend: {
-      colors: {
-        background: "rgb(var(--background-rgb))",
-        foreground: "rgb(var(--foreground-rgb))",
-        "muted-100": "rgb(var(--search-bar-background-rgb))",
-        "muted-200": "rgb(var(--search-bar-border-rgb))",
-        scroll: "rgba(var(--scroll-rgba))",
+      keyframes: {
+        marquee: {
+          "0%": { transform: "translateX(0%)" },
+          "100%": { transform: "translateX(-100%)" },
+        },
+      },
+      animation: {
+        marquee: "marquee 15s linear infinite",
+      },
+      zoom: {
+        large: { transform: "scale(1.2)" },
+      },
+      typography: {
+        DEFAULT: {
+          css: {
+            pre: {
+              fontFamily: "var(--font-monaco), monospace !important",
+            },
+            code: {
+              fontFamily: "var(--font-monaco), monospace !important",
+            },
+          },
+        },
       },
     },
   },
@@ -44,10 +70,8 @@ const config: Config = {
     plugin(function ({ addBase, theme }: PluginAPI & PluginUtils) {
       addBase({
         h1: {
-          fontSize: theme("fontSize.5xl"),
+          fontSize: theme("fontSize.3xl"),
           fontFamily: theme("fontFamily.heading"),
-          textTransform: "uppercase",
-          textAlign: "center",
           fontWeight: "700",
         },
         h2: {
@@ -64,4 +88,5 @@ const config: Config = {
     }),
   ],
 };
+
 export default config;
