@@ -41,7 +41,7 @@ const Spotify = ({ song }: { song: Song | null }) => {
       <div className="flex flex-col items-center justify-center p-2">
         <div className="rounded-md w-36 h-36 bg-muted-200 border-2 border-muted-200 z-30">
           <Image
-            src="https://i.giphy.com/FCYLrRJciiY6a1NdTD.webp"
+            src="/assets/no-music-playing.webp"
             alt="album cover"
             width={144}
             height={144}

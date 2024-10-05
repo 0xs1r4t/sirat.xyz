@@ -41,12 +41,13 @@ const Sidebar = () => {
         aria-hidden={!isOpen}
       >
         <SpotifyPlayer />
+
+        {/* Navigation and Social Links */}
         <div
           className={`flex flex-col transition-opacity duration-500 ease-in-out delay-150 ${
             isOpen ? "opacity-100" : "opacity-0"
           }`}
         >
-          {/* Navigation Links */}
           <p>
             <Link
               aria-label="home"
@@ -75,6 +76,30 @@ const Sidebar = () => {
             >
               <span aria-hidden="true">{"🎨 "}</span>
               graphics
+            </Link>
+          </p>
+          <p>
+            <Link
+              aria-label="my github"
+              href="https://github.com/0xs1r4t/"
+              className="cursor-pointer flex flex-nowrap flex-row gap-2 items-center rounded-md hover:bg-muted-200 lg:text-lg w-min pl-2 pr-1 transition-colors duration-500"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <Icons.github className="w-3.5 h-3.5 lg:w-[18px] lg:h-[18px] mix-blend-overlay" />{" "}
+              github
+            </Link>
+          </p>
+          <p>
+            <Link
+              aria-label="my linkedin"
+              href="https://www.linkedin.com/in/siratbaweja/"
+              className="cursor-pointer flex flex-nowrap flex-row gap-2 items-center rounded-md hover:bg-muted-200 lg:text-lg w-min pl-2 pr-1 transition-colors duration-500"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <Icons.linkedin className="w-3.5 h-3.5 lg:w-[18px] lg:h-[18px] mix-blend-overlay" />{" "}
+              linkedin
             </Link>
           </p>
         </div>
