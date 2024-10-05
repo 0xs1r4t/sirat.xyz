@@ -29,7 +29,10 @@
   ******************************************************************* */
   * {
     box-sizing: border-box;
-    cursor: url("https://cur.cursors-4u.net/symbols/sym-7/sym629.ani"), url("../../public/cursors/sym629.ani"), url("../../public/cursors/sym629.png"), auto !important;
+    /* cursor: url("/cursors/sym629/0004.png"), auto !important; */
+    cursor: url("/cursors/sym629/0004.png"), auto;
+    -webkit-animation: starCursor 750ms infinite;
+    animation: starCursor 750ms infinite;
   }
 
   html {
@@ -69,8 +72,22 @@
     background-color: darkgrey;
     outline: 1px solid slategrey;
   }
-}
 
+  /* cursor animation */
+  @-webkit-keyframes starCursor {
+    0%, 25% { cursor: url('/cursors/sym629/0001.png'), auto; }
+    25%, 50% { cursor: url('/cursors/sym629/0002.png'), auto; }
+    50%, 75% { cursor: url('/cursors/sym629/0003.png'), auto; }
+    75%, 100% { cursor: url('/cursors/sym629/0004.png'), auto; }
+  }
+
+  @keyframes starCursor {
+    0%, 25% { cursor: url('/cursors/sym629/0001.png'), auto; }
+    25%, 50% { cursor: url('/cursors/sym629/0002.png'), auto; }
+    50%, 75% { cursor: url('/cursors/sym629/0003.png'), auto; }
+    75%, 100% { cursor: url('/cursors/sym629/0004.png'), auto; }
+  }
+}
 
 @layer utilities {
   .text-balance {
