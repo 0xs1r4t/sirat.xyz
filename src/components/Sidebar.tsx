@@ -43,11 +43,7 @@ const Sidebar = () => {
         <SpotifyPlayer />
 
         {/* Navigation and Social Links */}
-        <div
-          className={`flex flex-col transition-opacity duration-500 ease-in-out delay-150 ${
-            isOpen ? "opacity-100" : "opacity-0"
-          }`}
-        >
+        <div className="flex flex-col">
           <p>
             <Link
               aria-label="home"

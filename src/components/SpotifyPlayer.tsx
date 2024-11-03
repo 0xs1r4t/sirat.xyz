@@ -6,6 +6,8 @@ import Link from "next/link";
 import useSWR from "swr";
 import fetcher from "@/lib/fetcher";
 
+import { NeonPinkImageFilter } from "@/components/SVGFilters/Filters";
+
 const refresh: number = 214400;
 
 const Spotify = ({ song }: { song: Song | null }) => {
@@ -18,7 +20,7 @@ const Spotify = ({ song }: { song: Song | null }) => {
         className="flex flex-col items-center justify-center p-2"
       >
         <div className="rounded-md w-36 h-36 bg-muted-200 border-2 border-muted-200 z-30">
-          <Image
+          {/* <Image
             src={song.albumImageUrl}
             alt="album cover"
             width={144}
@@ -27,6 +29,13 @@ const Spotify = ({ song }: { song: Song | null }) => {
             objectFit="cover"
             loading="lazy"
             className="rounded-md grayscale mix-blend-hard-light dark:mix-blend-luminosity z-40"
+          /> */}
+          <NeonPinkImageFilter
+            url={song.albumImageUrl}
+            alt="album cover"
+            w={144}
+            h={144}
+            styles="rounded-md z-40"
           />
         </div>
         <span className="w-36 overflow-x-hidden">
@@ -40,7 +49,7 @@ const Spotify = ({ song }: { song: Song | null }) => {
     return (
       <div className="flex flex-col items-center justify-center p-2">
         <div className="rounded-md w-36 h-36 bg-muted-200 border-2 border-muted-200 z-30">
-          <Image
+          {/* <Image
             src="/assets/no-music-playing.webp"
             alt="album cover"
             width={144}
@@ -49,6 +58,13 @@ const Spotify = ({ song }: { song: Song | null }) => {
             objectFit="cover"
             loading="lazy"
             className="rounded-md grayscale contrast-75 mix-blend-hard-light dark:mix-blend-luminosity z-40"
+          /> */}
+          <NeonPinkImageFilter
+            url="/assets/no-music-playing.webp"
+            alt="no music is playing :("
+            w={144}
+            h={144}
+            styles="rounded-md z-40"
           />
         </div>
         <span className="w-36 overflow-x-hidden">
