@@ -43,12 +43,12 @@ const Sidebar = () => {
         <SpotifyPlayer />
 
         {/* Navigation and Social Links */}
-        <div className="flex flex-col">
+        <div className="flex flex-col flex-nowrap">
           <p>
             <Link
               aria-label="home"
               href="/"
-              className="cursor-pointer rounded-md hover:bg-muted-200 lg:text-lg px-1 py-0.5 transition-colors duration-500"
+              className="place-self-start cursor-pointer rounded-md hover:bg-muted-200 lg:text-lg px-1 py-0.5 transition-colors duration-300"
             >
               <span aria-hidden="true">{"🏡 "}</span>
               home
@@ -58,7 +58,7 @@ const Sidebar = () => {
             <Link
               aria-label="garden"
               href="/garden"
-              className="cursor-pointer rounded-md hover:bg-muted-200 lg:text-lg px-1 py-0.5 transition-colors duration-500"
+              className="cursor-pointer rounded-md hover:bg-muted-200 lg:text-lg px-1 py-0.5 transition-colors duration-300"
             >
               <span aria-hidden="true">{"🌼 "}</span>
               garden
@@ -68,7 +68,7 @@ const Sidebar = () => {
             <Link
               aria-label="graphics"
               href="/graphics"
-              className="cursor-pointer rounded-md hover:bg-muted-200 lg:text-lg px-1 py-0.5 transition-colors duration-500"
+              className="cursor-pointer rounded-md hover:bg-muted-200 lg:text-lg px-1 py-0.5 transition-colors duration-300"
             >
               <span aria-hidden="true">{"🎨 "}</span>
               graphics
@@ -78,7 +78,7 @@ const Sidebar = () => {
             <Link
               aria-label="my github"
               href="https://github.com/0xs1r4t/"
-              className="cursor-pointer flex flex-nowrap flex-row gap-2 items-center rounded-md hover:bg-muted-200 lg:text-lg w-min pl-2 pr-1 transition-colors duration-500"
+              className="cursor-pointer flex flex-nowrap flex-row gap-2 items-center rounded-md hover:bg-muted-200 lg:text-lg w-min pl-2 pr-1 transition-colors duration-300"
               target="_blank"
               rel="noopener noreferrer"
             >
@@ -90,7 +90,7 @@ const Sidebar = () => {
             <Link
               aria-label="my linkedin"
               href="https://www.linkedin.com/in/siratbaweja/"
-              className="cursor-pointer flex flex-nowrap flex-row gap-2 items-center rounded-md hover:bg-muted-200 lg:text-lg w-min pl-2 pr-1 transition-colors duration-500"
+              className="cursor-pointer flex flex-nowrap flex-row gap-2 items-center rounded-md hover:bg-muted-200 lg:text-lg w-min pl-2 pr-1 transition-colors duration-300"
               target="_blank"
               rel="noopener noreferrer"
             >
