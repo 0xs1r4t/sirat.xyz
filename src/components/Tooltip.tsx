@@ -50,7 +50,7 @@ export function Tooltip({ children, label, placement }: Props) {
       {cloneElement(children, getReferenceProps({ ref, ...children.props }))}
       {open && (
         <div
-          className="Tooltip z-50 flex flex-wrap rounded-md bg-muted-100 border-2 border-muted-200 px-2 py-1 text-xs text-center text-wrap"
+          className="Tooltip z-50 flex flex-wrap rounded-md bg-muted-100 border-2 border-muted-200 px-2 py-1 text-xs text-center text-wrap max-w-[9.5rem]"
           ref={refs.setFloating}
           style={floatingStyles}
           {...getFloatingProps()}
