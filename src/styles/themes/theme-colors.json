@@ -1,0 +1,27 @@
+{
+    "highlight_font": "#c985ebff",
+    "highlight_background": "#c985eb3f",
+    "themes": {
+        "strawberry-matcha": {
+            "palette": "https://coolors.co/10071a-def0dc-f6d7fc-ebc4f8",
+            "foreground": "#10071aff",
+            "background": "#def0dcff",
+            "muted_100": "#f6d7fcff",
+            "muted_200": "#ebc4f8ff"
+        },
+        "blueberry-cheesecake":{
+            "palette": "https://coolors.co/edf5ec-10071a-56286e-8447a2",
+            "foreground": "#edf5ecff",
+            "background": "#10071aff",
+            "muted_100": "#56286eff",
+            "muted_200": "#8447a2ff"
+        },
+        "neopolitan-ice-cream":{
+            "palette": "https://coolors.co/fff5e0-542b23-ffcced-f587e5",
+            "foreground": "#fff5e0ff",
+            "background": "#542b23ff",
+            "muted_100": "#fdbbebff",
+            "muted_200": "#f587e5ff"
+        }
+    }
+}

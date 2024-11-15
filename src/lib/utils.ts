@@ -4,3 +4,7 @@ import { twMerge } from "tailwind-merge";
 export const cn = (...inputs: ClassValue[]) => {
   return twMerge(clsx(inputs));
 };
+
+export const switchTheme = (theme: string) => {
+  document.querySelector("html")?.setAttribute("data-theme", theme);
+};

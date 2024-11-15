@@ -2,7 +2,7 @@ import React from "react";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
 
-import "./filters.css";
+import "../styles/filters.css";
 
 export const NeonPinkImageFilter = ({
   url,
@@ -24,10 +24,10 @@ export const NeonPinkImageFilter = ({
         height={h}
         width={w}
         alt={`heat map - ${alt}`}
-        className={cn(`Pink dark:Neon ${styles ? styles : ""}`)}
+        className={cn(`GradientMap ${styles ? styles : ""}`)}
         unoptimized={true}
         loading="lazy"
-        objectFit="cover"
+        style={{ objectFit: "cover" }}
       />
       <NeonPinkFilter />
     </>
@@ -59,6 +59,14 @@ export const NeonPinkFilter = () => {
           <feFuncR type="table" tableValues="0.612  0.851  0.921  0.839" />
           <feFuncG type="table" tableValues="0.078  0.35   0.769  0.973" />
           <feFuncB type="table" tableValues="0.706  0.973  0.973  0.816" />
+        </feComponentTransfer>
+      </filter>
+
+      <filter id="neopolitan" colorInterpolationFilters="sRGB">
+        <feComponentTransfer>
+          <feFuncR type="table" tableValues="0.33  0.96  1    1" />
+          <feFuncG type="table" tableValues="0.17  0.53  0.8   0.96" />
+          <feFuncB type="table" tableValues="0.14  0.90  0.93  0.88" />
         </feComponentTransfer>
       </filter>
     </svg>

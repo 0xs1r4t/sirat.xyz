@@ -1,0 +1,25 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html{
+  --filter:  grayscale(100%) url(#neon-lemon);
+}
+
+html[data-theme="neopolitan-ice-cream"] {
+  --filter:  grayscale(100%) url(#neopolitan);
+}
+
+html[data-theme="blueberry-lemon"] {
+  --filter:  grayscale(100%) url(#neon-lemon);
+}
+
+html[data-theme="strawberry-matcha"] {
+  --filter:  grayscale(100%) url(#pinky-pie);
+}
+
+@layer base {
+  .GradientMap {
+    filter: var(--filter);
+  }
+}
