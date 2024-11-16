@@ -1,7 +1,7 @@
 /* default dark theme 🫐🍋 */
 html[data-theme="blueberry-lemon"] {
-  --foreground-rgba: 237, 245, 236, 1;
+  --foreground-rgba: 235, 241, 215, 1;
   --background-rgba: 16, 7, 26, 1;
   --muted-100-rgba: 86, 40, 110, 1;
-  --muted-200-rgba: 132, 71, 162, 1;
+  --muted-200-rgba: 150, 87, 181, 1;
 }

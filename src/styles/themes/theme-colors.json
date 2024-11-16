@@ -3,18 +3,18 @@
     "highlight_background": "#c985eb3f",
     "themes": {
         "strawberry-matcha": {
-            "palette": "https://coolors.co/10071a-def0dc-f6d7fc-ebc4f8",
+            "palette": "https://coolors.co/10071a-def0dc-f6d7fc-e59df8",
             "foreground": "#10071aff",
             "background": "#def0dcff",
             "muted_100": "#f6d7fcff",
-            "muted_200": "#ebc4f8ff"
+            "muted_200": "#e59df8ff"
         },
         "blueberry-cheesecake":{
-            "palette": "https://coolors.co/edf5ec-10071a-56286e-8447a2",
-            "foreground": "#edf5ecff",
+            "palette": "https://coolors.co/edf5ec-10071a-56286e-9657b5",
+            "foreground": "#ebf1d7ff",
             "background": "#10071aff",
             "muted_100": "#56286eff",
-            "muted_200": "#8447a2ff"
+            "muted_200": "#9657b5ff"
         },
         "neopolitan-ice-cream":{
             "palette": "https://coolors.co/fff5e0-542b23-ffcced-f587e5",

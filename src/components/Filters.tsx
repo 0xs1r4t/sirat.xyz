@@ -39,32 +39,23 @@ export const NeonPinkFilter = () => {
     <svg xmlns="http://www.w3.org/2000/svg" width="0" height="0">
       <filter id="neon-lemon" colorInterpolationFilters="sRGB">
         <feComponentTransfer>
-          <feFuncR
-            type="table"
-            tableValues="0.345  0.325  0.871  0.788  0.659"
-          />
-          <feFuncG
-            type="table"
-            tableValues="0.176  0.298  0.373  0.686  0.886"
-          />
-          <feFuncB
-            type="table"
-            tableValues="0.431  0.651  0.717  0.482  0.702"
-          />
+          <feFuncR type="table" tableValues="0.35  0.33  0.87  0.79  0.92" />
+          <feFuncG type="table" tableValues="0.18  0.3   0.37  0.69  0.95" />
+          <feFuncB type="table" tableValues="0.43  0.65  0.72  0.48  0.84" />
         </feComponentTransfer>
       </filter>
 
       <filter id="pinky-pie" colorInterpolationFilters="sRGB">
         <feComponentTransfer>
-          <feFuncR type="table" tableValues="0.612  0.851  0.921  0.839" />
-          <feFuncG type="table" tableValues="0.078  0.35   0.769  0.973" />
-          <feFuncB type="table" tableValues="0.706  0.973  0.973  0.816" />
+          <feFuncR type="table" tableValues="0.35  0.85  0.92  0.84" />
+          <feFuncG type="table" tableValues="0.18  0.35  0.77  0.97" />
+          <feFuncB type="table" tableValues="0.43  0.97  0.97  0.82" />
         </feComponentTransfer>
       </filter>
 
       <filter id="neopolitan" colorInterpolationFilters="sRGB">
         <feComponentTransfer>
-          <feFuncR type="table" tableValues="0.33  0.96  1    1" />
+          <feFuncR type="table" tableValues="0.33  0.96  1     1" />
           <feFuncG type="table" tableValues="0.17  0.53  0.8   0.96" />
           <feFuncB type="table" tableValues="0.14  0.90  0.93  0.88" />
         </feComponentTransfer>
