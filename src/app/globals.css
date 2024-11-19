@@ -3,28 +3,6 @@
 @tailwind utilities;
 
 @layer base {
-  /* light theme */
-  :root {
-    --foreground-rgba: 16, 7, 26, 1;
-    --background-rgba: 222, 240, 220, 1;
-    /* --background-rgba: 214, 248, 208, 1; */
-    /* --background-rgba: 252, 242, 252, 1; */
-    --muted-100-rgba: 246, 215, 252, 1;
-    --muted-200-rgba: 235, 196, 248, 1;
-
-    --highlight-font-rgba: 201, 133, 235, 1;
-    --highlight-background-rgba: 201, 133, 235, 0.25;
-  }
-  /* dark theme */
-  .dark {
-    --foreground-rgba: 237, 245, 236, 1;
-    /* --foreground-rgba: 233, 223, 246, 1; */
-    /* --foreground-rgba: 214, 248, 208, 1; */
-    --background-rgba: 16, 7, 26, 1;
-    --muted-100-rgba: 86, 40, 110, 1;
-    --muted-200-rgba: 132, 71, 162, 1;
-  }
-
   /* *******************************************************************
   This cursor is from https://cur.cursors-4u.net/
   https://www.cursors-4u.com/cursor/2011/11/26/shiny-violet-star.html
@@ -42,6 +20,44 @@
   html {
     padding: 0;
     margin: 0;
+
+    /* light/default theme */
+    --foreground-rgba: 16, 7, 26, 1;
+    --background-rgba: 233, 245, 219, 1;
+    --muted-100-rgba: 246, 215, 252, 1;
+    --muted-200-rgba: 229, 157, 248, 1;
+
+    --select-text-rgba: 201, 133, 235, 1;
+    --select-text-background-rgba: 201, 133, 235, 0.25;
+  }
+
+  /* default dark theme 🫐🍋 */
+  html[data-theme="blueberry-lemon"],
+  html[data-theme="dark"],
+  .dark {
+    --foreground-rgba: 235, 241, 215, 1;
+    --background-rgba: 16, 7, 26, 1;
+    --muted-100-rgba: 86, 40, 110, 1;
+    --muted-200-rgba: 150, 87, 181, 1;
+  }
+
+  /* neopolitan ice cream 🍥🍫 */
+  html[data-theme="neopolitan-ice-cream"] {
+    --foreground-rgba: 84, 43, 35, 1;
+    --background-rgba: 255, 245, 224, 1;
+    --muted-100-rgba: 255, 204, 237, 1;
+    --muted-200-rgba: 245, 135, 229, 1;
+
+    --select-text-rgba: 245, 135, 229, 1;
+    --select-text-background-rgba: 255, 204, 237, 0.5;
+  }
+
+  /* default light theme 🍓🧋 */
+  html[data-theme="strawberry-matcha"] {
+    --foreground-rgba: 16, 7, 26, 1;
+    --background-rgba: 233, 245, 219, 1;
+    --muted-100-rgba: 246, 215, 252, 1;
+    --muted-200-rgba: 229, 157, 248, 1;
   }
 
   body {
@@ -54,13 +70,13 @@
 
   /* selection styles */
   ::selection {
-      color: rgba(var(--highlight-font-rgba));
-      background-color: rgba(var(--highlight-background-rgba));
+    color: rgba(var(--select-text-rgba));
+    background-color: rgba(var(--select-text-background-rgba));
   }
 
   ::-moz-selection {
-      color: rgba(var(--highlight-font-rgba));
-      background-color: rgba(var(--highlight-background-rgba));
+    color: rgba(var(--select-text-rgba));
+    background-color: rgba(var(--select-text-background-rgba));
   }
 
   /* scrollbar styles */
@@ -69,7 +85,7 @@
   }
 
   body::-webkit-scrollbar-track {
-    -webkit-box-shadow: inset 0 0 3px rgba(0,0,0,0.3);
+    -webkit-box-shadow: inset 0 0 3px rgba(0, 0, 0, 0.3);
   }
 
   body::-webkit-scrollbar-thumb {
@@ -79,17 +95,41 @@
 
   /* cursor animation */
   @-webkit-keyframes starCursor {
-    0%, 25% { cursor: url('/cursors/sym629/0001.png'), auto; }
-    25%, 50% { cursor: url('/cursors/sym629/0002.png'), auto; }
-    50%, 75% { cursor: url('/cursors/sym629/0003.png'), auto; }
-    75%, 100% { cursor: url('/cursors/sym629/0004.png'), auto; }
+    0%,
+    25% {
+      cursor: url("/cursors/sym629/0001.png"), auto;
+    }
+    25%,
+    50% {
+      cursor: url("/cursors/sym629/0002.png"), auto;
+    }
+    50%,
+    75% {
+      cursor: url("/cursors/sym629/0003.png"), auto;
+    }
+    75%,
+    100% {
+      cursor: url("/cursors/sym629/0004.png"), auto;
+    }
   }
 
   @keyframes starCursor {
-    0%, 25% { cursor: url('/cursors/sym629/0001.png'), auto; }
-    25%, 50% { cursor: url('/cursors/sym629/0002.png'), auto; }
-    50%, 75% { cursor: url('/cursors/sym629/0003.png'), auto; }
-    75%, 100% { cursor: url('/cursors/sym629/0004.png'), auto; }
+    0%,
+    25% {
+      cursor: url("/cursors/sym629/0001.png"), auto;
+    }
+    25%,
+    50% {
+      cursor: url("/cursors/sym629/0002.png"), auto;
+    }
+    50%,
+    75% {
+      cursor: url("/cursors/sym629/0003.png"), auto;
+    }
+    75%,
+    100% {
+      cursor: url("/cursors/sym629/0004.png"), auto;
+    }
   }
 }
 

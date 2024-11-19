@@ -19,8 +19,8 @@ const Sidebar = () => {
       >
         <button
           onClick={() => setIsOpen(!isOpen)}
-          className={`fixed z-20 flex justify-center items-center p-1 h-max top-14 rounded-e-md bg-muted-100 border-2 border-muted-200 transition-all duration-500 ease-in-out
-          ${isOpen ? "left-[11.75rem]" : "left-0"}`}
+          className={`fixed z-20 flex justify-center items-center p-1 aspect-square top-[4.5rem] rounded-e-md bg-muted-100 border-2 border-muted-200 transition-all duration-500 ease-in-out
+          ${isOpen ? "left-[11.25rem]" : "left-0"}`}
         >
           <span
             aria-label="hidden"
@@ -28,7 +28,7 @@ const Sidebar = () => {
               isOpen ? "rotate-0" : "rotate-180"
             } transition-transform duration-500 ease-in-out`}
           >
-            <Icons.chevron className="w-4 h-4 lg:w-5 lg:h-5" />
+            <Icons.doubleChevron className="w-4 h-4 lg:w-5 lg:h-5" />
           </span>
         </button>
       </Tooltip>
@@ -36,11 +36,13 @@ const Sidebar = () => {
       {/* Sidebar navigation */}
       <nav
         aria-label="sidebar"
-        className={`flex flex-col fixed z-30 items-center justify-between top-12 left-4 py-1.5 lg:py-2 w-44 max-h-96 min-h-[85%] bg-muted-100 border-2 border-muted-200 rounded-lg overflow-hidden transition-transform duration-500 ease-in-out
+        className={`flex flex-col fixed z-30 items-center justify-between top-16 left-2 py-1.5 lg:py-2 w-44 bg-muted-100 border-2 border-muted-200 rounded-lg overflow-hidden transition-transform duration-500 ease-in-out
           ${isOpen ? "translate-x-0" : "-translate-x-48"}`}
         aria-hidden={!isOpen}
       >
         <SpotifyPlayer />
+        <span aria-hidden="true">&nbsp;</span>
+        <span aria-hidden="true">&nbsp;</span>
 
         {/* Navigation and Social Links */}
         <div className="flex flex-col flex-nowrap">
