@@ -28,35 +28,45 @@ const Breadcrumb = () => {
       currentLink += `/${crumb}`;
 
       const pathCrumb =
-        isMobile && index < array.length - 1
-          ? ".."
-          : crumb == "garden"
-          ? "🌼 garden"
+        crumb == "garden"
+          ? isMobile
+            ? "🌼"
+            : "🌼 garden"
           : crumb == "graphics"
-          ? "🎨 graphics"
-          : crumb == "not-found"
-          ? "404 :("
+          ? isMobile
+            ? "🎨"
+            : "🎨 graphics"
+          : isMobile && index < array.length - 1
+          ? ".."
           : crumb.replace(/-/g, " ");
       console.log(pathCrumb);
 
       return (
         <div aria-label={`follow the crumb to "${crumb}"`} key={crumb}>
-          <span>&nbsp;{"/"}&nbsp;</span>
-          <Link
-            href={currentLink}
-            className="cursor-pointer hover:bg-muted-100 hover:rounded-md px-1 py-0.5 lg:text-lg"
-          >
-            {pathCrumb}
-          </Link>
+          <button className="flex flex-row gap-1" role="button">
+            <span aria-label="hidden" className="self-center">
+              &nbsp;{`/`}
+            </span>
+            <Link
+              href={currentLink}
+              className="cursor-pointer hover:bg-muted-200 hover:rounded-md px-1 lg:text-lg"
+            >
+              {pathCrumb}
+            </Link>
+          </button>
         </div>
       );
     });
 
   return (
-    <div aria-label="breadcrumb" className="flex flex-wrap p-2">
+    <div
+      aria-label="breadcrumb"
+      className="inline-flex self-center mt-2 ml-2 p-1 rounded-md bg-muted-100 border-2 border-muted-200"
+      role="group"
+    >
       <Link
         href="/"
-        className="cursor-pointer hover:bg-muted-100 hover:rounded-md px-1 lg:text-lg"
+        className="cursor-pointer self-center hover:bg-muted-200 hover:rounded-md px-1 lg:text-lg"
       >
         <span>{homeCrumb}</span>
       </Link>

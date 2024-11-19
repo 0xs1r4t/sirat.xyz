@@ -1,7 +1,31 @@
 type IconProps = React.HTMLAttributes<SVGElement>;
 
 export const Icons = {
-  chevron: (props: IconProps) => (
+  singleChevron: (props: IconProps) => (
+    <svg
+      role="graphics-symbol"
+      width="800px"
+      height="800px"
+      viewBox="0 0 24 24"
+      className="block fill-none flex-shrink-0"
+      xmlns="http://www.w3.org/2000/svg"
+      {...props}
+    >
+      <g xmlns="http://www.w3.org/2000/svg" id="Complete">
+        <g id="F-Chevron">
+          <polyline
+            fill="currentColor"
+            id="Right"
+            points="8.5 5 15.5 12 8.5 19"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+          />
+        </g>
+      </g>
+    </svg>
+  ),
+  doubleChevron: (props: IconProps) => (
     <svg
       role="graphics-symbol"
       viewBox="0 0 16 16"

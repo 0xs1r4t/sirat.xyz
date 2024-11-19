@@ -3,9 +3,9 @@
     "highlight_background": "#c985eb3f",
     "themes": {
         "strawberry-matcha": {
-            "palette": "https://coolors.co/10071a-def0dc-f6d7fc-e59df8",
+            "palette": "https://coolors.co/10071a-e9f5db-f6d7fc-e59df8",
             "foreground": "#10071aff",
-            "background": "#def0dcff",
+            "background": "#e9f5dbff",
             "muted_100": "#f6d7fcff",
             "muted_200": "#e59df8ff"
         },

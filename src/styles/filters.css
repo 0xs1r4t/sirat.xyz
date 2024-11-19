@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 html{
-  --filter:  grayscale(100%) url(#neon-lemon);
+  --filter:  grayscale(100%) url(#strawberry-matcha-gradient);
 }
 
 html[data-theme="neopolitan-ice-cream"] {
@@ -15,7 +15,7 @@ html[data-theme="blueberry-lemon"] {
 }
 
 html[data-theme="strawberry-matcha"] {
-  --filter:  grayscale(100%) url(#pinky-pie);
+  --filter: grayscale(100%) url(#strawberry-matcha-gradient);
 }
 
 @layer base {

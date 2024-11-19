@@ -1,9 +1,8 @@
 import "./globals.css";
 import type { Metadata, Viewport } from "next";
 import { myMetadata, myViewport } from "@/lib/metadata";
-// import ThemeProvider from "@/components/ThemeProvider";
-// import ThemeToggle from "@/components/ThemeToggle";
 import ThemeSwitcher from "@/components/ThemeSwitcher";
+
 import {
   AuthenticSans,
   AuthenticSansCondensed,
@@ -28,12 +27,10 @@ const RootLayout = ({ children }: Readonly<{ children: React.ReactNode }>) => {
           Monaco.variable
         )}
       >
-        {/* <ThemeProvider> */}
         <div className="fixed top-0 z-10 flex justify-between w-full">
           <span className="flex flex-row justify-start">
             <Breadcrumb />
           </span>
-          {/* <ThemeToggle /> */}
           <ThemeSwitcher />
         </div>
         <div className="flex flex-row">
@@ -42,7 +39,6 @@ const RootLayout = ({ children }: Readonly<{ children: React.ReactNode }>) => {
             {children}
           </main>
         </div>
-        {/* </ThemeProvider> */}
       </body>
     </html>
   );

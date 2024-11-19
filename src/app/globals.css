@@ -23,16 +23,18 @@
 
     /* light/default theme */
     --foreground-rgba: 16, 7, 26, 1;
-    --background-rgba: 222, 240, 220, 1;
+    --background-rgba: 233, 245, 219, 1;
     --muted-100-rgba: 246, 215, 252, 1;
-    --muted-200-rgba: 235, 196, 248, 1;
+    --muted-200-rgba: 229, 157, 248, 1;
 
     --select-text-rgba: 201, 133, 235, 1;
     --select-text-background-rgba: 201, 133, 235, 0.25;
   }
 
   /* default dark theme 🫐🍋 */
-  html[data-theme="blueberry-lemon"], html[data-theme="dark"], .dark {
+  html[data-theme="blueberry-lemon"],
+  html[data-theme="dark"],
+  .dark {
     --foreground-rgba: 235, 241, 215, 1;
     --background-rgba: 16, 7, 26, 1;
     --muted-100-rgba: 86, 40, 110, 1;
@@ -53,7 +55,7 @@
   /* default light theme 🍓🧋 */
   html[data-theme="strawberry-matcha"] {
     --foreground-rgba: 16, 7, 26, 1;
-    --background-rgba: 222, 240, 220, 1;
+    --background-rgba: 233, 245, 219, 1;
     --muted-100-rgba: 246, 215, 252, 1;
     --muted-200-rgba: 229, 157, 248, 1;
   }
