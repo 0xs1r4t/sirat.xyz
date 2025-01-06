@@ -2,6 +2,7 @@
 
 import { usePathname } from "next/navigation";
 import Link from "next/link";
+import { Icons } from "@/components/Icons";
 import { useEffect, useState } from "react";
 
 const Breadcrumb = () => {
@@ -20,7 +21,14 @@ const Breadcrumb = () => {
     };
   }, []);
 
-  const homeCrumb = isMobile ? "🏡" : "🏡 home";
+  const homeCrumb = isMobile ? (
+    <Icons.home />
+  ) : (
+    <span className="flex flex-nowrap items-center">
+      <Icons.home />
+      &nbsp;home
+    </span>
+  );
   const crumbs = currentPath
     .split("/")
     .filter((crumb) => crumb !== "")
@@ -36,8 +44,8 @@ const Breadcrumb = () => {
           ? isMobile
             ? "🎨"
             : "🎨 graphics"
-          : isMobile && index < array.length - 1
-          ? ".."
+          : isMobile && index < array.length
+          ? "📖"
           : crumb.replace(/-/g, " ");
       console.log(pathCrumb);
 

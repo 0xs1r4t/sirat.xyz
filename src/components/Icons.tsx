@@ -1,3 +1,4 @@
+import Image from "next/image";
 type IconProps = React.HTMLAttributes<SVGElement>;
 
 export const Icons = {
@@ -24,6 +25,42 @@ export const Icons = {
         </g>
       </g>
     </svg>
+  ),
+  home: () => (
+    <Image
+      aria-hidden="true"
+      width={22}
+      height={22}
+      src="/icons/custom/HOUSE.svg"
+      alt="home icon"
+    />
+  ),
+  matcha: () => (
+    <Image
+      aria-hidden="true"
+      width={22}
+      height={22}
+      src="/icons/custom/MATCHA.svg"
+      alt="strawberry matcha theme icon"
+    />
+  ),
+  iceCream: () => (
+    <Image
+      aria-hidden="true"
+      width={22}
+      height={22}
+      src="/icons/custom/ICECREAM.svg"
+      alt="neopolitan ice-cream theme icon"
+    />
+  ),
+  cheesecake: () => (
+    <Image
+      aria-hidden="true"
+      width={22}
+      height={22}
+      src="/icons/custom/CHEESECAKE.svg"
+      alt="blueberry cheesecake theme icon"
+    />
   ),
   doubleChevron: (props: IconProps) => (
     <svg

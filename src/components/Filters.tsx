@@ -1,38 +1,6 @@
 import React from "react";
-import Image from "next/image";
-import { cn } from "@/lib/utils";
 
 import "../styles/filters.css";
-
-export const NeonPinkImageFilter = ({
-  url,
-  h,
-  w,
-  alt,
-  styles,
-}: {
-  url: string;
-  h: number;
-  w: number;
-  alt: string;
-  styles?: string;
-}) => {
-  return (
-    <>
-      <Image
-        src={url}
-        height={h}
-        width={w}
-        alt={`gradient map - ${alt}`}
-        className={cn(`GradientMap ${styles ? styles : ""}`)}
-        unoptimized={true}
-        loading="lazy"
-        style={{ objectFit: "cover" }}
-      />
-      <Filters />
-    </>
-  );
-};
 
 export const Filters = () => {
   return (
