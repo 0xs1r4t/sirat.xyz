@@ -1,6 +1,7 @@
 import "./globals.css";
 import type { Metadata, Viewport } from "next";
 import { myMetadata, myViewport } from "@/lib/metadata";
+import ThemeProvider from "@/components/ThemeProvider";
 import ThemeSwitcher from "@/components/ThemeSwitcher";
 
 import {
@@ -27,18 +28,28 @@ const RootLayout = ({ children }: Readonly<{ children: React.ReactNode }>) => {
           Monaco.variable
         )}
       >
-        <div className="fixed top-0 z-10 flex justify-between w-full">
-          <span className="flex flex-row justify-start">
-            <Breadcrumb />
-          </span>
-          <ThemeSwitcher />
-        </div>
-        <div className="flex flex-row">
-          <Sidebar />
-          <main className="container relative flex flex-col items-center justify-between w-full top-10 px-5">
-            {children}
-          </main>
-        </div>
+        <ThemeProvider
+          defaultTheme="strawberry-matcha"
+          enableColorScheme
+          themes={[
+            "strawberry-matcha",
+            "neopolitan-ice-cream",
+            "blueberry-lemon",
+          ]}
+        >
+          <div className="fixed top-0 z-10 flex justify-between w-full">
+            <span className="flex flex-row justify-start">
+              <Breadcrumb />
+            </span>
+            <ThemeSwitcher />
+          </div>
+          <div className="flex flex-row">
+            <Sidebar />
+            <main className="container relative flex flex-col items-center justify-between w-full top-10 px-5">
+              {children}
+            </main>
+          </div>
+        </ThemeProvider>
       </body>
     </html>
   );

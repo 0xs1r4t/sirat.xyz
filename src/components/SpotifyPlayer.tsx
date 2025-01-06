@@ -3,11 +3,12 @@
 import React from "react";
 
 import Link from "next/link";
+import Image from "next/image";
 import useSWR from "swr";
 import fetcher from "@/lib/fetcher";
 
 import { Tooltip } from "@/components/Tooltip";
-import { NeonPinkImageFilter } from "@/components/Filters";
+import { Filters } from "@/components/Filters";
 
 const refresh: number = 214400;
 
@@ -22,13 +23,17 @@ const Spotify = ({ song }: { song: Song | null }) => {
           className="flex flex-col items-center justify-center p-2"
         >
           <div className="rounded-md w-36 h-36 bg-muted-200 border-2 border-muted-200 z-30">
-            <NeonPinkImageFilter
-              url={song.albumImageUrl}
-              alt="album cover"
-              w={144}
-              h={144}
-              styles="rounded-md z-40"
+            <Image
+              src={song.albumImageUrl}
+              alt={`album cover`}
+              height={144}
+              width={144}
+              className="GradientMap rounded-md z-40"
+              unoptimized={false}
+              loading="lazy"
+              style={{ objectFit: "cover" }}
             />
+            <Filters />
           </div>
           <span className="w-36 overflow-x-hidden">
             <p className="animate-marquee self-center text-nowrap text-sm lg:text-base whitespace-nowrap hover:animate-paused">
@@ -42,13 +47,16 @@ const Spotify = ({ song }: { song: Song | null }) => {
     return (
       <div className="flex flex-col items-center justify-center p-2">
         <div className="rounded-md w-36 h-36 bg-muted-200 border-2 border-muted-200 z-30">
-          <NeonPinkImageFilter
-            url="/assets/no-music-playing.webp"
+          <Image
+            src="/images/no-music-playing.webp"
             alt="no music is playing :("
-            w={144}
-            h={144}
-            styles="rounded-md z-40"
+            height={144}
+            width={144}
+            className={`GradientMap rounded-md z-40`}
+            loading="lazy"
+            style={{ objectFit: "cover" }}
           />
+          <Filters />
         </div>
         <span className="w-36 overflow-x-hidden">
           <p className="animate-marquee self-center text-nowrap text-sm lg:text-base whitespace-nowrap hover:animate-paused">{`There is no song playing right now :(`}</p>

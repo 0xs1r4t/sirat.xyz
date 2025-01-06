@@ -31,7 +31,8 @@
     "swr": "^2.2.5",
     "tailwind-merge": "^2.2.1",
     "uninstall": "^0.0.0",
-    "use-debounce": "^10.0.0"
+    "use-debounce": "^10.0.0",
+    "use-sound": "^4.0.3"
   },
   "devDependencies": {
     "@commitlint/cli": "^19.0.3",
