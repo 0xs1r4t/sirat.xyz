@@ -1,4 +1,5 @@
 import { cloneElement, Fragment, useState } from "react";
+import { createPortal } from "react-dom";
 import {
   Placement,
   offset,
@@ -48,16 +49,18 @@ export function Tooltip({ children, label, placement }: Props) {
   return (
     <Fragment>
       {cloneElement(children, getReferenceProps({ ref, ...children.props }))}
-      {open && (
-        <div
-          className="Tooltip z-50 flex flex-wrap rounded-md bg-muted-100 border-2 border-muted-200 px-2 py-1 text-xs text-center text-wrap max-w-[9.5rem]"
-          ref={refs.setFloating}
-          style={floatingStyles}
-          {...getFloatingProps()}
-        >
-          {label}
-        </div>
-      )}
+      {open &&
+        createPortal(
+          <div
+            className="Tooltip z-50 flex flex-wrap rounded-md bg-muted-100 border-2 border-muted-200 px-2 py-1 text-xs text-center text-wrap max-w-[9.5rem]"
+            ref={refs.setFloating}
+            style={floatingStyles}
+            {...getFloatingProps()}
+          >
+            {label}
+          </div>,
+          document.body
+        )}
     </Fragment>
   );
 }
