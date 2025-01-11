@@ -14,14 +14,14 @@ const ThemeSwitcher = () => {
     setMounted(true);
   }, []);
 
-  const themes: Record<string, string | JSX.Element> = {
+  const themes: Record<string, JSX.Element> = {
     "strawberry-matcha": <Icons.matcha />,
     "neopolitan-ice-cream": <Icons.iceCream />,
     "blueberry-lemon": <Icons.cheesecake />,
   };
 
   return (
-    <div className="flex gap-1">
+    <div className="flex flex-col lg:flex-row gap-1 top-0 right-0 absolute z-50">
       {Object.entries(themes).map(([key, value]) => (
         <Tooltip
           key={key}

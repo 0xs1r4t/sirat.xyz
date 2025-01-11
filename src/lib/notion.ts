@@ -40,50 +40,34 @@ export const getPublishedPages = cache(() => {
 // search content by a page's content
 // https://developers.notion.com/reference/post-search
 // notion searches all parent or child pages and databases that have been shared with an integration.
-export const searchPagesByContent = cache((content: string) => {
-  return notion
-    .search({
-      query: content,
-      filter: {
-        value: "page",
-        property: "object",
-      },
-      sort: {
-        direction: "descending",
-        timestamp: "last_edited_time",
-      },
-    })
-    .then((res) => res.results as Array<DatabaseObjectResponse>);
-});
-
-// search for pages that are published
-// by their title, description, and tags
 export const getPagesByProps = cache((q: string) => {
   return notion.databases
     .query({
-      // filter_properties: ["title", "description", "tags"],
+      database_id: NOTION_DATABASE_ID!,
       filter: {
-        or: [
-          {
-            property: "title",
-            title: {
-              contains: q,
-            },
-          },
-          {
-            property: "description",
-            rich_text: {
-              contains: q,
-            },
-          },
-          {
-            property: "tags",
-            multi_select: {
-              contains: q,
-            },
-          },
-        ],
         and: [
+          {
+            or: [
+              {
+                property: "title",
+                title: {
+                  contains: q,
+                },
+              },
+              {
+                property: "description",
+                rich_text: {
+                  contains: q,
+                },
+              },
+              {
+                property: "tags",
+                multi_select: {
+                  contains: q,
+                },
+              },
+            ],
+          },
           {
             property: "status",
             select: {
@@ -93,8 +77,6 @@ export const getPagesByProps = cache((q: string) => {
         ],
       },
       sorts: [{ direction: "descending", timestamp: "created_time" }],
-
-      database_id: NOTION_DATABASE_ID!,
     })
     .then((res) => res.results as Array<DatabaseObjectResponse>);
 });
@@ -104,17 +86,15 @@ export const getPagesByProps = cache((q: string) => {
 export const getPagesByTag = cache((tag: string) => {
   return notion.databases
     .query({
-      // filter_properties: ["title", "description", "tags"],
+      database_id: NOTION_DATABASE_ID!,
       filter: {
-        or: [
+        and: [
           {
             property: "tags",
             multi_select: {
               contains: tag,
             },
           },
-        ],
-        and: [
           {
             property: "status",
             select: {
@@ -124,8 +104,6 @@ export const getPagesByTag = cache((tag: string) => {
         ],
       },
       sorts: [{ direction: "descending", timestamp: "created_time" }],
-
-      database_id: NOTION_DATABASE_ID!,
     })
     .then((res) => res.results as Array<DatabaseObjectResponse>);
 });

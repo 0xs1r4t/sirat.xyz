@@ -12,11 +12,15 @@ import { Filters } from "@/components/Filters";
 
 const refresh: number = 214400;
 
-const Spotify = ({ song }: { song: Song | null }) => {
+interface SpotifyProps {
+  song: Song | null;
+}
+
+const Spotify = ({ song }: SpotifyProps) => {
   if (song != null) {
     console.log(song.albumImageUrl);
     return (
-      <Tooltip label="click to open this song in spotify" placement="bottom">
+      <Tooltip label="click to open this song in spotify" placement="right">
         <Link
           href={song.songUrl}
           target="_blank"
@@ -35,10 +39,10 @@ const Spotify = ({ song }: { song: Song | null }) => {
             />
             <Filters />
           </div>
-          <span className="w-36 overflow-x-hidden">
-            <p className="animate-marquee self-center text-nowrap text-sm lg:text-base whitespace-nowrap hover:animate-paused">
+          <span className="w-36 overflow-x-hidden relative">
+            <div className="whitespace-nowrap inline-block animate-marquee text-sm lg:text-base hover:animate-paused">
               {song.title} by {song.artist} {song.message}
-            </p>
+            </div>
           </span>
         </Link>
       </Tooltip>

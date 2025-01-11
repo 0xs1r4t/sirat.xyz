@@ -4,10 +4,10 @@ declare global {
   type Song = {
     artist: string;
     albumImageUrl: string;
-    isPlaying: boolean;
     songUrl: string;
     title: string;
-    message: string;
+    message?: string;
+    isPlaying?: boolean;
   };
 
   type PostSummary = {

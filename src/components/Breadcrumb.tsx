@@ -22,10 +22,10 @@ const Breadcrumb = () => {
   }, []);
 
   const homeCrumb = isMobile ? (
-    <Icons.home />
+    <Icons.home size={22} />
   ) : (
     <span className="flex flex-nowrap items-center">
-      <Icons.home />
+      <Icons.home size={22} />
       &nbsp;home
     </span>
   );

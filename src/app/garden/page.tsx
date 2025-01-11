@@ -1,4 +1,5 @@
 import React, { Fragment } from "react";
+
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 
@@ -12,6 +13,7 @@ import { isoToNormalDate, isoToShortHandDate } from "@/lib/date";
 import Heading from "@/components/Heading";
 import Search from "@/components/Garden/Search";
 import Summary from "@/components/Garden/Summary";
+import NoPostSummary from "@/components/Garden/NoPostSummary";
 
 export const metadata: Metadata = {
   title: "🌐🌼 digital garden",
@@ -22,18 +24,27 @@ const Page = async ({
 }: {
   searchParams?: {
     q?: string;
+    tag?: string;
   };
 }) => {
   let pages = await getPublishedPages();
 
-  // If no blogs are published, then display a message??
-  // if (pages.length == 0) {
-  // return <NoPostSummary />;
-  // }
+  if (searchParams?.q) {
+    pages = await getPagesByProps(searchParams.q);
+  }
 
-  const content: string = searchParams?.q || "";
-  if (content != "") {
-    pages = await getPagesByProps(content);
+  if (searchParams?.tag) {
+    pages = await getPagesByTag(searchParams.tag);
+  }
+
+  if (pages.length === 0) {
+    return (
+      <Fragment>
+        <Heading title="MY DIGITAL GARDEN" />
+        <Search placeholder="🔍 Search this garden 🦗" />
+        <NoPostSummary />
+      </Fragment>
+    );
   }
 
   if (!pages) notFound();
