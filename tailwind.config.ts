@@ -41,7 +41,7 @@ const config: Config = {
         },
       },
       animation: {
-        marquee: "marquee 15s linear infinite",
+        marquee: "marquee 20s linear infinite",
       },
       zoom: {
         large: { transform: "scale(1.2)" },
