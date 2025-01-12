@@ -1,15 +1,12 @@
 import React from "react";
 import { Snake } from "@/graphics/Snake";
-import { Fragment } from "react";
 
-const Canvas = () => {
+const SnakeCanvas = () => {
   return (
-    <Fragment>
-      <div className="overflow-hidden max-h-[85svh] w-full mx-2 mt-2 rounded-lg">
-        <Snake />
-      </div>
-    </Fragment>
+    <div className="overflow-hidden max-h-[90svh] md:max-h-[85vh] w-full mx-2 mt-2 md:mx-4 md:mt-4 rounded-lg">
+      <Snake />
+    </div>
   );
 };
 
-export default Canvas;
+export default SnakeCanvas;

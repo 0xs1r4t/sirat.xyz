@@ -1,6 +1,7 @@
 import React from "react";
 import Link from "next/link";
 import Heading from "@/components/Heading";
+import { Icons } from "@/components/Icons";
 
 const Home = () => {
   return (
@@ -10,19 +11,24 @@ const Home = () => {
         <Link
           aria-label="garden"
           href="/garden"
-          className="cursor-pointer text-lg lg:text-xl hover:bg-muted-100 hover:rounded-md px-1 py-0.5"
+          className="cursor-pointer flex flex-nowrap items-center text-lg lg:text-xl hover:bg-muted-100 hover:rounded-md px-1 py-0.5"
         >
-          <span aria-hidden="true">{"🌼 "}</span>
-          digital garden
+          <span aria-hidden="true">
+            <Icons.digiGarden size={22} />
+          </span>
+          &nbsp;digital garden
         </Link>{" "}
       </p>
       <p>
         <Link
           aria-label="graphics"
           href="/graphics"
-          className="cursor-pointer text-lg lg:text-xl hover:bg-muted-100 hover:rounded-md px-1 py-0.5"
+          className="cursor-pointer flex flex-nowrap items-center text-lg lg:text-xl hover:bg-muted-100 hover:rounded-md px-1 py-0.5"
         >
-          <span aria-hidden="true">{"🎨 "}</span>visual experiments
+          <span aria-hidden="true">
+            <Icons.palette size={22} />
+          </span>
+          &nbsp;visual experiments
         </Link>{" "}
       </p>
     </div>

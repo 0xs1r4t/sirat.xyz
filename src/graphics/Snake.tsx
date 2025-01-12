@@ -11,21 +11,21 @@ import { NextReactP5Wrapper } from "@p5-wrapper/next";
  ***/
 
 export const Snake = () => {
-  let x: number,
-    y: number,
-    points: Vector[],
-    target: Vector,
-    leader: Vector,
-    i: number;
-  // windowSize: number;
-
-  let value: number = 300,
-    back: number = 120,
-    num: number = 80,
-    radius: number = 150;
-  let degrees: number[] = [];
-
   const sketch: Sketch = (p: P5CanvasInstance) => {
+    let x: number,
+      y: number,
+      points: Vector[],
+      target: Vector,
+      leader: Vector,
+      i: number;
+    // windowSize: number;
+
+    let value: number = 300;
+    let back: number = 120;
+    let num: number = p.windowWidth < 768 ? 40 : 80; // fewer segments on mobile
+    let radius: number = p.windowWidth < 768 ? 75 : 150; // smaller radius on mobile
+    let degrees: number[] = [];
+
     class Circle {
       distance: Vector;
       velocity: Vector;
@@ -48,10 +48,16 @@ export const Snake = () => {
         this.distance.y = leader.y - this.points[i].y;
         this.velocity = this.distance.mult(this.ease);
         this.points[i].add(this.velocity);
-        // hue = value
-        // saturation = (num - i + 5) / 3 or 28
-        // brightness = 90
-        // alpha = (num - i) * 1.25
+
+        /**************************************
+         * original values:
+         *
+        hue = value
+        saturation = (num - i + 5) / 3 or 28
+        brightness = 90
+        alpha = (num - i) * 1.25
+         *
+        **************************************/
         p.fill(value, (num - i + 5) / 3, 90, (num - i) * 1.25);
         p.ellipse(this.points[i].x, this.points[i].y, radius, radius);
         this.velocity.lerp(this.distance, this.ease);
@@ -60,13 +66,14 @@ export const Snake = () => {
 
     p.setup = () => {
       p.disableFriendlyErrors = true;
-      // windowSize = p.min(p.windowWidth, p.windowHeight);
 
-      // let myCanvas = p.createCanvas(windowSize, windowSize, "p2d");
       let myCanvas = p.createCanvas(p.windowWidth, p.windowHeight, "p2d");
       addDegrees(); // add degrees 0 - 360 in degrees
-      myCanvas.mouseClicked(chooseRandColor);
+
       p.colorMode(p.HSB, 360, 100, 100, 100); // with alpha (transparency)
+      p.noCursor();
+      p.frameRate(30);
+
       points = new Array<Vector>(num);
 
       for (i = 0; i < num; i++) {
@@ -78,9 +85,19 @@ export const Snake = () => {
       p.resizeCanvas(p.windowWidth, p.windowHeight);
     };
 
+    p.mousePressed = () => {
+      chooseRandColor();
+    };
+
+    p.touchStarted = () => {
+      chooseRandColor();
+      return false; // prevents default behaviours like scrolling
+    };
+
     const addDegrees = () => {
       for (i = 0; i <= 360; i += 30) {
         degrees.push(i);
+        // increment every 30 degrees to switch between 12 colours
       }
     };
 
@@ -96,11 +113,16 @@ export const Snake = () => {
 
     p.draw = () => {
       p.background(back, 20, 100);
-      // p.background(0, 0, 100);
       p.noStroke();
+
+      // touch for mobile, mouse for pc
+      // p.touches.length > 0 ? p.cursor("none") : p.cursor("default");
+      // x = p.touches.length > 0 ? p.touches[0].x : p.mouseX;
+      // y = p.touches.length > 0 ? p.touches[0].y : p.mouseY;
       x = p.mouseX;
       y = p.mouseY;
 
+      // set target to mouse position
       target = p.createVector(x, y);
       leader = p.createVector(target.x, target.y);
 

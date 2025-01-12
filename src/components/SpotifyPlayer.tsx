@@ -63,7 +63,7 @@ const Spotify = ({ song }: SpotifyProps) => {
           <Filters />
         </div>
         <span className="w-36 overflow-x-hidden">
-          <p className="animate-marquee self-center text-nowrap text-sm lg:text-base whitespace-nowrap hover:animate-paused">{`There is no song playing right now :(`}</p>
+          <p className="w-32 animate-marquee self-center text-nowrap text-sm lg:text-base whitespace-nowrap hover:animate-paused">{`There is no song playing right now :(`}</p>
         </span>
       </div>
     );

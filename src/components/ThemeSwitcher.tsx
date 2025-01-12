@@ -21,7 +21,7 @@ const ThemeSwitcher = () => {
   };
 
   return (
-    <div className="flex flex-col lg:flex-row gap-1 top-0 right-0 absolute z-50">
+    <div className="flex flex-col md:flex-row gap-1 top-0 right-0 absolute z-50">
       {Object.entries(themes).map(([key, value]) => (
         <Tooltip
           key={key}
@@ -33,7 +33,6 @@ const ThemeSwitcher = () => {
             className="z-20 p-1.5 aspect-square self-end inline-flex justify-center items-center top-14 mt-2 mr-2 rounded-md bg-muted-100 border-2 border-muted-200 focus:border-2 focus:rounded-lg focus:border-muted-200 focus:ring-2 focus:ring-muted-200 focus:shadow-sm focus:shadow-muted-200 transition-all duration-500 ease-in-out"
             onClick={() => {
               setTheme(key);
-              // switchTheme(key);
             }}
           >
             <span

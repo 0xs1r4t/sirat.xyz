@@ -35,25 +35,37 @@ const Breadcrumb = () => {
     .map((crumb, index, array) => {
       currentLink += `/${crumb}`;
 
-      const pathCrumb =
-        crumb == "garden"
-          ? isMobile
-            ? "🌼"
-            : "🌼 garden"
-          : crumb == "graphics"
-          ? isMobile
-            ? "🎨"
-            : "🎨 graphics"
-          : isMobile && index < array.length
-          ? "📖"
-          : crumb.replace(/-/g, " ");
+      const pathCrumb: string | JSX.Element =
+        crumb == "garden" ? (
+          isMobile ? (
+            <Icons.digiGarden size={22} />
+          ) : (
+            <span className="flex flex-nowrap items-center">
+              <Icons.digiGarden size={22} />
+              &nbsp;garden
+            </span>
+          )
+        ) : crumb == "graphics" ? (
+          isMobile ? (
+            <Icons.palette size={22} />
+          ) : (
+            <span className="flex flex-nowrap items-center">
+              <Icons.palette size={22} />
+              &nbsp;graphics
+            </span>
+          )
+        ) : isMobile && index < array.length ? (
+          "..."
+        ) : (
+          crumb.replace(/-/g, " ")
+        );
       console.log(pathCrumb);
 
       return (
         <div aria-label={`follow the crumb to "${crumb}"`} key={crumb}>
           <button className="flex flex-row gap-1" role="button">
             <span aria-label="hidden" className="self-center">
-              &nbsp;{`/`}
+              &nbsp;{`>`}
             </span>
             <Link
               href={currentLink}
