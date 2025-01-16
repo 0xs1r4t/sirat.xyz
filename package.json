@@ -3,9 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev -p 8000",
+    "dev": "next dev -H 0.0.0.0 -p 8000",
     "build": "next build",
-    "start": "next start -p 8000",
+    "start": "next start -H 0.0.0.0 -p 8000",
     "lint": "next lint"
   },
   "dependencies": {
@@ -15,6 +15,7 @@
     "@p5-wrapper/next": "^1.0.3",
     "@p5-wrapper/react": "^4.4.2",
     "@spotify/web-api-ts-sdk": "^1.2.0",
+    "@twemoji/api": "^15.1.0",
     "@types/prismjs": "^1.26.4",
     "clsx": "^2.1.0",
     "framer-motion": "^11.3.28",

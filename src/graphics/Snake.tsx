@@ -68,6 +68,14 @@ export const Snake = () => {
       p.disableFriendlyErrors = true;
 
       let myCanvas = p.createCanvas(p.windowWidth, p.windowHeight, "p2d");
+
+      const canvasElement = document.querySelector("canvas");
+      canvasElement?.addEventListener(
+        "touchstart",
+        (e) => e.preventDefault(),
+        false
+      );
+
       addDegrees(); // add degrees 0 - 360 in degrees
 
       p.colorMode(p.HSB, 360, 100, 100, 100); // with alpha (transparency)
@@ -91,7 +99,6 @@ export const Snake = () => {
 
     p.touchStarted = () => {
       chooseRandColor();
-      return false; // prevents default behaviours like scrolling
     };
 
     const addDegrees = () => {
