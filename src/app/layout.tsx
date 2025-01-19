@@ -11,9 +11,8 @@ import {
 } from "@/fonts/font-config";
 
 import { cn } from "@/lib/utils";
-import Breadcrumb from "@/components/Breadcrumb";
-import Sidebar from "@/components/MusicPlayer";
-// import Navbar from "@/components/Navbar";
+import Breadcrumb from "@/components/Navigation/Breadcrumb";
+import Navbar from "@/components/Navigation/Navbar";
 
 export const metadata: Metadata = myMetadata;
 export const viewport: Viewport = myViewport;
@@ -45,11 +44,10 @@ const RootLayout = ({ children }: Readonly<{ children: React.ReactNode }>) => {
             <ThemeSwitcher />
           </div>
           <div className="flex flex-row">
-            <Sidebar />
+            <Navbar />
             <main className="container relative flex flex-col items-center justify-between w-full top-10 px-5">
               {children}
             </main>
-            {/* <Navbar /> */}
           </div>
         </ThemeProvider>
       </body>
