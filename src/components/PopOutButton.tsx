@@ -45,9 +45,9 @@ const PopOutButton = ({
           stiffness: 400,
           damping: 40,
         }}
-        className={`fixed z-20 flex justify-center items-center p-1 aspect-square rounded-${
-          placement === "left" ? "e" : "s"
-        }-md bg-muted-100 border-2 border-muted-200 transition-colors duration-200`}
+        className={`fixed z-20 flex justify-center items-center p-1 aspect-square ${
+          placement === "left" ? "rounded-e-md" : "rounded-s-md"
+        } bg-muted-100 border-2 border-muted-200 transition-colors duration-200`}
       >
         <span
           aria-label="hidden"
