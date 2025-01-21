@@ -13,7 +13,7 @@ const Navbar = () => {
       <PopOutButton
         isOpen={isOpen}
         onToggle={() => setIsOpen(!isOpen)}
-        placement="right"
+        placement="left"
         position="top"
       />
       <MusicPlayerContainer isOpen={isOpen} />

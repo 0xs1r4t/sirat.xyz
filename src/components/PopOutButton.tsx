@@ -1,5 +1,7 @@
 "use client";
 
+import { motion } from "framer-motion";
+
 import { Icons } from "@/components/Icons";
 import { Tooltip } from "@/components/Tooltip";
 
@@ -7,8 +9,11 @@ interface PopOutButtonProps {
   isOpen: boolean;
   onToggle: () => void;
   placement: "left" | "right";
-  position?: "top" | "bottom";
-  offset?: string;
+  position: "top" | "bottom";
+  offsetTop?: string;
+  offsetBottom?: string;
+  offsetRight?: string;
+  offsetLeft?: string;
 }
 
 const PopOutButton = ({
@@ -16,28 +21,33 @@ const PopOutButton = ({
   onToggle,
   placement,
   position = "top",
-  offset = "4.5rem",
+  offsetTop = "4.5rem",
+  offsetBottom = "4.5rem",
+  offsetRight = "17.75rem",
+  offsetLeft = "11.25rem",
 }: PopOutButtonProps) => {
   return (
     <Tooltip
       label={`click to ${isOpen ? "close" : "expand"} sidebar`}
       placement={placement}
     >
-      <button
+      <motion.button
         onClick={onToggle}
+        style={{
+          top: position === "top" ? offsetTop : "auto",
+          bottom: position === "bottom" ? offsetBottom : "auto",
+        }}
+        animate={{
+          x: isOpen ? (placement === "left" ? offsetLeft : offsetRight) : 0,
+        }}
+        transition={{
+          type: "spring",
+          stiffness: 400,
+          damping: 40,
+        }}
         className={`fixed z-20 flex justify-center items-center p-1 aspect-square rounded-${
-          placement === "right" ? "e" : "s"
-        }-md bg-muted-100 border-2 border-muted-200 transition-all duration-500 ease-in-out
-        ${position === "top" ? `top-[${offset}]` : `bottom-[${offset}]`}
-        ${
-          placement === "right"
-            ? isOpen
-              ? "left-[11.25rem]"
-              : "left-0"
-            : isOpen
-            ? "right-[17.75rem]"
-            : "right-0"
-        }`}
+          placement === "left" ? "e" : "s"
+        }-md bg-muted-100 border-2 border-muted-200 transition-colors duration-200`}
       >
         <span
           aria-label="hidden"
@@ -47,7 +57,7 @@ const PopOutButton = ({
         >
           <Icons.doubleChevron className="w-4 h-4 lg:w-5 lg:h-5" />
         </span>
-      </button>
+      </motion.button>
     </Tooltip>
   );
 };

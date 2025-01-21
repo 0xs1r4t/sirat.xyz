@@ -23,7 +23,7 @@ const navLinks: Record<NavNames, NavInfo> = {
     name: "garden",
     link: "/garden",
     type: "internal",
-    icon: <span className="text-xl">🌼</span>,
+    icon: <span className="flex items-center justify-center w-5 h-5">🌼</span>,
   },
   graphics: {
     name: "graphics",
@@ -41,9 +41,7 @@ const navLinks: Record<NavNames, NavInfo> = {
     name: "github",
     link: "https://github.com/0xs1r4t/",
     type: "external",
-    icon: (
-      <Icons.github className="w-[20px] h-[20px] hover:mix-blend-overlay" />
-    ),
+    icon: <Icons.github className="w-5 h-5" />,
   },
 };
 

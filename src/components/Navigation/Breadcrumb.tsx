@@ -1,9 +1,11 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
+// import { motion, AnimatePresence } from "framer-motion";
+
 import { Icons } from "@/components/Icons";
-import { useEffect, useState } from "react";
 
 const Breadcrumb = () => {
   const currentPath = usePathname();
