@@ -65,10 +65,13 @@ const Breadcrumb = () => {
 
       return (
         <div aria-label={`follow the crumb to "${crumb}"`} key={crumb}>
-          <button className="flex flex-row gap-1" role="button">
-            <span aria-label="hidden" className="self-center">
-              &nbsp;{`>`}
-            </span>
+          <button
+            className="flex flex-row gap-1 justify-center items-center"
+            role="button"
+          >
+            &nbsp;
+            <Icons.singleChevron />
+            &nbsp;
             <Link
               href={currentLink}
               className="cursor-pointer hover:bg-muted-200 hover:rounded-md px-1 lg:text-lg"

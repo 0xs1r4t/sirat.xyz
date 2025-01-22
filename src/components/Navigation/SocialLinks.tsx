@@ -23,7 +23,7 @@ const navLinks: Record<NavNames, NavInfo> = {
     name: "garden",
     link: "/garden",
     type: "internal",
-    icon: <span className="flex items-center justify-center w-5 h-5">🌼</span>,
+    icon: <Icons.digiGarden size={20} />,
   },
   graphics: {
     name: "graphics",
@@ -31,17 +31,17 @@ const navLinks: Record<NavNames, NavInfo> = {
     type: "internal",
     icon: <Icons.palette size={20} />,
   },
-  linkedin: {
-    name: "linkedin",
-    link: "https://www.linkedin.com/in/siratbaweja/",
-    type: "external",
-    icon: <Icons.linkedin size={20} />,
-  },
   github: {
     name: "github",
     link: "https://github.com/0xs1r4t/",
     type: "external",
-    icon: <Icons.github className="w-5 h-5" />,
+    icon: <Icons.link size={20} />,
+  },
+  linkedin: {
+    name: "linkedin",
+    link: "https://www.linkedin.com/in/siratbaweja/",
+    type: "external",
+    icon: <Icons.link size={20} />,
   },
 };
 
