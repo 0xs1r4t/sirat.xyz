@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Fragment } from "react";
 
 import { Icons } from "@/components/Icons";
+import internal from "stream";
 
 type NavNames = "home" | "garden" | "graphics" | "linkedin" | "github";
 
@@ -54,7 +55,7 @@ const SocialLinks = () => {
           className="text-lg rounded-md hover:bg-muted-200 transition-colors duration-300"
         >
           <Link
-            aria-label={key}
+            aria-label={`link to ${internal ? "my" : "the"} ${key} page`}
             href={value.link}
             className="inline-flex items-center mx-1 cursor-pointer"
             target={value.type === "external" ? "_blank" : "_self"}

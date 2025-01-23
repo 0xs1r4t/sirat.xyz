@@ -9,10 +9,11 @@
   "scope": "/",
   "start_url": "/",
   "icons": [
-    { "src": "/icons/sirat-xyz-icon-16.png", "type": "image/png", "sizes": "16x16", "purpose": "any" },
-    { "src": "/icons/sirat-xyz-icon-32.png", "type": "image/png", "sizes": "32x32", "purpose": "any" },
-    { "src": "/icons/sirat-xyz-icon-192.png", "type": "image/png", "sizes": "192x192", "purpose":"maskable" },
-    { "src": "/icons/sirat-xyz-icon-256.png", "type": "image/png", "sizes": "256x256", "purpose":"maskable" },
-    { "src": "/icons/sirat-xyz-icon-512.png", "type": "image/png", "sizes": "512x512", "purpose":"maskable" }
+    { "src": "/icons/favicons/sirat-xyz-icon-16.png", "type": "image/png", "sizes": "16x16", "purpose": "any" },
+    { "src": "/icons/favicons/sirat-xyz-icon-32.png", "type": "image/png", "sizes": "32x32", "purpose": "any" },
+    { "src": "/icons/favicons/sirat-xyz-icon-64.png", "type": "image/png", "sizes": "64x64", "purpose": "any" },
+    { "src": "/icons/favicons/sirat-xyz-icon-192.png", "type": "image/png", "sizes": "192x192", "purpose":"maskable" },
+    { "src": "/icons/favicons/sirat-xyz-icon-256.png", "type": "image/png", "sizes": "256x256", "purpose":"maskable" },
+    { "src": "/icons/favicons/sirat-xyz-icon-512.png", "type": "image/png", "sizes": "512x512", "purpose":"maskable" }
   ]
 }

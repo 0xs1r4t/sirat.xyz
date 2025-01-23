@@ -1,4 +1,3 @@
-import { Icon } from "next/dist/lib/metadata/types/metadata-types";
 import Image from "next/image";
 type IconProps = React.HTMLAttributes<SVGElement>;
 
@@ -8,7 +7,7 @@ export const Icons = {
       aria-hidden="true"
       width={props.size}
       height={props.size}
-      src="/icons/custom/HOUSE.svg"
+      src="/icons/pixel/HOUSE.svg"
       alt="home icon"
     />
   ),
@@ -17,7 +16,7 @@ export const Icons = {
       aria-hidden="true"
       width={props.size}
       height={props.size}
-      src="/icons/custom/DIGIGARDEN.svg"
+      src="/icons/pixel/DIGIGARDEN.svg"
       alt="digital garden icon"
     />
   ),
@@ -26,7 +25,7 @@ export const Icons = {
       aria-hidden="true"
       width={props.size}
       height={props.size}
-      src="/icons/custom/PALETTE.svg"
+      src="/icons/pixel/PALETTE.svg"
       alt="palette icon"
     />
   ),
@@ -35,7 +34,7 @@ export const Icons = {
       aria-hidden="true"
       width={22}
       height={22}
-      src="/icons/custom/MATCHA.svg"
+      src="/icons/pixel/MATCHA.svg"
       alt="strawberry matcha theme icon"
     />
   ),
@@ -44,7 +43,7 @@ export const Icons = {
       aria-hidden="true"
       width={22}
       height={22}
-      src="/icons/custom/ICECREAM.svg"
+      src="/icons/pixel/ICECREAM.svg"
       alt="neopolitan ice-cream theme icon"
     />
   ),
@@ -53,7 +52,7 @@ export const Icons = {
       aria-hidden="true"
       width={22}
       height={22}
-      src="/icons/custom/CHEESECAKE.svg"
+      src="/icons/pixel/CHEESECAKE.svg"
       alt="blueberry cheesecake theme icon"
     />
   ),
@@ -62,7 +61,7 @@ export const Icons = {
       aria-hidden="true"
       width={props.size}
       height={props.size}
-      src="/icons/custom/LINK.svg"
+      src="/icons/pixel/LINK.svg"
       alt="link icon"
     />
   ),
@@ -72,20 +71,21 @@ export const Icons = {
       height="16"
       viewBox="0 0 26 27"
       fill="currentColor"
+      aria-label="single chevron icon"
       xmlns="http://www.w3.org/2000/svg"
       {...props}
     >
       <path
         d="M8.50018 4.5L25.5002 12.5"
         stroke="currentColor"
-        stroke-width="3"
-        stroke-linecap="round"
+        strokeWidth="3"
+        strokeLinecap="round"
       />
       <path
         d="M25.5002 12.5L8.50012 21.5"
         stroke="currentColor"
-        stroke-width="3"
-        stroke-linecap="round"
+        strokeWidth="3"
+        strokeLinecap="round"
       />
     </svg>
   ),
@@ -94,6 +94,7 @@ export const Icons = {
       aria-hidden="true"
       role="graphics-symbol"
       viewBox="0 0 16 16"
+      aria-label="double chevron icon"
       className="block w-4 h-4 fill-none flex-shrink-0"
       xmlns="http://www.w3.org/2000/svg"
       {...props}
@@ -109,8 +110,8 @@ export const Icons = {
       aria-hidden="true"
       width={props.size}
       height={props.size}
-      src="/icons/custom/clean/doubleChevronRight.svg"
-      alt="palette icon"
+      src="/icons/clean/doubleChevronRight.svg"
+      alt="double chevron icon"
     />
   ),
   search: (props: { size: number }) => (
@@ -118,8 +119,8 @@ export const Icons = {
       aria-hidden="true"
       width={props.size}
       height={props.size}
-      src="/icons/custom/clean/search.svg"
-      alt="palette icon"
+      src="/icons/clean/search.svg"
+      alt="search icon"
     />
   ),
   hamburger: (props: { size: number }) => (
@@ -127,8 +128,8 @@ export const Icons = {
       aria-hidden="true"
       width={props.size}
       height={props.size}
-      src="/icons/custom/clean/hamburger.svg"
-      alt="palette icon"
+      src="/icons/clean/hamburger.svg"
+      alt="hamburger menu icon"
     />
   ),
   upwardArrow: (props: { size: number }) => (
@@ -136,8 +137,8 @@ export const Icons = {
       aria-hidden="true"
       width={props.size}
       height={props.size}
-      src="/icons/custom/clean/upwardArrow.svg"
-      alt="palette icon"
+      src="/icons/clean/upwardArrow.svg"
+      alt="upward arrow icon"
     />
   ),
 };

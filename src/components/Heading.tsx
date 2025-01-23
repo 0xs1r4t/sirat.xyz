@@ -12,7 +12,7 @@ const Heading = ({
 }) => {
   return (
     <div
-      role="title"
+      aria-label="page title"
       className={cn(
         `text-6xl font-bold text-center font-heading p-4 pb-4 not-prose lg:text-7xl ${
           styles ? styles : ""
@@ -20,7 +20,7 @@ const Heading = ({
       )}
     >
       {title}
-      {children ? children : <span aria-label="hidden">{""}</span>}
+      {children ? children : <span aria-hidden="true">{""}</span>}
     </div>
   );
 };
