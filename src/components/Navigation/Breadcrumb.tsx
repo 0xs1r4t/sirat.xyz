@@ -74,6 +74,7 @@ const Breadcrumb = () => {
             &nbsp;
             <Link
               href={currentLink}
+              aria-label={`link to the ${crumb} page`}
               className="cursor-pointer hover:bg-muted-200 hover:rounded-md px-1 lg:text-lg"
             >
               {pathCrumb}
@@ -92,6 +93,7 @@ const Breadcrumb = () => {
       <Link
         href="/"
         className="cursor-pointer self-center hover:bg-muted-200 hover:rounded-md px-1 lg:text-lg"
+        aria-label="link to the home page"
       >
         <span>{homeCrumb}</span>
       </Link>

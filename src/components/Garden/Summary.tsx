@@ -19,12 +19,12 @@ const Summary = ({ summary }: { summary: PostSummary[] }) => {
           >
             <Link aria-label="patch" href={`/garden/${slug}`}>
               <h1 className="lg:text-4xl">{title}</h1>
-              <span aria-label="hidden">{""}</span>
+              <span aria-hidden="true">{""}</span>
               <p>{description}</p>
               <Date date={created_at} />
             </Link>
             <Tags tags={tags} />
-            <span aria-label="hidden">{""}</span>
+            <span aria-hidden="true">{""}</span>
           </section>
         )
       )}

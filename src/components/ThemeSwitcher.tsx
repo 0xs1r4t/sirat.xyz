@@ -31,6 +31,7 @@ const ThemeSwitcher = () => {
           <button
             key={key}
             className="z-20 p-1.5 aspect-square self-end inline-flex justify-center items-center top-14 mt-2 mr-2 rounded-md bg-muted-100 border-2 border-muted-200 focus:border-2 focus:rounded-lg focus:border-muted-200 focus:ring-2 focus:ring-muted-200 focus:shadow-sm focus:shadow-muted-200 transition-all duration-500 ease-in-out"
+            aria-label={`${key.replace("-", " ")} theme`}
             onClick={() => {
               setTheme(key);
             }}

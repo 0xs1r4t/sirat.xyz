@@ -50,7 +50,7 @@ const PopOutButton = ({
         } bg-muted-100 border-2 border-muted-200 transition-colors duration-200`}
       >
         <span
-          aria-label="hidden"
+          aria-hidden="true"
           className={`${
             isOpen ? "rotate-0" : "rotate-180"
           } transition-transform duration-500 ease-in-out`}

@@ -11,11 +11,11 @@ const SummaryAccordion = ({ summary }: { summary: Post }) => {
         className="p-2 max-w-[ch65] rounded-lg text-base"
       >
         <p>{summary.description}</p>
-        <span aria-label="hidden">{""}</span>
+        <span aria-hidden="true">{""}</span>
         <Date date={summary.created_at} label="Created on" />
         <Date date={summary.updated_at} label="Updated on" />
         <Tags tags={summary.tags} />
-        <span aria-label="hidden">{""}</span>
+        <span aria-hidden="true">{""}</span>
       </section>
     </details>
   );

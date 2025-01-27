@@ -23,7 +23,7 @@ export const myMetadata: Metadata = {
     "design",
   ],
   referrer: "origin",
-  icons: "icons/favicon.ico",
+  icons: "icons/favicons/sirat-xyz.ico",
   manifest: "/manifest.json",
 };
 
