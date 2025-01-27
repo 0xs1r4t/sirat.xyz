@@ -2,7 +2,7 @@ import Link from "next/link";
 import { Fragment } from "react";
 
 import { Icons } from "@/components/Icons";
-import internal from "stream";
+import { Tooltip } from "@/components/Tooltip";
 
 type NavNames = "home" | "garden" | "graphics" | "linkedin" | "github";
 
@@ -50,20 +50,27 @@ const SocialLinks = () => {
   return (
     <Fragment>
       {Object.entries(navLinks).map(([key, value]) => (
-        <span
+        <Tooltip
           key={key}
-          className="text-lg rounded-md hover:bg-muted-200 transition-colors duration-300"
+          label={`click to visit ${
+            value.type === "internal" ? "my" : "the"
+          } ${key} page`}
+          placement="right"
         >
-          <Link
-            aria-label={`link to ${internal ? "my" : "the"} ${key} page`}
-            href={value.link}
-            className="inline-flex items-center mx-1 cursor-pointer"
-            target={value.type === "external" ? "_blank" : "_self"}
-            rel={value.type === "external" ? "noopener noreferrer" : ""}
-          >
-            {value.icon}&nbsp;{value.name}
-          </Link>
-        </span>
+          <span className="text-lg rounded-md hover:bg-muted-200 transition-colors duration-300">
+            <Link
+              aria-label={`link to ${
+                value.type === "external" ? "the" : "my"
+              } ${key} page`}
+              href={value.link}
+              className="inline-flex items-center mx-1 cursor-pointer"
+              target={value.type === "external" ? "_blank" : "_self"}
+              rel={value.type === "external" ? "noopener noreferrer" : ""}
+            >
+              {value.icon}&nbsp;{value.name}
+            </Link>
+          </span>
+        </Tooltip>
       ))}
     </Fragment>
   );

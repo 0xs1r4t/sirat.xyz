@@ -63,6 +63,7 @@ export const Icons = {
       height={props.size}
       src="/icons/pixel/LINK.svg"
       alt="link icon"
+      className="data-[theme=neopolitan-ice-cream]:mix-blend-multiply"
     />
   ),
   singleChevron: (props: IconProps) => (
