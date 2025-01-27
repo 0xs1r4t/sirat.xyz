@@ -7,7 +7,7 @@
     box-sizing: border-box;
 
     /* star cursor */
-    cursor: url("/cursors/small-star/0004.png"), auto;
+    cursor: url("/cursors/small-star/0004.PNG"), auto;
     -webkit-animation: starCursor 750ms infinite;
     animation: starCursor 750ms infinite;
   }
@@ -93,38 +93,38 @@
   @-webkit-keyframes starCursor {
     0%,
     25% {
-      cursor: url("/cursors/small-star/0001.png"), auto;
+      cursor: url("/cursors/small-star/0001.PNG"), auto;
     }
     25%,
     50% {
-      cursor: url("/cursors/small-star/0002.png"), auto;
+      cursor: url("/cursors/small-star/0002.PNG"), auto;
     }
     50%,
     75% {
-      cursor: url("/cursors/small-star/0003.png"), auto;
+      cursor: url("/cursors/small-star/0003.PNG"), auto;
     }
     75%,
     100% {
-      cursor: url("/cursors/small-star/0004.png"), auto;
+      cursor: url("/cursors/small-star/0004.PNG"), auto;
     }
   }
 
   @keyframes starCursor {
     0%,
     25% {
-      cursor: url("/cursors/small-star/0001.png"), auto;
+      cursor: url("/cursors/small-star/0001.PNG"), auto;
     }
     25%,
     50% {
-      cursor: url("/cursors/small-star/0002.png"), auto;
+      cursor: url("/cursors/small-star/0002.PNG"), auto;
     }
     50%,
     75% {
-      cursor: url("/cursors/small-star/0003.png"), auto;
+      cursor: url("/cursors/small-star/0003.PNG"), auto;
     }
     75%,
     100% {
-      cursor: url("/cursors/small-star/0004.png"), auto;
+      cursor: url("/cursors/small-star/0004.PNG"), auto;
     }
   }
 
@@ -132,46 +132,46 @@
   @-webkit-keyframes starSparkleCursor {
     0%,
     20% {
-      cursor: url("/cursors/star-sparkle/0001.png"), auto;
+      cursor: url("/cursors/star-sparkle/0001.PNG"), auto;
     }
     20%,
     40% {
-      cursor: url("/cursors/star-sparkle/0002.png"), auto;
+      cursor: url("/cursors/star-sparkle/0002.PNG"), auto;
     }
     40%,
     60% {
-      cursor: url("/cursors/star-sparkle/0003.png"), auto;
+      cursor: url("/cursors/star-sparkle/0003.PNG"), auto;
     }
     60%,
     80% {
-      cursor: url("/cursors/star-sparkle/0004.png"), auto;
+      cursor: url("/cursors/star-sparkle/0004.PNG"), auto;
     }
     80%,
     100% {
-      cursor: url("/cursors/star-sparkle/0005.png"), auto;
+      cursor: url("/cursors/star-sparkle/0005.PNG"), auto;
     }
   }
 
   @keyframes starSparkleCursor {
     0%,
     20% {
-      cursor: url("/cursors/star-sparkle/0001.png"), auto;
+      cursor: url("/cursors/star-sparkle/0001.PNG"), auto;
     }
     20%,
     40% {
-      cursor: url("/cursors/star-sparkle/0002.png"), auto;
+      cursor: url("/cursors/star-sparkle/0002.PNG"), auto;
     }
     40%,
     60% {
-      cursor: url("/cursors/star-sparkle/0003.png"), auto;
+      cursor: url("/cursors/star-sparkle/0003.PNG"), auto;
     }
     60%,
     80% {
-      cursor: url("/cursors/star-sparkle/0004.png"), auto;
+      cursor: url("/cursors/star-sparkle/0004.PNG"), auto;
     }
     80%,
     100% {
-      cursor: url("/cursors/star-sparkle/0005.png"), auto;
+      cursor: url("/cursors/star-sparkle/0005.PNG"), auto;
     }
   }
 
@@ -179,38 +179,38 @@
   @-webkit-keyframes starHeartBlastCursor {
     0%,
     25% {
-      cursor: url("/cursors/star-heart-blast/0001.png"), auto;
+      cursor: url("/cursors/star-heart-blast/0001.PNG"), auto;
     }
     25%,
     50% {
-      cursor: url("/cursors/star-heart-blast/0002.png"), auto;
+      cursor: url("/cursors/star-heart-blast/0002.PNG"), auto;
     }
     50%,
     75% {
-      cursor: url("/cursors/star-heart-blast/0003.png"), auto;
+      cursor: url("/cursors/star-heart-blast/0003.PNG"), auto;
     }
     75%,
     100% {
-      cursor: url("/cursors/star-heart-blast/0004.png"), auto;
+      cursor: url("/cursors/star-heart-blast/0004.PNG"), auto;
     }
   }
 
   @keyframes starHeartBlastCursor {
     0%,
     25% {
-      cursor: url("/cursors/star-heart-blast/0001.png"), auto;
+      cursor: url("/cursors/star-heart-blast/0001.PNG"), auto;
     }
     25%,
     50% {
-      cursor: url("/cursors/star-heart-blast/0002.png"), auto;
+      cursor: url("/cursors/star-heart-blast/0002.PNG"), auto;
     }
     50%,
     75% {
-      cursor: url("/cursors/star-heart-blast/0003.png"), auto;
+      cursor: url("/cursors/star-heart-blast/0003.PNG"), auto;
     }
     75%,
     100% {
-      cursor: url("/cursors/star-heart-blast/0004.png"), auto;
+      cursor: url("/cursors/star-heart-blast/0004.PNG"), auto;
     }
   }
 }
