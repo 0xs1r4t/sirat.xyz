@@ -30,6 +30,7 @@ const config: Config = {
     // fontSize: {},
     fontFamily: {
       normal: ["var(--font-authentic-sans)", "sans-serif"],
+      name: ["var(--font-that-that-new-pixel)", "serif"],
       heading: ["var(--font-authentic-sans-condensed)", "sans-serif"],
       code: ["var(--font-monaco)"],
     },
@@ -64,6 +65,7 @@ const config: Config = {
   plugins: [
     require("@tailwindcss/typography"),
     require("@tailwindcss/forms"),
+    require("@designbycode/tailwindcss-text-stroke"),
     plugin(function ({ addBase, theme }: PluginAPI & PluginUtils) {
       addBase({
         h1: {

@@ -52,6 +52,22 @@ export const AuthenticSansCondensed = localFont({
   variable: "--font-authentic-sans-condensed",
 });
 
+export const ThatThatNewPixel = localFont({
+  src: [
+    {
+      path: "./that-that-new-pixel/ThatThatNewPixelVariable-Regular.woff",
+      weight: "400",
+      style: "normal",
+    },
+    {
+      path: "./that-that-new-pixel/ThatThatNewPixelVariable-Italic.woff",
+      weight: "400",
+      style: "italic",
+    },
+  ],
+  variable: "--font-that-that-new-pixel",
+});
+
 export const Monaco = localFont({
   src: [
     {

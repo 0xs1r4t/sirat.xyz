@@ -7,6 +7,7 @@ import ThemeSwitcher from "@/components/ThemeSwitcher";
 import {
   AuthenticSans,
   AuthenticSansCondensed,
+  ThatThatNewPixel,
   Monaco,
 } from "@/fonts/font-config";
 
@@ -25,6 +26,7 @@ const RootLayout = ({ children }: Readonly<{ children: React.ReactNode }>) => {
           "min-h-screen bg-background font-sans antialiased overflow-x-clip transition-all duration-500 ease-in-out",
           AuthenticSans.className,
           AuthenticSansCondensed.variable,
+          ThatThatNewPixel.variable,
           Monaco.variable
         )}
       >
