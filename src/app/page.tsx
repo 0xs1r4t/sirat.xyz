@@ -1,12 +1,12 @@
 import React from "react";
 import Link from "next/link";
-import Heading from "@/components/Heading";
+import Name from "@/components/Landing/Name";
 import { Icons } from "@/components/Icons";
 
 const Home = () => {
   return (
     <div className="flex flex-col items-center justify-center h-[75vh]">
-      <Heading title="0XS1R4T" />
+      <Name />
       <p>
         <Link
           aria-label="garden"
