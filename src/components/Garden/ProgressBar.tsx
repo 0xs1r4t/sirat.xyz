@@ -1,35 +1,33 @@
 "use client";
 
-import { motion, useScroll, useSpring, useTransform } from "framer-motion";
+import { Fragment, ReactNode } from "react";
+import { motion, useSpring, useScroll } from "motion/react";
 
-// type ScrollingAnimationProps = {
-//   children: React.ReactNode;
-// };
-
-const ProgressBar = () => {
+const ProgressBar = (props: { children: ReactNode }) => {
   const { scrollYProgress } = useScroll();
   const scaleX = useSpring(scrollYProgress, {
-    stiffness: 400,
-    damping: 50,
+    stiffness: 100,
+    damping: 30,
+    restDelta: 0.001,
   });
 
-  const hue = useTransform(scrollYProgress, [0, 1], [0.95, 1]); //[290, 306]
-
-  const progressBarColor = (alpha: number) => {
-    // return `hsl(${hue}, 84%, 61%)`; // hue = 292
-    return `rgba(31, 41, 55, ${alpha})`;
-  };
-
   return (
-    <motion.div
-      className="fixed w-full top-0 right-0 h-1 origin-top-right bg-muted-100"
-      animate={{
-        backgroundColor: progressBarColor(hue.get()),
-      }}
-      style={{
-        scaleX: scaleX,
-      }}
-    />
+    <Fragment>
+      <motion.div
+        id="scroll-indicator"
+        style={{
+          scaleX,
+          position: "fixed",
+          bottom: 0,
+          left: 0,
+          right: 0,
+          height: 10,
+          originX: 0,
+        }}
+        className="bg-muted-100 border-t-2 border-t-muted-200"
+      />
+      {props.children}
+    </Fragment>
   );
 };
 
