@@ -24,8 +24,8 @@ const NavbarContainer = ({ isOpen }: NavbarContainerProps) => {
             type: "spring",
             stiffness: 500,
             damping: 50,
-            x: { duration: 0.25 },
-            scaleX: { duration: 0.3 },
+            x: { type: "spring", duration: 0.5 },
+            scaleX: { type: "spring", duration: 0.5 },
           }}
           className={`flex flex-col fixed z-30 items-center justify-between top-16 left-2 py-1.5 lg:py-2 w-44 bg-muted-100 border-2 border-muted-200 rounded-lg overflow-hidden`}
           aria-hidden={!isOpen}
