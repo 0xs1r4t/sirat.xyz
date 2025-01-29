@@ -42,8 +42,9 @@ const PopOutButton = ({
         }}
         transition={{
           type: "spring",
-          stiffness: 400,
-          damping: 40,
+          stiffness: 500,
+          damping: 50,
+          x: { type: "spring", duration: 0.5 },
         }}
         className={`fixed z-20 flex justify-center items-center p-1 aspect-square ${
           placement === "left" ? "rounded-e-md" : "rounded-s-md"
