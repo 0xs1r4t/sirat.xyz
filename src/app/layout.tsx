@@ -1,8 +1,10 @@
+import React from "react";
+
 import "./globals.css";
 import type { Metadata, Viewport } from "next";
 import { myMetadata, myViewport } from "@/lib/metadata";
 import ThemeProvider from "@/components/ThemeProvider";
-import ThemeSwitcher from "@/components/ThemeSwitcher";
+import ThemeSwitcher from "@/components/ThemeSwitcherButton";
 
 import {
   AuthenticSans,
