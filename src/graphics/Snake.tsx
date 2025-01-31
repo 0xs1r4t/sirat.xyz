@@ -40,7 +40,7 @@ export const Snake = () => {
         this.points.length = num;
         this.distance = p.createVector(0, 0);
         this.velocity = p.createVector(0, 0);
-        this.ease = 0.5;
+        this.ease = 0.75;
       }
 
       public createSnake(i: number, leader: Vector) {
@@ -68,6 +68,11 @@ export const Snake = () => {
       p.disableFriendlyErrors = true;
 
       let myCanvas = p.createCanvas(p.windowWidth, p.windowHeight, "p2d");
+      // Add z-index to ensure Snake canvas stays on top
+      myCanvas.style("z-index", "10");
+      myCanvas.style("pointer-events", "none");
+      myCanvas.style("cursor", "none");
+      myCanvas.style("touch-action", "none");
 
       const canvasElement = document.querySelector("canvas");
       canvasElement?.addEventListener(
