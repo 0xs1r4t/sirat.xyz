@@ -23,6 +23,7 @@ const ProgressBar = (props: { children: ReactNode }) => {
           right: 0,
           height: 10,
           originX: 0,
+          zIndex: 50,
         }}
         className="bg-muted-100 border-t-2 border-t-muted-200"
       />

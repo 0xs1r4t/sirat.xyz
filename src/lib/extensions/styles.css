@@ -1,0 +1,105 @@
+/* Video block styles */
+.video-container {
+    aspect-ratio: 16 / 9;
+    width: 100%;
+    max-width: 100%;
+    margin: 1rem 0;
+    padding: 0 1rem;
+}
+
+.video-iframe {
+    width: 100%;
+    height: 100%;
+    border: 2px solid rgba(var(--muted-200-rgba));
+    border-radius: 0.5rem;
+}
+
+/* Code block styles */
+.code-block-container {
+    position: relative;
+    width: 100%;
+    max-width: 100%;
+    margin: 1rem 0;
+    padding: 0 1rem;
+}
+
+.code-block-container pre {
+    width: 100%;
+    overflow-x: auto;
+    padding: 1rem;
+    border-radius: 0.5rem;
+    /* background-color: rgba(var(--muted-100-rgba)); */
+    border: 2px solid rgba(var(--muted-200-rgba));
+
+    white-space: pre-wrap;
+    word-break: break-word;
+    text-wrap: wrap /*pretty*/;
+    width: 100%;
+}
+
+.code-block-container code {
+    white-space: pre-wrap;
+    word-break: break-word;
+    text-wrap: wrap /*pretty*/;
+    width: 100%;
+}
+
+.code-block-container:hover .copy-button {
+    opacity: 1;
+}
+
+.copy-button {
+    position: absolute;
+    aspect-ratio: 1 / 1;
+    right: 1rem;
+    top: 0.5rem;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+    padding: 0.25rem 0.5rem;
+    margin: 0.5rem;
+    background-color: rgba(var(--muted-100-rgba));
+    color: rgba(var(--foreground-rgba));
+    border: 2px solid rgba(var(--muted-200-rgba));
+    border-radius: 0.5rem;
+    font-size: 0.875rem;
+    z-index: 5;
+}
+
+.copy-button svg {
+    width: 100%;
+    height: 100%;
+}
+
+.copy-button svg g {
+    stroke: rgba(var(--foreground-rgba));
+}
+
+.code-block-caption {
+    font-size: 0.875rem;
+    color: rgba(var(--muted-200-rgba));
+    padding: 0.5rem 0;
+}
+
+@media (max-width: 640px) {
+    .video-container,
+    .code-block-container {
+        padding: 0 0.5rem;
+    }
+
+    .code-block-container pre {
+        padding: 0.75rem;
+        font-size: 0.875rem;
+    }
+
+    .copy-button {
+        opacity: 1;
+        font-size: 0.75rem;
+        padding: 0.2rem 0.4rem;
+        right: 0.5rem;
+        top: 0.25rem;
+    }
+
+    .code-block-caption {
+        font-size: 0.75rem;
+    }
+}
