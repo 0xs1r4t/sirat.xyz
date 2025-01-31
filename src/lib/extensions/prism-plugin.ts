@@ -33,15 +33,27 @@ const codeBlockRenderer = (options: Config) =>
       );
 
       return `
-        <div>
-            <pre><code class="language-${language}">${highlightedCode}</code></pre>
-            ${
-              data.code.caption.length > 1
-                ? `<legend>${await renderer.render(
-                    ...data.code.caption
-                  )}</legend>`
-                : ""
-            }
+        <div class="code-block-container">
+          <button
+            onclick="navigator.clipboard.writeText(this.parentElement.querySelector('code').innerText)"
+            class="copy-button"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" class="not-prose">
+              <g fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
+                <path d="M7 9.667A2.667 2.667 0 0 1 9.667 7h8.666A2.667 2.667 0 0 1 21 9.667v8.666A2.667 2.667 0 0 1 18.333 21H9.667A2.667 2.667 0 0 1 7 18.333z" />
+                <path d="M4.012 16.737A2 2 0 0 1 3 15V5c0-1.1.9-2 2-2h10c.75 0 1.158.385 1.5 1" />
+              </g>
+            </svg>
+
+          </button>
+          <pre><code class="code-block-container language-${language}">${highlightedCode}</code></pre>
+          ${
+            data.code.caption.length > 1
+              ? `<legend class="code-block-caption">${await renderer.render(
+                  ...data.code.caption
+                )}</legend>`
+              : ""
+          }
         </div>
       `;
     }

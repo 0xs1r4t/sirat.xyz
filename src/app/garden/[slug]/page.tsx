@@ -4,6 +4,7 @@ import { Metadata, ResolvingMetadata } from "next";
 
 import { NotionRenderer } from "@notion-render/client";
 import prismPlugin from "@/lib/extensions/prism-plugin";
+import videoPlugin from "@/lib/extensions/video-plugin";
 
 import { notion, getPageBySlug, getPageContent } from "@/lib/notion";
 import { isoToNormalDate } from "@/lib/date";
@@ -37,6 +38,7 @@ const Page = async ({ params, searchParams }: Props) => {
 
   const notionRenderer = new NotionRenderer({ client: notion });
   notionRenderer.use(prismPlugin({})); // custom plugin for code syntax highlighting
+  notionRenderer.use(videoPlugin({})); // custom plugin to display videos
 
   const title: string = (post.properties.title as any).title[0].plain_text;
   const description: string = (post.properties.description as any).rich_text[0]
