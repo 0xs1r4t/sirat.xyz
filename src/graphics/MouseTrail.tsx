@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
 import { P5CanvasInstance, Sketch } from "@p5-wrapper/react";
 import { NextReactP5Wrapper } from "@p5-wrapper/next";
@@ -24,6 +24,27 @@ interface MouseTrailProps {
 
 const MouseTrail = ({ children, className }: MouseTrailProps) => {
   const pathname = usePathname();
+  const [theme, setTheme] = useState("strawberry-matcha");
+
+  useEffect(() => {
+    // Get initial theme
+    const htmlElement = document.documentElement;
+    setTheme(htmlElement.getAttribute("data-theme") || "strawberry-matcha");
+
+    // Watch for theme changes
+    const observer = new MutationObserver((mutations) => {
+      mutations.forEach((mutation) => {
+        if (mutation.attributeName === "data-theme") {
+          setTheme(
+            htmlElement.getAttribute("data-theme") || "strawberry-matcha"
+          );
+        }
+      });
+    });
+
+    observer.observe(htmlElement, { attributes: true });
+    return () => observer.disconnect();
+  }, []);
 
   // Don't render the trail if we're on the graphics page
   if (pathname === "/graphics") {
@@ -35,6 +56,18 @@ const MouseTrail = ({ children, className }: MouseTrailProps) => {
     const num = 25;
     const radius = 50;
     let value = 300; // initial hue
+
+    const getThemeValues = () => {
+      switch (theme) {
+        case "blueberry-lemon":
+          return { saturation: 75, brightness: 75 };
+        case "neopolitan-ice-cream":
+          return { saturation: 30, brightness: 100 };
+        case "strawberry-matcha":
+        default:
+          return { saturation: 20, brightness: 100 };
+      }
+    };
 
     class SnakeTrail {
       distance: Vector;
@@ -54,8 +87,8 @@ const MouseTrail = ({ children, className }: MouseTrailProps) => {
         this.velocity = this.distance.mult(this.ease);
         this.points[i].add(this.velocity);
 
-        // using a random hue for each point per click
-        p.fill(value, 25, 100, (num - i) * 1.25);
+        const { saturation, brightness } = getThemeValues();
+        p.fill(value, saturation, brightness, (num - i) * 1.25);
         p.ellipse(this.points[i].x, this.points[i].y, radius, radius);
         this.velocity.lerp(this.distance, this.ease);
       }
@@ -90,7 +123,7 @@ const MouseTrail = ({ children, className }: MouseTrailProps) => {
     };
 
     p.mousePressed = () => {
-      value = p.floor(p.random(0, 359)); // Random color on click
+      value = p.ceil(p.random(-1, 356)); // Random color on click
       console.log(`the hue of the trail is ${value}/360`);
     };
 
