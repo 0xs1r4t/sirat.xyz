@@ -17,6 +17,12 @@
     margin: 0;
   }
 
+  html,
+  body {
+    overscroll-behavior: none;
+    overflow-x: hidden;
+  }
+
   :root {
     /* light/default theme */
     --foreground-rgba: 16, 7, 26, 1;
