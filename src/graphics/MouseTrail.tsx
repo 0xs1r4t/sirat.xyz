@@ -67,9 +67,14 @@ const MouseTrail = ({ children, className }: MouseTrailProps) => {
       myCanvas.style("position", "fixed");
       myCanvas.style("top", "0");
       myCanvas.style("left", "0");
-      myCanvas.style("z-index", "-1"); // Place canvas behind content
+      myCanvas.style("z-index", "-1");
       myCanvas.style("pointer-events", "none");
-      myCanvas.style("touch-action", "none");
+
+      // Only apply touch prevention to the canvas element
+      myCanvas.elt.style.touchAction = "none";
+      myCanvas.elt.style.userSelect = "none";
+      myCanvas.elt.style.webkitUserSelect = "none";
+      myCanvas.elt.style.webkitTouchCallout = "none";
 
       p.colorMode(p.HSB, 360, 100, 100, 100);
       p.frameRate(30);
@@ -108,7 +113,7 @@ const MouseTrail = ({ children, className }: MouseTrailProps) => {
   return (
     <div className={cn("relative w-full h-full", className)}>
       <NextReactP5Wrapper sketch={sketch} />
-      <div className="relative z-[2]">{children}</div>
+      <div className="relative">{children}</div>
     </div>
   );
 };
