@@ -23,16 +23,19 @@ const videoBlockRenderer = (options: Config) =>
           : data.video.external.url;
       const youtubeId = getYouTubeVideoId(url);
       const origin =
-        typeof window !== "undefined"
-          ? window.location.origin
-          : "http://localhost:8000";
+        process.env.NEXT_PUBLIC_SITE_URL ||
+        (typeof window !== "undefined" ? window.location.origin : "");
+      console.log(origin);
 
       if (youtubeId) {
         return `
           <div class="video-container">
             <iframe
-              src="https://www.youtube.com/embed/${youtubeId}&origin=${origin}"
+              src="https://www.youtube.com/embed/${youtubeId}?origin=${encodeURIComponent(
+          origin
+        )}"
               title="${caption}"
+              frameborder="0"
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
               allowFullScreen
               class="video-iframe"
