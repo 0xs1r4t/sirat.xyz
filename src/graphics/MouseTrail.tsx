@@ -69,6 +69,15 @@ const MouseTrail = ({ children, className }: MouseTrailProps) => {
       }
     };
 
+    const getViewportHeight = () => {
+      // Use svh if available, fallback to vh
+      return (
+        (window.innerHeight *
+          (window.visualViewport?.height || window.innerHeight)) /
+        window.innerHeight
+      );
+    };
+
     class SnakeTrail {
       distance: Vector;
       velocity: Vector;
@@ -102,6 +111,8 @@ const MouseTrail = ({ children, className }: MouseTrailProps) => {
       myCanvas.style("left", "0");
       myCanvas.style("z-index", "-1");
       myCanvas.style("pointer-events", "none");
+      myCanvas.style("height", "100svh");
+      myCanvas.style("max-height", "100svh");
 
       // Only apply touch prevention to the canvas element
       myCanvas.elt.style.touchAction = "none";
@@ -119,7 +130,7 @@ const MouseTrail = ({ children, className }: MouseTrailProps) => {
     };
 
     p.windowResized = () => {
-      p.resizeCanvas(p.windowWidth, p.windowHeight);
+      p.resizeCanvas(p.windowWidth, getViewportHeight());
     };
 
     p.mousePressed = () => {
@@ -144,7 +155,7 @@ const MouseTrail = ({ children, className }: MouseTrailProps) => {
   };
 
   return (
-    <div className={cn("relative w-full h-full", className)}>
+    <div className={cn("relative w-full h-[100svh]", className)}>
       <NextReactP5Wrapper sketch={sketch} />
       <div className="relative">{children}</div>
     </div>

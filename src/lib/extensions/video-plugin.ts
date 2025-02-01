@@ -2,6 +2,7 @@ import { createBlockRenderer, Plugin } from "@notion-render/client";
 import type { VideoBlockObjectResponse } from "@notionhq/client/build/src/api-endpoints";
 
 import "./styles.css";
+// import "../../styles/filters.css";
 
 // Optional configuration for future enhancements
 type Config = Record<string, unknown>;

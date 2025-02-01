@@ -31,17 +31,49 @@ const ThemeSwitcherButton = () => {
         >
           <motion.button
             key={key}
-            className="z-20 p-1.5 aspect-square self-end inline-flex justify-center items-center top-14 mt-2 mr-2 rounded-md bg-muted-100 border-2 border-muted-200 focus:border-2 focus:rounded-lg focus:border-muted-200 focus:ring-2 focus:ring-muted-200 focus:shadow-sm focus:shadow-muted-200 transition-all duration-500 ease-in-out"
+            className={`z-20 p-1.5 aspect-square self-end inline-flex justify-center items-center top-14 mt-2 mr-2 rounded-md bg-muted-100 border-2 border-muted-200 
+              ${
+                mounted && theme === key
+                  ? "scale-105 ring-2 ring-offset-0 ring-muted-200"
+                  : "scale-100"
+              }
+              transition-all duration-200 ease-out
+              hover:scale-110 hover:shadow-xl
+              active:scale-95 active:duration-100
+              focus:border-2 focus:rounded-lg focus:border-muted-200 focus:ring-2 focus:ring-muted-200 focus:shadow-lg`}
             aria-label={`${key.replace("-", " ")} theme`}
             onClick={() => {
               setTheme(key);
             }}
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 1.2 }}
-            whileFocus={{ scale: 1.1 }}
+            whileHover={{
+              scale: 1.1,
+              transition: { duration: 0.2 },
+            }}
+            whileTap={{
+              scale: 0.95,
+              transition: { duration: 0.1 },
+            }}
+            whileFocus={{ scale: 1.05 }}
+            animate={
+              mounted && theme === key
+                ? {
+                    scale: 1.05,
+                    y: [0, -1, 0],
+                    transition: {
+                      y: {
+                        repeat: Infinity,
+                        duration: 1,
+                        ease: "easeInOut",
+                      },
+                    },
+                  }
+                : {}
+            }
           >
             <span
-            // className={`${mounted && theme == key ? "text-xl" : "text-lg"}`}
+              className={`transform transition-transform duration-200 ${
+                mounted && theme === key ? "scale-105" : "scale-100"
+              }`}
             >
               {value}
             </span>
