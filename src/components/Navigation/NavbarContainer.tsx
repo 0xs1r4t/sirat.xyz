@@ -18,7 +18,18 @@ const NavbarContainer = ({ isOpen }: NavbarContainerProps) => {
         <motion.div
           aria-label="sidebar"
           initial={{ x: -192, scaleX: 0.5 }} // -48 * 4 = -192
-          animate={{ x: 0, scaleX: 1 }}
+          animate={{
+            x: 0,
+            scaleX: 1,
+            y: [0, -1, 0],
+            transition: {
+              y: {
+                repeat: Infinity,
+                duration: 1,
+                ease: "easeInOut",
+              },
+            },
+          }}
           exit={{ x: -192, scaleX: 0.5 }}
           transition={{
             type: "spring",

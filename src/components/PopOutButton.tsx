@@ -37,9 +37,22 @@ const PopOutButton = ({
           top: position === "top" ? offsetTop : "auto",
           bottom: position === "bottom" ? offsetBottom : "auto",
         }}
-        animate={{
-          x: isOpen ? (placement === "left" ? offsetLeft : offsetRight) : 0,
-        }}
+        animate={
+          isOpen
+            ? {
+                x: placement === "left" ? offsetLeft : offsetRight,
+                scale: 1.05,
+                y: [0, -1, 0],
+                transition: {
+                  y: {
+                    repeat: Infinity,
+                    duration: 1,
+                    ease: "easeInOut",
+                  },
+                },
+              }
+            : { x: 0 }
+        }
         transition={{
           type: "spring",
           stiffness: 500,
