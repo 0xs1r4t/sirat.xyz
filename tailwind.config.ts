@@ -17,14 +17,16 @@ const config: Config = {
     ],
   ],
   theme: {
-    container: {
-      center: true,
-    },
-    colors: {
-      background: "rgba(var(--background-rgba))",
-      foreground: "rgba(var(--foreground-rgba))",
-      "muted-100": "rgba(var(--muted-100-rgba))",
-      "muted-200": "rgba(var(--muted-200-rgba))",
+    extend: {
+      container: {
+        center: true,
+      },
+      colors: {
+        background: "rgba(var(--background-rgba))",
+        foreground: "rgba(var(--foreground-rgba))",
+        "muted-100": "rgba(var(--muted-100-rgba))",
+        "muted-200": "rgba(var(--muted-200-rgba))",
+      },
     },
     // spacing: {},
     // fontSize: {},
