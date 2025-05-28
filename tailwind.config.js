@@ -1,18 +1,6 @@
 const plugin = require("tailwindcss/plugin");
 
 module.exports = {
-  safelist: [
-    "bg-background",
-    "text-foreground",
-    "bg-muted-100",
-    "text-muted-100",
-    "bg-muted-200",
-    "text-muted-200",
-    "font-name",
-    "font-normal",
-    "font-heading",
-    "font-code",
-  ],
   content: [
     "./src/pages/**/*.{js,ts,jsx,tsx,mdx}",
     "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
@@ -36,12 +24,6 @@ module.exports = {
       center: true,
     },
     extend: {
-      colors: {
-        background: "rgb(var(--color-background) / <alpha-value>)",
-        foreground: "rgb(var(--color-foreground) / <alpha-value>)",
-        "muted-100": "rgb(var(--color-muted-100) / <alpha-value>)",
-        "muted-200": "rgb(var(--color-muted-200) / <alpha-value>)",
-      },
       keyframes: {
         marquee: {
           "0%": { transform: "translateX(50%)" },
