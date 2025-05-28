@@ -1,7 +1,18 @@
-import plugin from "tailwindcss/plugin";
+const plugin = require("tailwindcss/plugin");
 
-const config = {
-  safelist: ["bg-background", "text-foreground"],
+module.exports = {
+  safelist: [
+    "bg-background",
+    "text-foreground",
+    "bg-muted-100",
+    "text-muted-100",
+    "bg-muted-200",
+    "text-muted-200",
+    "font-name",
+    "font-normal",
+    "font-heading",
+    "font-code",
+  ],
   content: [
     "./src/pages/**/*.{js,ts,jsx,tsx,mdx}",
     "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
@@ -15,28 +26,26 @@ const config = {
     ],
   ],
   theme: {
-    // spacing: {},
-    // fontSize: {},
     fontFamily: {
       normal: ["var(--font-authentic-sans)", "sans-serif"],
       name: ["var(--font-that-that-new-pixel)", "serif"],
       heading: ["var(--font-authentic-sans-condensed)", "sans-serif"],
       code: ["var(--font-monaco)"],
     },
+    container: {
+      center: true,
+    },
     extend: {
+      colors: {
+        background: "rgb(var(--color-background) / <alpha-value>)",
+        foreground: "rgb(var(--color-foreground) / <alpha-value>)",
+        "muted-100": "rgb(var(--color-muted-100) / <alpha-value>)",
+        "muted-200": "rgb(var(--color-muted-200) / <alpha-value>)",
+      },
       keyframes: {
         marquee: {
           "0%": { transform: "translateX(50%)" },
           "100%": { transform: "translateX(-100%)" },
-        },
-        container: {
-          center: true,
-        },
-        colors: {
-          background: "rgba(var(--background-rgba))",
-          foreground: "rgba(var(--foreground-rgba))",
-          "muted-100": "rgba(var(--muted-100-rgba))",
-          "muted-200": "rgba(var(--muted-200-rgba))",
         },
       },
       animation: {
@@ -59,7 +68,6 @@ const config = {
       },
     },
   },
-  variants: { extend: {} },
   plugins: [
     require("@tailwindcss/typography"),
     require("@tailwindcss/forms"),
@@ -85,5 +93,3 @@ const config = {
     }),
   ],
 };
-
-export default config;

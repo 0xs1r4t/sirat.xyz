@@ -1,20 +1,14 @@
 @import 'tailwindcss';
 
 @layer utilities {
-  html {
+  html.strawberry-matcha {
     --filter: grayscale(100%) url(#strawberry-matcha-gradient);
   }
-
-  html[data-theme='neopolitan-ice-cream'] {
+  html.neopolitan-ice-cream {
     --filter: grayscale(100%) url(#neopolitan);
   }
-
-  html[data-theme='blueberry-lemon'] {
+  html.blueberry-lemon {
     --filter: grayscale(100%) url(#neon-lemon);
-  }
-
-  html[data-theme='strawberry-matcha'] {
-    --filter: grayscale(100%) url(#strawberry-matcha-gradient);
   }
 }
 

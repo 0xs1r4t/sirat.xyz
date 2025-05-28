@@ -15,7 +15,7 @@ const ThemeSwitcherButton = () => {
     setMounted(true);
   }, []);
 
-  const themes: Record<string, JSX.Element> = {
+  const themes: Record<string, React.ReactNode> = {
     "strawberry-matcha": <Icons.matcha />,
     "neopolitan-ice-cream": <Icons.iceCream />,
     "blueberry-lemon": <Icons.cheesecake />,

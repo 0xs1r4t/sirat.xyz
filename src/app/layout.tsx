@@ -1,6 +1,7 @@
+import "@/app/globals.css";
+
 import React from "react";
 
-import "./globals.css";
 import type { Metadata, Viewport } from "next";
 import { myMetadata, myViewport } from "@/lib/metadata";
 import ThemeProvider from "@/components/ThemeProvider";
@@ -34,6 +35,7 @@ const RootLayout = ({ children }: Readonly<{ children: React.ReactNode }>) => {
         )}
       >
         <ThemeProvider
+          attribute="class"
           defaultTheme="strawberry-matcha"
           enableColorScheme
           themes={[
