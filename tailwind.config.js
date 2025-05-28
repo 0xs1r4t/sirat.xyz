@@ -1,9 +1,7 @@
-import type { Config } from "tailwindcss";
-import { PluginUtils, PluginAPI } from "tailwindcss/types/config";
+import plugin from "tailwindcss/plugin";
 
-const plugin = require("tailwindcss/plugin");
-
-const config: Config = {
+const config = {
+  safelist: ["bg-background", "text-foreground"],
   content: [
     "./src/pages/**/*.{js,ts,jsx,tsx,mdx}",
     "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
@@ -17,17 +15,6 @@ const config: Config = {
     ],
   ],
   theme: {
-    extend: {
-      container: {
-        center: true,
-      },
-      colors: {
-        background: "rgba(var(--background-rgba))",
-        foreground: "rgba(var(--foreground-rgba))",
-        "muted-100": "rgba(var(--muted-100-rgba))",
-        "muted-200": "rgba(var(--muted-200-rgba))",
-      },
-    },
     // spacing: {},
     // fontSize: {},
     fontFamily: {
@@ -41,6 +28,15 @@ const config: Config = {
         marquee: {
           "0%": { transform: "translateX(50%)" },
           "100%": { transform: "translateX(-100%)" },
+        },
+        container: {
+          center: true,
+        },
+        colors: {
+          background: "rgba(var(--background-rgba))",
+          foreground: "rgba(var(--foreground-rgba))",
+          "muted-100": "rgba(var(--muted-100-rgba))",
+          "muted-200": "rgba(var(--muted-200-rgba))",
         },
       },
       animation: {
@@ -68,7 +64,7 @@ const config: Config = {
     require("@tailwindcss/typography"),
     require("@tailwindcss/forms"),
     require("@designbycode/tailwindcss-text-stroke"),
-    plugin(function ({ addBase, theme }: PluginAPI & PluginUtils) {
+    plugin(function ({ addBase, theme }) {
       addBase({
         h1: {
           fontSize: theme("fontSize.3xl"),
