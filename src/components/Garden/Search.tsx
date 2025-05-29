@@ -68,7 +68,7 @@ const Search = ({ placeholder }: { placeholder: string }) => {
       <motion.input
         ref={inputRef}
         type="text"
-        className="peer block bg-muted-100 border-2 border-muted-200 rounded-md focus:outline-none focus:border-2 focus:rounded-lg focus:border-muted-200 focus:ring-2 focus:ring-muted-200 focus:shadow-sm focus:shadow-muted-200 placeholder:text-foreground placeholder:opacity-80 w-full self-stretch my-5 px-4 py-2 p-4 text-inherit"
+        className="peer block bg-muted-100 border-2 border-muted-200 rounded-md hover:drop-shadow-muted-200 hover:drop-shadow-[0_0_2px] focus:outline-none focus:border-2 focus:rounded-lg focus:border-muted-200 focus:ring-2 focus:ring-muted-200 focus:drop-shadow-muted-200 focus:drop-shadow-[0_0_2px] placeholder:text-foreground placeholder:opacity-80 w-full self-stretch my-5 px-4 py-2 p-4 text-inherit"
         placeholder={placeholder}
         onChange={(e) => {
           handleSearch(e.target.value);

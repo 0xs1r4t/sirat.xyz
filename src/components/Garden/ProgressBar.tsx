@@ -7,7 +7,7 @@ const ProgressBar = (props: { children: ReactNode }) => {
   const { scrollYProgress } = useScroll();
   const scaleX = useSpring(scrollYProgress, {
     stiffness: 100,
-    damping: 30,
+    damping: 50,
     restDelta: 0.001,
   });
 
@@ -21,11 +21,11 @@ const ProgressBar = (props: { children: ReactNode }) => {
           bottom: 0,
           left: 0,
           right: 0,
-          height: 10,
+          height: 5,
           originX: 0,
           zIndex: 50,
         }}
-        className="bg-muted-100 border-t-2 border-t-muted-200"
+        className="bg-linear-to-r/increasing from-violet-300 via-lime-200 to-violet-300"
       />
       {props.children}
     </Fragment>

@@ -64,7 +64,7 @@ export const Icons = {
       height={props.size}
       src="/icons/pixel/LINK.svg"
       alt="link icon"
-      className="data-[theme=neopolitan-ice-cream]:mix-blend-multiply"
+      className="blend-link"
     />
   ),
   singleChevron: (props: IconProps) => (
@@ -97,7 +97,7 @@ export const Icons = {
       role="graphics-symbol"
       viewBox="0 0 16 16"
       aria-label="double chevron icon"
-      className="block w-4 h-4 fill-none flex-shrink-0"
+      className="block w-4 h-4 fill-none shrink-0"
       xmlns="http://www.w3.org/2000/svg"
       {...props}
     >

@@ -1,8 +1,0 @@
-/* default light theme 🍓🧋 */
-
-html, html[data-theme="strawberry-matcha"] {
-  --foreground-rgba: 39, 56, 33, 1;
-  --background-rgba: 222, 234, 193, 1;
-  --muted-100-rgba: 246, 215, 252, 1;
-  --muted-200-rgba: 229, 157, 248, 1;
-}

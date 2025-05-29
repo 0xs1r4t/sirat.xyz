@@ -15,7 +15,7 @@ const ThemeSwitcherButton = () => {
     setMounted(true);
   }, []);
 
-  const themes: Record<string, JSX.Element> = {
+  const themes: Record<string, React.ReactNode> = {
     "strawberry-matcha": <Icons.matcha />,
     "neopolitan-ice-cream": <Icons.iceCream />,
     "blueberry-lemon": <Icons.cheesecake />,
@@ -38,9 +38,9 @@ const ThemeSwitcherButton = () => {
                   : "scale-100"
               }
               transition-all duration-200 ease-out
-              hover:scale-110 hover:shadow-xl
+              hover:scale-110 hover:drop-shadow-muted-200 hover:drop-shadow-[0_0_2px]
               active:scale-95 active:duration-100
-              focus:border-2 focus:rounded-lg focus:border-muted-200 focus:ring-2 focus:ring-muted-200 focus:shadow-lg`}
+              focus:border-2 focus:rounded-lg focus:border-muted-200 focus:ring-2 focus:ring-muted-200 focus:drop-shadow-muted-200 focus:drop-shadow-[0_0_2px]`}
             aria-label={`${key.replace("-", " ")} theme`}
             onClick={() => {
               setTheme(key);

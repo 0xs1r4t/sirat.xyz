@@ -37,7 +37,7 @@ const Breadcrumb = () => {
     .map((crumb, index, array) => {
       currentLink += `/${crumb}`;
 
-      const pathCrumb: string | JSX.Element =
+      const pathCrumb: string | React.ReactNode =
         crumb == "garden" ? (
           isMobile ? (
             <Icons.digiGarden size={22} />

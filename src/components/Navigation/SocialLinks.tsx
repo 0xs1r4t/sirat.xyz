@@ -10,7 +10,7 @@ interface NavInfo {
   name: NavNames;
   link: string;
   type: "internal" | "external";
-  icon: JSX.Element | string;
+  icon: React.ReactNode | string;
 }
 
 const navLinks: Record<NavNames, NavInfo> = {

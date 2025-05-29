@@ -1,6 +1,28 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+@plugin "@tailwindcss/typography";
+
+/* light/default theme 🍓🧋 */
+@theme {
+  --color-background: rgb(232 241 216);
+  --color-foreground: rgb(39 56 33);
+  --color-muted-100: rgb(246 215 252);
+  --color-muted-200: rgb(229 157 248);
+
+  --font-authentic-sans: 'Authentic Sans', sans-serif;
+  --font-that-that-new-pixel: 'That That New Pixel', serif;
+  --font-authentic-sans-condensed: 'Authentic Sans Condensed', sans-serif;
+  --font-monaco: 'Monaco', monospace;
+
+  --select-text-rgba: rgb(201, 133, 235, 1);
+  --select-text-background-rgba: rgb(201, 133, 235, 0.25);
+
+  --star-cursor: url("/cursors/small-star/0004.PNG"), auto;
+}
+
+@custom-variant strawberry-matcha (&.strawberry-matcha :where(& *));
+@custom-variant blueberry-lemon (&.blueberry-lemon :where(& *));
+@custom-variant neopolitan-ice-cream (&.neopolitan-ice-cream :where(& *));
+
 
 @layer base {
   * {
@@ -12,6 +34,32 @@
     animation: starCursor 750ms infinite;
   }
 
+  /* themes */
+  /* default light theme 🍓🧋 */
+  html.strawberry-matcha {
+    /* taro and matcha palette - https://www.color-hex.com/color-palette/1028107 */
+    --color-background: rgb(232 241 216);
+    --color-foreground: rgb(39 56 33);
+    --color-muted-100: rgb(246 215 252);
+    --color-muted-200: rgb(229 157 248);
+  }
+
+  /* default dark theme 🫐🍋 */
+  html.blueberry-lemon, html.dark {
+    --color-background: rgb(16 7 26);
+    --color-foreground: rgb(235 241 215);
+    --color-muted-100: rgb(86 40 110);
+    --color-muted-200: rgb(150 87 181);
+  }
+  
+  /* neopolitan ice cream 🍥🍫 */
+  html.neopolitan-ice-cream {
+    --color-background: rgb(255 245 224);
+    --color-foreground: rgb(84 43 35);
+    --color-muted-100: rgb(255 204 237);
+    --color-muted-200: rgb(245 135 229);
+  }
+
   html {
     padding: 0;
     margin: 0;
@@ -21,48 +69,6 @@
   body {
     overscroll-behavior: none;
     overflow-x: hidden;
-  }
-
-  :root {
-    /* light/default theme */
-    --foreground-rgba: 39, 56, 33, 1;
-    --background-rgba: 222, 234, 193, 1;
-    --muted-100-rgba: 246, 215, 252, 1;
-    --muted-200-rgba: 229, 157, 248, 1;
-
-    --select-text-rgba: 201, 133, 235, 1;
-    --select-text-background-rgba: 201, 133, 235, 0.25;
-  }
-
-  /* default light theme 🍓🧋 */
-  html[data-theme="strawberry-matcha"] {
-    --foreground-rgba: 39, 56, 33, 1;
-    --background-rgba: 222, 234, 193, 1;
-    --muted-100-rgba: 246, 215, 252, 1;
-    --muted-200-rgba: 229, 157, 248, 1;
-  }
-
-  /* default dark theme 🫐🍋 */
-  html[data-theme="blueberry-lemon"],
-  html[data-theme="dark"] {
-    --foreground-rgba: 235, 241, 215, 1;
-    --background-rgba: 16, 7, 26, 1;
-    --muted-100-rgba: 86, 40, 110, 1;
-    --muted-200-rgba: 150, 87, 181, 1;
-  }
-
-  /* neopolitan ice cream 🍥🍫 */
-  html[data-theme="neopolitan-ice-cream"] {
-    --foreground-rgba: 84, 43, 35, 1;
-    --background-rgba: 255, 245, 224, 1;
-    --muted-100-rgba: 255, 204, 237, 1;
-    --muted-200-rgba: 245, 135, 229, 1;
-
-    --select-text-rgba: 245, 135, 229, 1;
-    --select-text-background-rgba: 255, 204, 237, 0.5;
-  }
-
-  body {
     @apply bg-background text-foreground;
   }
 
@@ -72,13 +78,13 @@
 
   /* selection styles */
   ::selection {
-    color: rgba(var(--select-text-rgba));
-    background-color: rgba(var(--select-text-background-rgba));
+    color: var(--select-text-rgba);
+    background-color: var(--select-text-background-rgba);
   }
 
   ::-moz-selection {
-    color: rgba(var(--select-text-rgba));
-    background-color: rgba(var(--select-text-background-rgba));
+    color: var(--select-text-rgba);
+    background-color: var(--select-text-background-rgba);
   }
 
   /* scrollbar styles */
@@ -234,8 +240,28 @@
     font-size: 120%;
   }
 
-  .text-stroke-foreground {
-    -webkit-text-stroke: 1px rgba(var(--foreground-rgba));
-    /* text-stroke: 1px var(--foreground); */
+  .text-stroke-foreground-thin {
+    -webkit-text-stroke: 1px var(--color-foreground);
+  }
+
+  .text-stroke-foreground-thick {
+    -webkit-text-stroke: 3px var(--color-foreground);
+  }
+
+  .text-stroke-muted-thin {
+    -webkit-text-stroke: 1px var(--color-muted-200);
+  }
+
+  .text-stroke-muted-thick {
+    -webkit-text-stroke: 2px var(--color-muted-200);
+  }
+
+  .glow-text {
+    text-shadow: 0px 0px 5px var(--color-muted-200);
+  }
+
+  .strawberry-matcha .blend-link,
+  .neopolitan-ice-cream .blend-link {
+    mix-blend-mode: multiply;
   }
 }

@@ -19,22 +19,21 @@ export const metadata: Metadata = {
   title: "🌐🌼 digital garden",
 };
 
-const Page = async ({
-  searchParams,
-}: {
-  searchParams?: {
-    q?: string;
-    tag?: string;
-  };
-}) => {
+type Props = {
+  searchParams: Promise<{ q?: string; tag?: string }>;
+};
+
+const Page = async ({ searchParams }: Props) => {
+  const params = await searchParams;
+
   let pages = await getPublishedPages();
 
-  if (searchParams?.q) {
-    pages = await getPagesByProps(searchParams.q);
+  if (params?.q) {
+    pages = await getPagesByProps(params.q);
   }
 
-  if (searchParams?.tag) {
-    pages = await getPagesByTag(searchParams.tag);
+  if (params?.tag) {
+    pages = await getPagesByTag(params.tag);
   }
 
   if (pages.length === 0) {

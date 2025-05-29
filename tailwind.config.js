@@ -1,9 +1,6 @@
-import type { Config } from "tailwindcss";
-import { PluginUtils, PluginAPI } from "tailwindcss/types/config";
-
 const plugin = require("tailwindcss/plugin");
 
-const config: Config = {
+module.exports = {
   content: [
     "./src/pages/**/*.{js,ts,jsx,tsx,mdx}",
     "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
@@ -17,22 +14,14 @@ const config: Config = {
     ],
   ],
   theme: {
-    container: {
-      center: true,
-    },
-    colors: {
-      background: "rgba(var(--background-rgba))",
-      foreground: "rgba(var(--foreground-rgba))",
-      "muted-100": "rgba(var(--muted-100-rgba))",
-      "muted-200": "rgba(var(--muted-200-rgba))",
-    },
-    // spacing: {},
-    // fontSize: {},
     fontFamily: {
       normal: ["var(--font-authentic-sans)", "sans-serif"],
       name: ["var(--font-that-that-new-pixel)", "serif"],
       heading: ["var(--font-authentic-sans-condensed)", "sans-serif"],
       code: ["var(--font-monaco)"],
+    },
+    container: {
+      center: true,
     },
     extend: {
       keyframes: {
@@ -61,12 +50,11 @@ const config: Config = {
       },
     },
   },
-  variants: { extend: {} },
   plugins: [
     require("@tailwindcss/typography"),
     require("@tailwindcss/forms"),
     require("@designbycode/tailwindcss-text-stroke"),
-    plugin(function ({ addBase, theme }: PluginAPI & PluginUtils) {
+    plugin(function ({ addBase, theme }) {
       addBase({
         h1: {
           fontSize: theme("fontSize.3xl"),
@@ -87,5 +75,3 @@ const config: Config = {
     }),
   ],
 };
-
-export default config;

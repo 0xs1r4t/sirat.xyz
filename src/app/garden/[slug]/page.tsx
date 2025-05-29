@@ -13,14 +13,15 @@ import Post from "@/components/Garden/Post";
 // import ProgressBar from "@/components/Garden/ProgressBar";
 
 type Props = {
-  params: { slug: string };
-  searchParams: { [key: string]: string | string[] | undefined };
+  params: Promise<{ slug: string }>;
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 };
 
 export const generateMetadata = async (
-  { params, searchParams }: Props,
+  props: { params: Props["params"]; searchParams: Props["searchParams"] },
   parent: ResolvingMetadata
 ): Promise<Metadata> => {
+  const params = await props.params;
   const slug = params.slug;
   const post = await getPageBySlug(slug);
   if (!post) notFound();
@@ -30,7 +31,10 @@ export const generateMetadata = async (
   };
 };
 
-const Page = async ({ params, searchParams }: Props) => {
+const Page = async (props: Props) => {
+  const params = await props.params;
+  // const searchParams = await props.searchParams; // Use if needed
+
   const post = await getPageBySlug(params.slug);
   if (!post) notFound();
 
