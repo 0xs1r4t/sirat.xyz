@@ -18,7 +18,7 @@ import {
 interface Props {
   label: string;
   placement?: Placement;
-  children: JSX.Element;
+  children: React.ReactElement;
 }
 
 export function Tooltip({ children, label, placement }: Props) {
@@ -48,7 +48,10 @@ export function Tooltip({ children, label, placement }: Props) {
 
   return (
     <Fragment>
-      {cloneElement(children, getReferenceProps({ ref, ...children.props }))}
+      {cloneElement(
+        children,
+        getReferenceProps({ ref, ...(children.props ?? {}) })
+      )}
       {open &&
         createPortal(
           <div
