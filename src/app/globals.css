@@ -1,8 +1,9 @@
 @import "tailwindcss";
+@plugin "@tailwindcss/typography";
 
 /* light/default theme 🍓🧋 */
 @theme {
-  --color-background: rgb(222 234 193);
+  --color-background: rgb(232 241 216);
   --color-foreground: rgb(39 56 33);
   --color-muted-100: rgb(246 215 252);
   --color-muted-200: rgb(229 157 248);
@@ -14,6 +15,8 @@
 
   --select-text-rgba: rgb(201, 133, 235, 1);
   --select-text-background-rgba: rgb(201, 133, 235, 0.25);
+
+  --star-cursor: url("/cursors/small-star/0004.PNG"), auto;
 }
 
 @custom-variant strawberry-matcha (&.strawberry-matcha :where(& *));
@@ -34,7 +37,8 @@
   /* themes */
   /* default light theme 🍓🧋 */
   html.strawberry-matcha {
-    --color-background: rgb(222 234 193);
+    /* taro and matcha palette - https://www.color-hex.com/color-palette/1028107 */
+    --color-background: rgb(232 241 216);
     --color-foreground: rgb(39 56 33);
     --color-muted-100: rgb(246 215 252);
     --color-muted-200: rgb(229 157 248);
@@ -236,13 +240,28 @@
     font-size: 120%;
   }
 
-  .text-stroke-foreground {
-    -webkit-text-stroke: 1px rgba(var(--foreground-rgba));
-    /* text-stroke: 1px var(--foreground); */
+  .text-stroke-foreground-thin {
+    -webkit-text-stroke: 1px var(--color-foreground);
   }
 
-  .font-name {
-    font-family: var(--font-that-that-new-pixel), serif;
+  .text-stroke-foreground-thick {
+    -webkit-text-stroke: 3px var(--color-foreground);
+  }
+
+  .text-stroke-muted-thin {
+    -webkit-text-stroke: 1px var(--color-muted-200);
+  }
+
+  .text-stroke-muted-thick {
+    -webkit-text-stroke: 2px var(--color-muted-200);
+  }
+
+  .glow-text {
+    text-shadow: 0px 0px 5px var(--color-muted-200);
+  }
+
+  .strawberry-matcha .blend-link,
+  .neopolitan-ice-cream .blend-link {
+    mix-blend-mode: multiply;
   }
 }
-

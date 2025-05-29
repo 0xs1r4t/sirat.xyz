@@ -155,7 +155,7 @@ const MouseTrail = ({ children, className }: MouseTrailProps) => {
   };
 
   return (
-    <div className={cn("relative w-full h-[100svh]", className)}>
+    <div className={cn("relative w-full h-svh", className)}>
       <NextReactP5Wrapper sketch={sketch} />
       <div className="relative">{children}</div>
     </div>
