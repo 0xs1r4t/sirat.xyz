@@ -65,7 +65,7 @@ const MouseTrail = ({ children, className }: MouseTrailProps) => {
     return () => observer.disconnect();
   }, [isMounted]);
 
-  // Add mouse tracking with touch support
+  // Only keep mouse move handler here
   useEffect(() => {
     if (!isMounted) return;
 
@@ -76,37 +76,9 @@ const MouseTrail = ({ children, className }: MouseTrailProps) => {
       };
     };
 
-    const handleTouchMove = (e: TouchEvent) => {
-      e.preventDefault(); // Prevent scrolling
-      if (e.touches.length > 0) {
-        const touch = e.touches[0];
-        mousePosition.current = {
-          x: touch.clientX,
-          y: touch.clientY,
-        };
-      }
-    };
-
-    const handleTouchStart = (e: TouchEvent) => {
-      if (e.touches.length > 0) {
-        const touch = e.touches[0];
-        mousePosition.current = {
-          x: touch.clientX,
-          y: touch.clientY,
-        };
-      }
-    };
-
     document.addEventListener("mousemove", handleMouseMove);
-    document.addEventListener("touchmove", handleTouchMove, { passive: false });
-    document.addEventListener("touchstart", handleTouchStart, {
-      passive: true,
-    });
-
     return () => {
       document.removeEventListener("mousemove", handleMouseMove);
-      document.removeEventListener("touchmove", handleTouchMove);
-      document.removeEventListener("touchstart", handleTouchStart);
     };
   }, [isMounted]);
 
@@ -129,8 +101,12 @@ const MouseTrail = ({ children, className }: MouseTrailProps) => {
           left: 0,
           width: "100vw",
           height: "100vh",
-          zIndex: 0, // Behind content like p5.js version
+          zIndex: 1,
           pointerEvents: "none",
+          touchAction: "none",
+          userSelect: "none",
+          WebkitUserSelect: "none",
+          WebkitTouchCallout: "none",
         }}
       >
         <Suspense fallback={null}>
@@ -144,6 +120,7 @@ const MouseTrail = ({ children, className }: MouseTrailProps) => {
               userSelect: "none",
               WebkitUserSelect: "none",
               WebkitTouchCallout: "none",
+              pointerEvents: "none",
             }}
           >
             <TrailSystem theme={theme} mousePosition={mousePosition} />
@@ -164,14 +141,15 @@ const TrailSystem = ({
 }) => {
   const meshRef = useRef<THREE.Points>(null);
   const { size, viewport, gl } = useThree();
+  const touchStartPosition = useRef<{ x: number; y: number } | null>(null);
 
   // Mobile-optimized parameters
   const [isMobile, setIsMobile] = useState(false);
   const [supportsWebGL, setSupportsWebGL] = useState(true);
 
   // Adaptive parameters based on device
-  const num = isMobile ? 15 : 25; // Fewer points on mobile
-  const radius = isMobile ? 60 : 80; // Smaller radius on mobile
+  const num = 25;
+  const radius = 80;
   const [hue, setHue] = useState<number>(300);
 
   // Mouse position in world coordinates
@@ -317,6 +295,39 @@ const TrailSystem = ({
     };
   }, []);
 
+  // Add touch handlers here where we have access to the canvas
+  useEffect(() => {
+    const handleTouchMove = (e: TouchEvent) => {
+      if (e.touches.length > 0) {
+        const touch = e.touches[0];
+        mousePosition.current = {
+          x: touch.clientX,
+          y: touch.clientY,
+        };
+      }
+    };
+
+    const handleTouchStart = (e: TouchEvent) => {
+      if (e.touches.length > 0) {
+        const touch = e.touches[0];
+        mousePosition.current = {
+          x: touch.clientX,
+          y: touch.clientY,
+        };
+      }
+    };
+
+    document.addEventListener("touchmove", handleTouchMove, { passive: true });
+    document.addEventListener("touchstart", handleTouchStart, {
+      passive: true,
+    });
+
+    return () => {
+      document.removeEventListener("touchmove", handleTouchMove);
+      document.removeEventListener("touchstart", handleTouchStart);
+    };
+  }, [mousePosition]);
+
   useFrame((state) => {
     // Throttle updates on mobile for better performance
     const now = state.clock.elapsedTime * 1000;
@@ -377,11 +388,11 @@ const TrailSystem = ({
         attribute float size;
         varying float vOpacity;
         varying vec3 vColor;
-        
+
         void main() {
           vOpacity = opacity;
           vColor = color;
-          
+
           vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
           gl_Position = projectionMatrix * mvPosition;
           gl_PointSize = size;
@@ -390,16 +401,16 @@ const TrailSystem = ({
       fragmentShader: `
         varying float vOpacity;
         varying vec3 vColor;
-        
+
         void main() {
           vec2 center = gl_PointCoord - vec2(0.5);
           float dist = length(center);
-          
+
           // Sharp circle edge like p5.js ellipse
           if (dist > 0.5) {
             discard;
           }
-          
+
           // Solid fill like p5.js, no glow effects
           gl_FragColor = vec4(vColor, vOpacity);
         }
