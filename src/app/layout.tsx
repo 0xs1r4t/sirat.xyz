@@ -18,17 +18,10 @@ import {
 import { cn } from "@/lib/utils";
 import Breadcrumb from "@/components/Navigation/Breadcrumb";
 import Navbar from "@/components/Navigation/Navbar";
-// import DrawableCanvas from "@/graphics/MouseTrail";
+import MouseTrail from "@/graphics/MouseTrail";
 
 export const metadata: Metadata = myMetadata;
 export const viewport: Viewport = myViewport;
-
-const starFrames = [
-  "/cursors/small-star/0001.PNG",
-  "/cursors/small-star/0002.PNG",
-  "/cursors/small-star/0003.PNG",
-  "/cursors/small-star/0004.PNG",
-];
 
 const RootLayout = ({ children }: Readonly<{ children: React.ReactNode }>) => {
   return (
@@ -43,6 +36,7 @@ const RootLayout = ({ children }: Readonly<{ children: React.ReactNode }>) => {
         )}
       >
         <AnimatedCursor />
+
         <ThemeProvider
           attribute="class"
           defaultTheme="strawberry-matcha"
@@ -53,18 +47,20 @@ const RootLayout = ({ children }: Readonly<{ children: React.ReactNode }>) => {
             "blueberry-lemon",
           ]}
         >
-          <div className="fixed top-0 z-10 flex justify-between w-full">
-            <span className="flex flex-row justify-start">
-              <Breadcrumb />
-            </span>
-            <ThemeSwitcher />
-          </div>
-          <div className="flex flex-row">
-            <Navbar />
-            <main className="container mx-auto relative flex flex-col items-center justify-between top-10 px-5">
-              {children}
-            </main>
-          </div>
+          <MouseTrail>
+            <div className="fixed top-0 z-10 flex justify-between w-full">
+              <span className="flex flex-row justify-start">
+                <Breadcrumb />
+              </span>
+              <ThemeSwitcher />
+            </div>
+            <div className="flex flex-row">
+              <Navbar />
+              <main className="container mx-auto relative flex flex-col items-center justify-between top-10 px-5">
+                {children}
+              </main>
+            </div>
+          </MouseTrail>
         </ThemeProvider>
       </body>
     </html>
