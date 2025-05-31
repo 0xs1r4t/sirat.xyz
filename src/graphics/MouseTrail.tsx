@@ -1,6 +1,13 @@
 "use client";
 
-import React, { useRef, useMemo, useEffect, useState, Suspense } from "react";
+import React, {
+  useCallback,
+  useRef,
+  useMemo,
+  useEffect,
+  useState,
+  Suspense,
+} from "react";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import * as THREE from "three";
 import { usePathname } from "next/navigation";
@@ -122,7 +129,7 @@ const MouseTrail = ({ children, className }: MouseTrailProps) => {
           left: 0,
           width: "100vw",
           height: "100vh",
-          zIndex: 0,
+          zIndex: 0, // Behind content like p5.js version
           pointerEvents: "none",
         }}
       >
@@ -164,8 +171,20 @@ const TrailSystem = ({
 
   // Adaptive parameters based on device
   const num = isMobile ? 15 : 25; // Fewer points on mobile
-  const radius = isMobile ? 60 : 90; // Smaller radius on mobile
+  const radius = isMobile ? 60 : 80; // Smaller radius on mobile
   const [hue, setHue] = useState<number>(300);
+
+  // Mouse position in world coordinates
+  const mousePos = useRef<{ x: number; y: number }>({ x: 0, y: 0 });
+  const targetPos = useRef<{ x: number; y: number }>({ x: 0, y: 0 });
+  const lastUpdateTime = useRef<number>(0);
+
+  // Trail points
+  const points = useRef<{ x: number; y: number }[]>(
+    Array(num)
+      .fill(null)
+      .map(() => ({ x: 0, y: 0 }))
+  );
 
   // Device detection
   useEffect(() => {
@@ -196,18 +215,6 @@ const TrailSystem = ({
     return () => window.removeEventListener("resize", checkDevice);
   }, []);
 
-  // Mouse position in world coordinates
-  const mousePos = useRef<{ x: number; y: number }>({ x: 0, y: 0 });
-  const targetPos = useRef<{ x: number; y: number }>({ x: 0, y: 0 });
-  const lastUpdateTime = useRef<number>(0);
-
-  // Trail points
-  const points = useRef<{ x: number; y: number }[]>(
-    Array(num)
-      .fill(null)
-      .map(() => ({ x: 0, y: 0 }))
-  );
-
   // Update points array when num changes (mobile vs desktop)
   useEffect(() => {
     const newLength = num;
@@ -218,12 +225,7 @@ const TrailSystem = ({
     }
   }, [num]);
 
-  // Fallback for devices without WebGL
-  if (!supportsWebGL) {
-    return null; // Gracefully degrade
-  }
-
-  const getThemeValues = () => {
+  const getThemeValues = useCallback(() => {
     switch (theme) {
       case "blueberry-lemon":
         return { saturation: 0.75, brightness: 0.75 }; // Match p5.js values
@@ -233,7 +235,7 @@ const TrailSystem = ({
       default:
         return { saturation: 0.2, brightness: 1.0 }; // Match p5.js values
     }
-  };
+  }, [theme]);
 
   // Convert HSB to RGB (matching p5.js HSB color mode)
   const hsbToRgb = (
@@ -287,7 +289,7 @@ const TrailSystem = ({
     if (meshRef.current?.geometry.attributes.color) {
       meshRef.current.geometry.attributes.color.needsUpdate = true;
     }
-  }, [hue, theme, colors, num]);
+  }, [hue, theme, colors, num, getThemeValues]);
 
   // Handle click/tap to change color (with touch support)
   useEffect(() => {
@@ -342,7 +344,7 @@ const TrailSystem = ({
 
     // Update trail points with snake-like following (match p5.js ease = 0.7)
     let leader = { x: mousePos.current.x, y: mousePos.current.y };
-    const trailEase = isMobile ? 0.8 : 0.5; // Slightly faster on mobile for responsiveness
+    const trailEase = isMobile ? 0.7 : 0.6; // Slightly faster on mobile for responsiveness
 
     for (let i = 0; i < num; i++) {
       const point = points.current[i];
@@ -408,6 +410,11 @@ const TrailSystem = ({
       depthTest: false,
     });
   }, []);
+
+  // Fallback for devices without WebGL - render null but after all hooks
+  if (!supportsWebGL) {
+    return null; // Gracefully degrade
+  }
 
   return (
     <points ref={meshRef} material={shaderMaterial}>
