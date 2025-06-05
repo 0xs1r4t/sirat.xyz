@@ -28,7 +28,7 @@ const RootLayout = ({ children }: Readonly<{ children: React.ReactNode }>) => {
     <html lang="en" suppressHydrationWarning>
       <body
         className={cn(
-          "min-h-screen bg-background font-sans antialiased overflow-x-clip transition-all duration-500 ease-in-out",
+          "min-h-dvh bg-background font-sans antialiased overflow-x-clip transition-all duration-500 ease-in-out",
           AuthenticSans.className,
           AuthenticSansCondensed.variable,
           ThatThatNewPixel.variable,
