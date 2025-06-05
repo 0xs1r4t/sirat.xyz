@@ -206,7 +206,7 @@ const TrailSystem = ({
   const getThemeValues = useCallback(() => {
     switch (theme) {
       case "blueberry-lemon":
-        return { saturation: 0.75, brightness: 0.75 }; // Match p5.js values
+        return { saturation: 0.5, brightness: 1.0 }; // Match p5.js values
       case "neopolitan-ice-cream":
         return { saturation: 0.3, brightness: 1.0 };
       case "strawberry-matcha":
@@ -421,11 +421,6 @@ const TrailSystem = ({
       depthTest: false,
     });
   }, []);
-
-  // Fallback for devices without WebGL - render null but after all hooks
-  if (!supportsWebGL) {
-    return null; // Gracefully degrade
-  }
 
   return (
     <points ref={meshRef} material={shaderMaterial}>
