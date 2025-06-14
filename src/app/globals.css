@@ -1,12 +1,12 @@
 @import "tailwindcss";
 @plugin "@tailwindcss/typography";
 
-/* light/default theme 🍓🧋 */
+/* light/default theme 🍥🍫 */
 @theme {
-  --color-background: rgb(232 241 216);
-  --color-foreground: rgb(39 56 33);
-  --color-muted-100: rgb(246 215 252);
-  --color-muted-200: rgb(229 157 248);
+  --color-background: rgb(255 245 224);
+  --color-foreground: rgb(84 43 35);
+  --color-muted-100: rgb(255 204 237);
+  --color-muted-200: rgb(245 135 229);
 
   --font-authentic-sans: 'Authentic Sans', sans-serif;
   --font-that-that-new-pixel: 'That That New Pixel', serif;
@@ -40,8 +40,8 @@
     /* taro and matcha palette - https://www.color-hex.com/color-palette/1028107 */
     --color-background: rgb(232 241 216);
     --color-foreground: rgb(39 56 33);
-    --color-muted-100: rgb(246 215 252);
-    --color-muted-200: rgb(229 157 248);
+    --color-muted-100: rgb(243 198 252);
+    --color-muted-200: rgb(222 126 249);
   }
 
   /* default dark theme 🫐🍋 */
@@ -256,8 +256,13 @@
     -webkit-text-stroke: 2px var(--color-muted-200);
   }
 
+  .text-stroke-foreground-thick {
+    -webkit-text-stroke: 2px var(--color-foreground);
+  }
+
   .glow-text {
-    text-shadow: 0px 0px 5px var(--color-muted-200);
+    text-shadow: 0px 0px 10px var(--color-muted-200);
+    /* text-shadow: 0px 0px 5px var(--color-foreground); */
   }
 
   .strawberry-matcha .blend-link,

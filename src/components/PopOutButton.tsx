@@ -33,6 +33,7 @@ const PopOutButton = ({
     >
       <motion.button
         onClick={onToggle}
+        aria-label={`Click to ${isOpen ? "close" : "expand"} sidebar`}
         style={{
           top: position === "top" ? offsetTop : "auto",
           bottom: position === "bottom" ? offsetBottom : "auto",
