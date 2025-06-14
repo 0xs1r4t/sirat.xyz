@@ -23,6 +23,7 @@ export const AuthenticSans = localFont({
       style: "normal",
     },
   ],
+  display: "swap",
   variable: "--font-authentic-sans",
 });
 
@@ -49,6 +50,7 @@ export const AuthenticSansCondensed = localFont({
       style: "normal",
     },
   ],
+  display: "swap",
   variable: "--font-authentic-sans-condensed",
 });
 
@@ -65,6 +67,7 @@ export const ThatThatNewPixel = localFont({
       style: "italic",
     },
   ],
+  display: "swap",
   variable: "--font-that-that-new-pixel",
 });
 
@@ -76,5 +79,6 @@ export const Monaco = localFont({
       style: "normal",
     },
   ],
+  display: "swap",
   variable: "--font-monaco",
 });
