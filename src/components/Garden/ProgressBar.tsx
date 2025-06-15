@@ -4,7 +4,8 @@ import { Fragment, ReactNode } from "react";
 import * as m from "motion/react-m";
 import { LazyMotion, useSpring, useScroll } from "motion/react";
 
-const loadFeatures = () => import("@/lib/features").then((res) => res.default);
+const loadFeatures = () =>
+  import("@/lib/features/min").then((res) => res.default);
 
 const ProgressBar = (props: { children: ReactNode }) => {
   const { scrollYProgress } = useScroll();

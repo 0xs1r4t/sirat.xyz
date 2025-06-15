@@ -9,7 +9,8 @@ import { useDebouncedCallback } from "use-debounce";
 import { LazyMotion } from "motion/react";
 import * as m from "motion/react-m";
 
-const loadFeatures = () => import("@/lib/features").then((res) => res.default);
+const loadFeatures = () =>
+  import("@/lib/features/min").then((res) => res.default);
 
 const Search = ({ placeholder }: { placeholder: string }) => {
   const searchParams = useSearchParams();

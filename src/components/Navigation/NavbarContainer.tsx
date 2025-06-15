@@ -7,7 +7,8 @@ import * as m from "motion/react-m";
 import SpotifyPlayer from "@/components/Navigation/SpotifyPlayer";
 import SocialLinks from "@/components/Navigation/SocialLinks";
 
-const loadFeatures = () => import("@/lib/features").then((res) => res.default);
+const loadFeatures = () =>
+  import("@/lib/features/min").then((res) => res.default);
 
 interface NavbarContainerProps {
   isOpen: boolean;

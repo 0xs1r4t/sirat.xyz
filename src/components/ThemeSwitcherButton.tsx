@@ -4,7 +4,8 @@ import { useEffect, useState } from "react";
 import { LazyMotion } from "motion/react";
 import * as m from "motion/react-m";
 
-const loadFeatures = () => import("@/lib/features").then((res) => res.default);
+const loadFeatures = () =>
+  import("@/lib/features/min").then((res) => res.default);
 
 import { useTheme } from "next-themes";
 import { Tooltip } from "@/components/Tooltip";
