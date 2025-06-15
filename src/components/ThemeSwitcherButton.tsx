@@ -1,7 +1,10 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import * as motion from "motion/react-client";
+import { LazyMotion } from "motion/react";
+import * as m from "motion/react-m";
+
+const loadFeatures = () => import("@/lib/features").then((res) => res.default);
 
 import { useTheme } from "next-themes";
 import { Tooltip } from "@/components/Tooltip";
@@ -29,9 +32,10 @@ const ThemeSwitcherButton = () => {
           label={`switch the theme to ${key.replace("-", " ")}!`}
           placement="bottom"
         >
-          <motion.button
-            key={key}
-            className={`z-20 p-1.5 aspect-square self-end inline-flex justify-center items-center top-14 mt-2 mr-2 rounded-md bg-muted-100 border-2 border-muted-200 
+          <LazyMotion features={loadFeatures}>
+            <m.button
+              key={key}
+              className={`z-20 p-1.5 aspect-square self-end inline-flex justify-center items-center top-14 mt-2 mr-2 rounded-md bg-muted-100 border-2 border-muted-200 
               ${
                 mounted && theme === key
                   ? "scale-105 ring-2 ring-offset-0 ring-muted-200"
@@ -41,43 +45,44 @@ const ThemeSwitcherButton = () => {
               hover:scale-110 hover:drop-shadow-muted-200 hover:drop-shadow-[0_0_2px]
               active:scale-95 active:duration-100
               focus:border-2 focus:rounded-lg focus:border-muted-200 focus:ring-2 focus:ring-muted-200 focus:drop-shadow-muted-200 focus:drop-shadow-[0_0_2px]`}
-            aria-label={`${key.replace("-", " ")} theme`}
-            onClick={() => {
-              setTheme(key);
-            }}
-            whileHover={{
-              scale: 1.1,
-              transition: { duration: 0.2 },
-            }}
-            whileTap={{
-              scale: 0.95,
-              transition: { duration: 0.1 },
-            }}
-            whileFocus={{ scale: 1.05 }}
-            animate={
-              mounted && theme === key
-                ? {
-                    scale: 1.05,
-                    y: [0, -1, 0],
-                    transition: {
-                      y: {
-                        repeat: Infinity,
-                        duration: 1,
-                        ease: "easeInOut",
+              aria-label={`${key.replace("-", " ")} theme`}
+              onClick={() => {
+                setTheme(key);
+              }}
+              whileHover={{
+                scale: 1.1,
+                transition: { duration: 0.2 },
+              }}
+              whileTap={{
+                scale: 0.95,
+                transition: { duration: 0.1 },
+              }}
+              whileFocus={{ scale: 1.05 }}
+              animate={
+                mounted && theme === key
+                  ? {
+                      scale: 1.05,
+                      y: [0, -1, 0],
+                      transition: {
+                        y: {
+                          repeat: Infinity,
+                          duration: 1,
+                          ease: "easeInOut",
+                        },
                       },
-                    },
-                  }
-                : {}
-            }
-          >
-            <span
-              className={`transform transition-transform duration-200 ${
-                mounted && theme === key ? "scale-105" : "scale-100"
-              }`}
+                    }
+                  : {}
+              }
             >
-              {value}
-            </span>
-          </motion.button>
+              <span
+                className={`transform transition-transform duration-200 ${
+                  mounted && theme === key ? "scale-105" : "scale-100"
+                }`}
+              >
+                {value}
+              </span>
+            </m.button>
+          </LazyMotion>
         </Tooltip>
       ))}
     </div>

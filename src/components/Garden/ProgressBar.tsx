@@ -1,7 +1,10 @@
 "use client";
 
 import { Fragment, ReactNode } from "react";
-import { motion, useSpring, useScroll } from "motion/react";
+import * as m from "motion/react-m";
+import { LazyMotion, useSpring, useScroll } from "motion/react";
+
+const loadFeatures = () => import("@/lib/features").then((res) => res.default);
 
 const ProgressBar = (props: { children: ReactNode }) => {
   const { scrollYProgress } = useScroll();
@@ -13,20 +16,22 @@ const ProgressBar = (props: { children: ReactNode }) => {
 
   return (
     <Fragment>
-      <motion.div
-        id="scroll-indicator"
-        style={{
-          scaleX,
-          position: "fixed",
-          bottom: 0,
-          left: 0,
-          right: 0,
-          height: 5,
-          originX: 0,
-          zIndex: 50,
-        }}
-        className="bg-linear-to-r/increasing from-violet-300 via-lime-200 to-violet-300"
-      />
+      <LazyMotion features={loadFeatures}>
+        <m.div
+          id="scroll-indicator"
+          style={{
+            scaleX,
+            position: "fixed",
+            bottom: 0,
+            left: 0,
+            right: 0,
+            height: 5,
+            originX: 0,
+            zIndex: 50,
+          }}
+          className="bg-linear-to-r/increasing from-violet-300 via-lime-200 to-violet-300"
+        />
+      </LazyMotion>
       {props.children}
     </Fragment>
   );

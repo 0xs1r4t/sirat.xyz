@@ -6,7 +6,10 @@
 import React, { FormEvent, useEffect, useState, useRef } from "react";
 import { useSearchParams, usePathname, useRouter } from "next/navigation";
 import { useDebouncedCallback } from "use-debounce";
-import * as motion from "motion/react-client";
+import { LazyMotion } from "motion/react";
+import * as m from "motion/react-m";
+
+const loadFeatures = () => import("@/lib/features").then((res) => res.default);
 
 const Search = ({ placeholder }: { placeholder: string }) => {
   const searchParams = useSearchParams();
@@ -65,31 +68,33 @@ const Search = ({ placeholder }: { placeholder: string }) => {
 
   return (
     <form className="relative flex flex-row" onSubmit={handleSubmit}>
-      <motion.input
-        ref={inputRef}
-        type="text"
-        className="peer block bg-muted-100 border-2 border-muted-200 rounded-md hover:drop-shadow-muted-200 hover:drop-shadow-[0_0_2px] focus:outline-none focus:border-2 focus:rounded-lg focus:border-muted-200 focus:ring-2 focus:ring-muted-200 focus:drop-shadow-muted-200 focus:drop-shadow-[0_0_2px] placeholder:text-foreground placeholder:opacity-80 w-full self-stretch my-5 px-4 py-2 p-4 text-inherit"
-        placeholder={placeholder}
-        onChange={(e) => {
-          handleSearch(e.target.value);
-        }}
-        defaultValue={searchParams.get("q")?.toString()}
-        animate={
-          isFocused
-            ? {
-                scale: 1.05,
-                y: [0, -1, 0],
-                transition: {
-                  y: {
-                    repeat: Infinity,
-                    duration: 1,
-                    ease: "easeInOut",
+      <LazyMotion features={loadFeatures}>
+        <m.input
+          ref={inputRef}
+          type="text"
+          className="peer block bg-muted-100 border-2 border-muted-200 rounded-md hover:drop-shadow-muted-200 hover:drop-shadow-[0_0_2px] focus:outline-none focus:border-2 focus:rounded-lg focus:border-muted-200 focus:ring-2 focus:ring-muted-200 focus:drop-shadow-muted-200 focus:drop-shadow-[0_0_2px] placeholder:text-foreground placeholder:opacity-80 w-full self-stretch my-5 px-4 py-2 p-4 text-inherit"
+          placeholder={placeholder}
+          onChange={(e) => {
+            handleSearch(e.target.value);
+          }}
+          defaultValue={searchParams.get("q")?.toString()}
+          animate={
+            isFocused
+              ? {
+                  scale: 1.05,
+                  y: [0, -1, 0],
+                  transition: {
+                    y: {
+                      repeat: Infinity,
+                      duration: 1,
+                      ease: "easeInOut",
+                    },
                   },
-                },
-              }
-            : {}
-        }
-      />
+                }
+              : {}
+          }
+        />
+      </LazyMotion>
     </form>
   );
 };
