@@ -37,6 +37,7 @@ const codeBlockRenderer = (options: Config) =>
           <button
             onclick="navigator.clipboard.writeText(this.parentElement.querySelector('code').innerText)"
             class="copy-button"
+            aria-label="copy code block"
           >
             <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" class="not-prose">
               <g fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="2">

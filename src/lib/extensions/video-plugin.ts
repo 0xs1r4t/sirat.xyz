@@ -35,7 +35,7 @@ const videoBlockRenderer = (options: Config) =>
               src="https://www.youtube.com/embed/${youtubeId}?origin=${encodeURIComponent(
           origin
         )}"
-              title="${caption}"
+              title="${caption} (from youtube)"
               frameborder="0"
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
               allowFullScreen
