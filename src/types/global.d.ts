@@ -16,8 +16,8 @@ declare global {
     description: string;
     tags: string[];
     type: string;
-    createdAt?: string;
-    updatedAt?: string;
+    createdAt: string;
+    updatedAt: string;
   };
 
   type Post = PostSummary & {
