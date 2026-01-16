@@ -1,0 +1,19 @@
+/*
+* Bash Profile Styles
+* Based on my custom bash profile
+*/
+
+
+pre[class*="language-bash"]::before,
+pre[class*="language-shell"]::before {
+  content: "🌼 ";
+  color: #ebe087; /* brightYellow */
+  font-size: 1em;
+  margin-right: 0.5em;
+}
+
+/* Style the prompt line differently */
+pre[class*="language-bash"] .token.function,
+pre[class*="language-shell"] .token.function {
+  color: #deff8c; /* brightGreen */
+}

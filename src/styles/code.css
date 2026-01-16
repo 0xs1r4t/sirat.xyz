@@ -1,0 +1,25 @@
+code[class*="language-"],
+pre[class*="language-"] {
+  background: none;
+  font-family: "Cascadia Mono", Monaco, "Courier New", monospace;
+  font-size: 16px;
+  text-align: left;
+  white-space: pre;
+  word-spacing: normal;
+  word-break: normal;
+  word-wrap: normal;
+  line-height: 1.5;
+  tab-size: 4;
+  hyphens: none;
+}
+
+/* Custom spacing for code blocks in prose */
+.prose pre {
+  margin-bottom: 2rem !important;
+  margin-top: 1.5rem !important;
+}
+
+.prose pre[class*="language-"] {
+  margin-bottom: 2rem !important;
+  margin-top: 1.5rem !important;
+}
