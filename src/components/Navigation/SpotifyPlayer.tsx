@@ -10,6 +10,8 @@ import fetcher from "@/lib/fetcher";
 import { Tooltip } from "@/components/Tooltip";
 import { Filters } from "@/components/Filters";
 
+import DitherImage from "@/graphics/Dither/DitherImage";
+
 const refresh: number = 214400;
 
 interface SpotifyProps {
@@ -27,7 +29,7 @@ const Spotify = ({ song }: SpotifyProps) => {
           className="flex flex-col items-center justify-center p-2"
         >
           <div className="rounded-md w-36 h-36 bg-muted-200 border-2 border-muted-200 z-30">
-            <Image
+            <DitherImage
               src={song.albumImageUrl}
               alt={`album cover`}
               height={144}
@@ -36,6 +38,8 @@ const Spotify = ({ song }: SpotifyProps) => {
               unoptimized={false}
               loading="lazy"
               style={{ objectFit: "cover" }}
+              ditherPattern="8x8"
+              ditherIntensity={1.0}
             />
             <Filters />
           </div>
@@ -51,7 +55,7 @@ const Spotify = ({ song }: SpotifyProps) => {
     return (
       <div className="flex flex-col items-center justify-center p-2">
         <div className="rounded-md w-36 h-36 bg-muted-200 border-2 border-muted-200 z-30">
-          <Image
+          <DitherImage
             src="/images/no-music-playing.webp"
             alt="no music is playing :("
             height={144}
@@ -59,6 +63,8 @@ const Spotify = ({ song }: SpotifyProps) => {
             className={`GradientMap rounded-md z-40`}
             loading="lazy"
             style={{ objectFit: "cover" }}
+            ditherPattern="4x4"
+            ditherIntensity={1.0}
           />
           <Filters />
         </div>

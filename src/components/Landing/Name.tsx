@@ -5,7 +5,7 @@ import { LazyMotion } from "motion/react";
 import * as m from "motion/react-m";
 
 const loadFeatures = () =>
-  import("@/lib/maxFeatures").then((res) => res.default);
+  import("@/lib/features/max").then((res) => res.default);
 
 const Name = () => {
   const constraintsRef = useRef(null);

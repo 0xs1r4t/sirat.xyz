@@ -11,20 +11,16 @@ declare global {
   };
 
   type PostSummary = {
+    slug: string;
     title: string;
     description: string;
     tags: string[];
-    slug: string;
-    created_at: string;
-    updated_at: string;
+    type: string;
+    createdAt: string;
+    updatedAt: string;
   };
 
-  type Post = {
-    title: string;
-    description: string;
-    tags: string[];
+  type Post = PostSummary & {
     html: string;
-    created_at: string;
-    updated_at: string;
   };
 }

@@ -1,6 +1,11 @@
 @import "tailwindcss";
 @plugin "@tailwindcss/typography";
 
+/* Code block styles */
+@import url("../styles/code.css");
+@import url("../styles/dracula-prism.css");
+@import url("../styles/prism-line-numbers.css");
+
 /* light/default theme 🍥🍫 */
 @theme {
   --color-background: rgb(255 245 224);

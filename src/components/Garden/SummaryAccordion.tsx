@@ -12,8 +12,12 @@ const SummaryAccordion = ({ summary }: { summary: Post }) => {
       >
         <p>{summary.description}</p>
         <span aria-hidden="true">{""}</span>
-        <Date date={summary.created_at} label="Created on" />
-        <Date date={summary.updated_at} label="Updated on" />
+        {summary.createdAt && (
+          <Date date={summary.createdAt} label="Created on" />
+        )}
+        {summary.updatedAt && (
+          <Date date={summary.updatedAt} label="Updated on" />
+        )}
         <Tags tags={summary.tags} />
         <span aria-hidden="true">{""}</span>
       </section>

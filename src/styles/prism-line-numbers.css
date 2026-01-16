@@ -1,0 +1,50 @@
+
+/*
+ *
+ * Line Numbers for rehype-prism-plus with Dracula theme
+ *
+*/
+
+/* Style the line number attribute */
+.code-line.line-number::before {
+  content: attr(line);
+  display: inline-block;
+  width: 2.5rem;
+  padding-right: 1rem;
+  margin-right: 1rem;
+  margin-left: -0.5rem;
+  color: #6272a4; /* Dracula comment color */
+  text-align: right;
+  user-select: none;
+  border-right: 1px solid #44475a; /* Dracula selection */
+}
+
+/* Add padding to code blocks with line numbers */
+pre[class*="language-"] code.code-highlight {
+  display: block;
+  padding-left: 0.5rem;
+}
+
+/* Optional: Highlight specific lines */
+.code-line.highlight-line {
+  background-color: rgba(68, 71, 90, 0.5); /* Dracula selection */
+  border-left: 4px solid #bd93f9; /* Dracula purple */
+  display: block;
+  margin-left: -1rem;
+  margin-right: -1rem;
+  padding-left: calc(1rem - 4px);
+}
+
+/* Optional: Inserted/deleted lines for diffs */
+.code-line.inserted {
+  background-color: rgba(80, 250, 123, 0.15); /* Dracula green */
+}
+
+.code-line.deleted {
+  background-color: rgba(255, 85, 85, 0.15); /* Dracula red */
+}
+
+/* Make sure code lines are block level */
+.code-line {
+  display: block;
+}

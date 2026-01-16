@@ -1,0 +1,148 @@
+/*
+* PrismJS Custom Styles
+* Based on my custom Windows Terminal theme
+*/
+
+/* Code blocks */
+pre[class*="language-"] {
+  padding: 1em;
+  margin: 0.5em 0;
+  overflow: auto;
+  background: #242728; /* background */
+  border-radius: 0.5em;
+  border: 2px solid #636667; /* brightBlack */
+}
+
+:not(pre) > code[class*="language-"],
+pre[class*="language-"] {
+  background: #242728;
+}
+
+/* Inline code */
+:not(pre) > code[class*="language-"] {
+  padding: 0.1em 0.3em;
+  border-radius: 0.3em;
+  white-space: normal;
+}
+
+/* Tokens */
+.token.comment,
+.token.prolog,
+.token.doctype,
+.token.cdata {
+  color: #636667; /* brightBlack - comments */
+  font-style: italic;
+}
+
+.token.punctuation {
+  color: #e1e1e1; /* white */
+}
+
+.token.namespace {
+  opacity: 0.7;
+}
+
+.token.property,
+.token.tag,
+.token.boolean,
+.token.number,
+.token.constant,
+.token.symbol,
+.token.deleted {
+  color: #ff0090; /* red */
+}
+
+.token.selector,
+.token.attr-name,
+.token.string,
+.token.char,
+.token.builtin,
+.token.inserted {
+  color: #b6ff00; /* green */
+}
+
+.token.operator,
+.token.entity,
+.token.url,
+.language-css .token.string,
+.style .token.string {
+  color: #47e0fb; /* blue */
+}
+
+.token.atrule,
+.token.attr-value,
+.token.keyword {
+  color: #d731ff; /* purple */
+}
+
+.token.function,
+.token.class-name {
+  color: #fff727; /* yellow */
+}
+
+.token.regex,
+.token.important,
+.token.variable {
+  color: #0effbb; /* cyan */
+}
+
+.token.important,
+.token.bold {
+  font-weight: bold;
+}
+
+.token.italic {
+  font-style: italic;
+}
+
+.token.entity {
+  cursor: help;
+}
+
+/* Line highlighting */
+.highlight-line {
+  background-color: rgba(71, 224, 251, 0.1); /* blue with opacity */
+  display: block;
+  margin-left: -1em;
+  margin-right: -1em;
+  padding-left: 0.75em;
+  padding-right: 1em;
+  border-left: 4px solid #47e0fb; /* blue */
+}
+
+/* Line numbers */
+.code-line {
+  display: block;
+  padding-left: 16px;
+  padding-right: 16px;
+  margin-left: -16px;
+  margin-right: -16px;
+}
+
+.line-number::before {
+  display: inline-block;
+  width: 2rem;
+  text-align: right;
+  margin-right: 16px;
+  margin-left: -8px;
+  color: #636667; /* brightBlack */
+  content: attr(line);
+  user-select: none;
+}
+
+/* Diff highlighting */
+.code-line.inserted {
+  background-color: rgba(182, 255, 0, 0.2); /* green with opacity */
+}
+
+.code-line.deleted {
+  background-color: rgba(255, 0, 144, 0.2); /* red with opacity */
+}
+
+/* Selection */
+code[class*="language-"]::selection,
+code[class*="language-"] ::selection,
+pre[class*="language-"]::selection,
+pre[class*="language-"] ::selection {
+  background: rgba(255, 255, 255, 0.3); /* selectionBackground with opacity */
+}

@@ -18,7 +18,7 @@ import {
 import { cn } from "@/lib/utils";
 import Breadcrumb from "@/components/Navigation/Breadcrumb";
 import Navbar from "@/components/Navigation/Navbar";
-const MouseTrail = React.lazy(() => import("@/graphics/MouseTrail"));
+const MouseTrail = React.lazy(() => import("@/graphics/Trail/Mouse"));
 
 export const metadata: Metadata = myMetadata;
 export const viewport: Viewport = myViewport;
