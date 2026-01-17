@@ -2,6 +2,7 @@ import React from "react";
 
 import ProgressBar from "@/components/Garden/ProgressBar";
 import Heading from "@/components/Heading";
+import LinkPreview from "@/components/Garden/LinkPreview";
 
 const Post = ({ post }: { post: Post }) => {
   return (
@@ -15,17 +16,16 @@ const Post = ({ post }: { post: Post }) => {
         <div
           dangerouslySetInnerHTML={{ __html: post.html }}
           className="text-foreground w-full max-w-full prose prose-fuchsia 
-                     lg:prose-lg lg:max-w-2xl xl:max-w-3xl mx-auto
-                     prose-headings:text-foreground 
-                     prose-headings:font-authentic-sans-condensed 
-                     prose-pre:font-monaco 
-                     prose-pre:border-2 
-                     prose-pre:border-muted-200 
-                     prose-pre:max-w-full 
-                     prose-pre:min-w-0 
-                     prose-pre:w-full 
-                     prose-pre:overflow-x-auto"
+             lg:prose-lg lg:max-w-2xl xl:max-w-3xl mx-auto
+             prose-headings:text-foreground 
+             prose-headings:font-authentic-sans-condensed 
+             prose-pre:font-monaco 
+             prose-pre:border-2 
+             prose-pre:border-muted-200 
+             prose-a:transition-colors
+             prose-a:duration-200"
         />
+        <LinkPreview />
         <span aria-hidden="true" className="p-4">
           {""}
         </span>

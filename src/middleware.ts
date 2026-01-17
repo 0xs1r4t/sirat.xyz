@@ -35,7 +35,7 @@ export function middleware(request: NextRequest) {
     [
       "frame-src 'self' https://www.youtube.com https://youtube.com https://youtu.be;",
       "connect-src 'self' https://*.google.com https://play.google.com;",
-      "img-src 'self' https://*.google.com https://*.youtube.com;",
+      "img-src 'self' https://*.google.com https://*.youtube.com https://icons.duckduckgo.com https: data:;",
     ].join(" ")
   );
 

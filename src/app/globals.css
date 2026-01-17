@@ -6,6 +6,9 @@
 @import url("../styles/dracula-prism.css");
 @import url("../styles/prism-line-numbers.css");
 
+/* Link preview styles */
+@import url("../styles/link-preview.css");
+
 /* light/default theme 🍥🍫 */
 @theme {
   --color-background: rgb(255 245 224);
