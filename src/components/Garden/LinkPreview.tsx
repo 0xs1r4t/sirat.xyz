@@ -57,12 +57,43 @@ const LinkPreview = () => {
         display: inline-block !important;
         width: 16px !important;
         height: 16px !important;
-        margin-right: 4px;
-        vertical-align: text-bottom;
-      `;
+        margin: 0 4px 0 0 !important;
+        vertical-align: middle !important;
+        position: relative;
+        top: -1px;
+        `;
 
       let imageLoaded = false;
       let fallbackAttempted = false;
+
+      const insertCustomIcon = () => {
+        favicon.remove();
+
+        const iconContainer = document.createElement("span");
+        iconContainer.className = "inline-block mr-1";
+        iconContainer.style.cssText = `
+            display: inline-block !important;
+            width: 16px !important;
+            height: 16px !important;
+            margin-right: 4px;
+            vertical-align: middle !important;
+            position: relative;
+            top: -1px;
+        `;
+        iconContainer.innerHTML = `
+            <img 
+            src="/icons/pixel/LINK.svg" 
+            alt="" 
+            width="16" 
+            height="16"
+            class="blend-link"
+            style="display: inline-block !important; width: 16px !important; height: 16px !important; vertical-align: middle !important;"
+            />
+        `;
+
+        link.insertBefore(iconContainer, link.firstChild);
+        console.log(`Inserted custom icon for link ${index}`);
+      };
 
       const tryFallback = () => {
         if (!fallbackAttempted) {
@@ -74,37 +105,10 @@ const LinkPreview = () => {
           setTimeout(() => {
             if (!imageLoaded || favicon.naturalWidth <= 1) {
               console.log(`Using custom icon for ${link.href}`);
-              useCustomIcon();
+              insertCustomIcon();
             }
           }, 1000);
         }
-      };
-
-      const useCustomIcon = () => {
-        favicon.remove();
-
-        const iconContainer = document.createElement("span");
-        iconContainer.className = "inline-block mr-1";
-        iconContainer.style.cssText = `
-          display: inline-block !important;
-          width: 16px !important;
-          height: 16px !important;
-          margin-right: 4px;
-          vertical-align: text-bottom;
-        `;
-        iconContainer.innerHTML = `
-          <img 
-            src="/icons/pixel/LINK.svg" 
-            alt="" 
-            width="16" 
-            height="16"
-            class="blend-link"
-            style="display: inline-block !important; width: 16px !important; height: 16px !important;"
-          />
-        `;
-
-        link.insertBefore(iconContainer, link.firstChild);
-        console.log(`Inserted custom icon for link ${index}`);
       };
 
       favicon.onerror = () => {
