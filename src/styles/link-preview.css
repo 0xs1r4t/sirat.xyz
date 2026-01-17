@@ -1,0 +1,33 @@
+/*
+*
+* Enhanced external links with favicons
+*
+ */
+
+/* External links styling */
+.external-link {
+  position: relative;
+  text-decoration: underline;
+  text-decoration-color: var(--color-muted-200);
+  text-underline-offset: 2px;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+}
+
+.external-link:hover {
+  color: var(--color-muted-200);
+}
+
+/* Internal links styling */
+.internal-link {
+  text-decoration: underline;
+  text-decoration-color: var(--color-muted-200);
+  text-decoration-style: wavy;
+  text-underline-offset: 2px;
+  transition: all 0.2s ease;
+}
+
+.internal-link:hover {
+  color: var(--color-muted-200);
+}

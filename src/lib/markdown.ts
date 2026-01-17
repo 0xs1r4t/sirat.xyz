@@ -9,6 +9,7 @@ import rehypePrism from "rehype-prism-plus";
 import rehypeStringify from "rehype-stringify";
 import remarkYoutube from "@/lib/plugins/youtube";
 import remarkPostLink from "@/lib/plugins/post-link";
+import rehypeLinkPreview from "@/lib/plugins/link-preview";
 
 const contentDirectory = path.join(process.cwd(), "content/garden");
 
@@ -82,10 +83,12 @@ export async function getPostBySlug(slug: string): Promise<Post | null> {
         ignoreMissing: true,
         showLineNumbers: true, // Enable line numbers for all code blocks
       }) // Syntax highlighting (rehype plugin)
+      .use(rehypeLinkPreview) // Link previews
       .use(rehypeStringify, { allowDangerousHtml: true }) // Convert to HTML string
       .process(content);
 
     const html = processedContent.toString();
+    console.log(`Loaded post: ${html}`);
 
     return {
       slug: data.slug,

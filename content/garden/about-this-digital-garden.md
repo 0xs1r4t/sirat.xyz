@@ -3,7 +3,7 @@ slug: about-this-digital-garden
 title: about this digital repository (garden) of posts
 description: i swear i will add things to this blog(?). useful things...
 tags: [ai, art, introduction, updates]
-type: commentary
+type: life updates
 status: published
 createdAt: January 12, 2025
 updatedAt: February 13, 2025
