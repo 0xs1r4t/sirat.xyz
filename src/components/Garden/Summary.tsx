@@ -3,7 +3,7 @@ import Link from "next/link";
 import Tags from "@/components/Garden/Tags";
 import Date from "@/components/Garden/Date";
 
-const Summary = ({ summary }: { summary: PostSummary[] }) => {
+const Summary = ({ summary }: { summary: PostMetadata[] }) => {
   return (
     <section role="feed" className="w-full max-w-2xl">
       {summary.map(
@@ -29,7 +29,7 @@ const Summary = ({ summary }: { summary: PostSummary[] }) => {
             <Tags tags={tags} />
             <span aria-hidden="true">{""}</span>
           </section>
-        )
+        ),
       )}
     </section>
   );

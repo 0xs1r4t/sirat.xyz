@@ -9,6 +9,13 @@
 /* Link preview styles */
 @import url("../styles/link-preview.css");
 
+/* KaTeX styles */
+/* @import url("https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css"); */
+@import url("katex/dist/katex.min.css");
+
+/* Table of Contents styles */
+@import url("../styles/toc.css");
+
 /* light/default theme 🍥🍫 */
 @theme {
   --color-background: rgb(255 245 224);

@@ -23,9 +23,13 @@ const PopOutButton = ({
   position = "top",
   offsetTop = "4.5rem",
   offsetBottom = "4.5rem",
-  offsetRight = "17.75rem",
-  offsetLeft = "11.25rem",
+  offsetRight = "0rem", // Start close to right edge
+  offsetLeft = "0rem", // Start close to left edge
 }: PopOutButtonProps) => {
+  // Calculate the open position based on sidebar width
+  const leftSidebarWidth = "11.25rem"; // 180px
+  const rightSidebarWidth = "11.5rem"; // 184px (44 * 4 + margin)
+
   return (
     <Tooltip
       label={`click to ${isOpen ? "close" : "expand"} sidebar`}
@@ -37,11 +41,18 @@ const PopOutButton = ({
         style={{
           top: position === "top" ? offsetTop : "auto",
           bottom: position === "bottom" ? offsetBottom : "auto",
+          // Position from the correct side
+          ...(placement === "left"
+            ? { left: offsetLeft }
+            : { right: offsetRight }),
         }}
         animate={
           isOpen
             ? {
-                x: placement === "left" ? offsetLeft : offsetRight,
+                x:
+                  placement === "left"
+                    ? leftSidebarWidth
+                    : `-${rightSidebarWidth}`,
                 scale: 1.05,
                 y: [0, -1, 0],
                 transition: {
@@ -67,7 +78,13 @@ const PopOutButton = ({
         <span
           aria-hidden="true"
           className={`${
-            isOpen ? "rotate-0" : "rotate-180"
+            isOpen
+              ? placement === "left"
+                ? "rotate-0"
+                : "rotate-180"
+              : placement === "left"
+                ? "rotate-180"
+                : "rotate-0"
           } transition-transform duration-500 ease-in-out`}
         >
           <Icons.doubleChevron className="w-4 h-4 lg:w-5 lg:h-5" />

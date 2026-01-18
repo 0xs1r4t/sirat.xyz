@@ -1,12 +1,18 @@
 import fs from "fs";
 import path from "path";
 import matter from "gray-matter";
+
 import { remark } from "remark";
 import remarkHtml from "remark-html";
 import remarkGfm from "remark-gfm";
 import remarkRehype from "remark-rehype";
+import remarkToc from "remark-toc";
+import remarkMath from "remark-math";
+import rehypeSlug from "rehype-slug";
 import rehypePrism from "rehype-prism-plus";
 import rehypeStringify from "rehype-stringify";
+import rehypeKatex from "rehype-katex";
+
 import remarkYoutube from "@/lib/plugins/youtube";
 import remarkPostLink from "@/lib/plugins/post-link";
 import rehypeLinkPreview from "@/lib/plugins/link-preview";
@@ -27,6 +33,7 @@ export interface PostMetadata {
 export interface Post extends PostMetadata {
   content: string;
   html: string;
+  toc: string;
 }
 
 // Get all markdown files
@@ -52,7 +59,7 @@ export async function getAllPosts(): Promise<PostMetadata[]> {
           createdAt: data.createdAt,
           updatedAt: data.updatedAt,
         } as PostMetadata;
-      })
+      }),
   );
 
   // Sort by createdAt in descending order (newest first)
@@ -76,19 +83,34 @@ export async function getPostBySlug(slug: string): Promise<Post | null> {
 
     const processedContent = await remark()
       .use(remarkGfm) // GitHub-flavored markdown
+      .use(remarkToc, {
+        heading: "table of contents|contents|toc",
+        tight: true,
+        ordered: true,
+        maxDepth: 4,
+      }) // Table of contents
+      .use(remarkMath) // Parse math syntax
       .use(remarkPostLink) // Internal post links
       .use(remarkYoutube) // YouTube embeds
       .use(remarkRehype, { allowDangerousHtml: true }) // Convert to rehype and preserve HTML
+      .use(rehypeSlug) // Add slugs to headings
       .use(rehypePrism, {
         ignoreMissing: true,
         showLineNumbers: true, // Enable line numbers for all code blocks
       }) // Syntax highlighting (rehype plugin)
+      .use(rehypeKatex) // Render math with KaTeX
       .use(rehypeLinkPreview) // Link previews
       .use(rehypeStringify, { allowDangerousHtml: true }) // Convert to HTML string
       .process(content);
 
     const html = processedContent.toString();
-    console.log(`Loaded post: ${html}`);
+
+    // Extract TOC from generated HTML
+    // Extract TOC - it's an <h2> with id "table-of-contents" followed by an <ol>
+    const tocMatch = html.match(
+      /<h2 id="table-of-contents">Table of Contents<\/h2>\s*(<ol>[\s\S]*?<\/ol>)/,
+    );
+    const toc = tocMatch ? tocMatch[1] : "";
 
     return {
       slug: data.slug,
@@ -101,6 +123,7 @@ export async function getPostBySlug(slug: string): Promise<Post | null> {
       updatedAt: data.updatedAt,
       content,
       html,
+      toc,
     } as Post;
   } catch (error) {
     console.error(`Error loading post ${slug}:`, error);
@@ -117,7 +140,7 @@ export async function searchPosts(query: string): Promise<PostMetadata[]> {
     (post) =>
       post.title.toLowerCase().includes(lowercaseQuery) ||
       post.description.toLowerCase().includes(lowercaseQuery) ||
-      post.tags.some((tag) => tag.toLowerCase().includes(lowercaseQuery))
+      post.tags.some((tag) => tag.toLowerCase().includes(lowercaseQuery)),
   );
 }
 
@@ -125,6 +148,6 @@ export async function searchPosts(query: string): Promise<PostMetadata[]> {
 export async function getPostsByTag(tag: string): Promise<PostMetadata[]> {
   const posts = await getPublishedPosts();
   return posts.filter((post) =>
-    post.tags.some((t) => t.toLowerCase() === tag.toLowerCase())
+    post.tags.some((t) => t.toLowerCase() === tag.toLowerCase()),
   );
 }

@@ -18,6 +18,8 @@ createdAt: January 16, 2026
 updatedAt: January 16, 2026
 ---
 
+## Table of Contents
+
 # general
 
 i'm back! i have been here the whole time, but i did voluntarily leave my previous job and move my whole life to a place ~8,300km from my previous home so that i could go back to school (i'm studying to get a master's degree). in my first post, [[about-this-digital-garden]], i had said i'll keep it there to "keep myself accountable", but considering how my next update is being made a whole year later, that clearly wasn't good enough to keep me on top of things.
