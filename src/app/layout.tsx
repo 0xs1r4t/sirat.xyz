@@ -6,6 +6,7 @@ import type { Metadata, Viewport } from "next";
 import { myMetadata, myViewport } from "@/lib/metadata";
 import ThemeProvider from "@/components/ThemeProvider";
 import ThemeSwitcher from "@/components/ThemeSwitcherButton";
+import { SidebarProvider } from "@/contexts/SidebarContext";
 const AnimatedCursor = React.lazy(() => import("@/components/AnimatedCursor"));
 
 import {
@@ -49,22 +50,23 @@ const RootLayout = ({ children }: Readonly<{ children: React.ReactNode }>) => {
             "blueberry-lemon",
           ]}
         >
-          <Suspense fallback={<></>}>
-            <MouseTrail>
-              <div className="fixed top-0 z-10 flex justify-between w-full">
-                <span className="flex flex-row justify-start">
-                  <Breadcrumb />
-                </span>
-                <ThemeSwitcher />
-              </div>
-              <div className="flex flex-row">
-                <Navbar />
-                <main className="container mx-auto relative flex flex-col items-center justify-between top-10 px-5">
-                  {children}
-                </main>
-              </div>
-            </MouseTrail>
-          </Suspense>
+          <SidebarProvider>
+            <Suspense fallback={<></>}>
+              <MouseTrail />
+            </Suspense>
+            <div className="fixed top-0 z-10 flex justify-between w-full">
+              <span className="flex flex-row justify-start">
+                <Breadcrumb />
+              </span>
+              <ThemeSwitcher />
+            </div>
+            <div className="flex flex-row">
+              <Navbar />
+            </div>
+            <main className="container mx-auto relative flex flex-col items-center justify-between top-10 px-5">
+              {children}
+            </main>
+          </SidebarProvider>
         </ThemeProvider>
       </body>
     </html>

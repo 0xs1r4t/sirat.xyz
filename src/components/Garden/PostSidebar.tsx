@@ -1,8 +1,9 @@
 "use client";
 
-import React, { Fragment, useState } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import PopOutButton from "@/components/PopOutButton";
 import PostSidebarContainer from "@/components/Garden/PostSidebarContainer";
+import { useSidebar } from "@/contexts/SidebarContext";
 
 interface PostSidebarProps {
   description: string;
@@ -10,18 +11,18 @@ interface PostSidebarProps {
 }
 
 const PostSidebar = ({ description, tocHtml }: PostSidebarProps) => {
-  const [isOpen, setIsOpen] = useState(false);
+  const { rightOpen, toggleRight } = useSidebar();
 
   return (
     <Fragment>
       <PopOutButton
-        isOpen={isOpen}
-        onToggle={() => setIsOpen(!isOpen)}
+        isOpen={rightOpen}
+        onToggle={toggleRight}
         placement="right"
         position="top"
       />
       <PostSidebarContainer
-        isOpen={isOpen}
+        isOpen={rightOpen}
         description={description}
         tocHtml={tocHtml}
       />

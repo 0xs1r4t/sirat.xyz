@@ -13,11 +13,11 @@ import * as THREE from "three";
 import { usePathname } from "next/navigation";
 
 interface MouseTrailProps {
-  children: React.ReactNode;
   className?: string;
 }
 
-const MouseTrail = ({ children, className }: MouseTrailProps) => {
+// Update MouseTrail component to not require children
+const MouseTrail = ({ className }: { className?: string }) => {
   const pathname = usePathname();
   const [theme, setTheme] = useState<string>("strawberry-matcha");
   const [isMounted, setIsMounted] = useState(false);
@@ -35,8 +35,8 @@ const MouseTrail = ({ children, className }: MouseTrailProps) => {
     const classList = Array.from(htmlElement.classList);
     const themeClass = classList.find((cls) =>
       ["strawberry-matcha", "blueberry-lemon", "neopolitan-ice-cream"].includes(
-        cls
-      )
+        cls,
+      ),
     );
     const initialTheme = themeClass || "strawberry-matcha";
     setTheme(initialTheme);
@@ -52,7 +52,7 @@ const MouseTrail = ({ children, className }: MouseTrailProps) => {
               "strawberry-matcha",
               "blueberry-lemon",
               "neopolitan-ice-cream",
-            ].includes(cls)
+            ].includes(cls),
           );
           const newTheme = themeClass || "strawberry-matcha";
           setTheme(newTheme);
@@ -83,51 +83,44 @@ const MouseTrail = ({ children, className }: MouseTrailProps) => {
   }, [isMounted]);
 
   // Don't render the trail if we're on the graphics page
-  if (pathname === "/graphics") {
-    return <div className={className}>{children}</div>;
-  }
-
-  // Don't render on server side
-  if (!isMounted) {
-    return <div className={className}>{children}</div>;
+  if (pathname === "/graphics" || !isMounted) {
+    return null;
   }
 
   return (
-    <div className={`relative w-full min-h-screen ${className || ""}`}>
-      <div
-        style={{
-          position: "fixed",
-          top: 0,
-          left: 0,
-          width: "100vw",
-          height: "100vh",
-          zIndex: 1,
-          pointerEvents: "none",
-          touchAction: "none",
-          userSelect: "none",
-          WebkitUserSelect: "none",
-          WebkitTouchCallout: "none",
-        }}
-      >
-        <Suspense fallback={null}>
-          <Canvas
-            orthographic
-            camera={{ position: [0, 0, 1000], zoom: 1 }}
-            style={{
-              width: "100%",
-              height: "100%",
-              touchAction: "none",
-              userSelect: "none",
-              WebkitUserSelect: "none",
-              WebkitTouchCallout: "none",
-              pointerEvents: "none",
-            }}
-          >
-            <TrailSystem theme={theme} mousePosition={mousePosition} />
-          </Canvas>
-        </Suspense>
-      </div>
-      <div className="relative">{children}</div>
+    <div
+      style={{
+        position: "fixed",
+        top: 0,
+        left: 0,
+        width: "100vw",
+        height: "100vh",
+        zIndex: 1,
+        pointerEvents: "none",
+        touchAction: "none",
+        userSelect: "none",
+        WebkitUserSelect: "none",
+        WebkitTouchCallout: "none",
+      }}
+      className={className}
+    >
+      <Suspense fallback={null}>
+        <Canvas
+          orthographic
+          camera={{ position: [0, 0, 1000], zoom: 1 }}
+          style={{
+            width: "100%",
+            height: "100%",
+            touchAction: "none",
+            userSelect: "none",
+            WebkitUserSelect: "none",
+            WebkitTouchCallout: "none",
+            pointerEvents: "none",
+          }}
+        >
+          <TrailSystem theme={theme} mousePosition={mousePosition} />
+        </Canvas>
+      </Suspense>
     </div>
   );
 };
@@ -161,7 +154,7 @@ const TrailSystem = ({
   const points = useRef<{ x: number; y: number }[]>(
     Array(num)
       .fill(null)
-      .map(() => ({ x: 0, y: 0 }))
+      .map(() => ({ x: 0, y: 0 })),
   );
 
   // Device detection
@@ -170,7 +163,7 @@ const TrailSystem = ({
       const userAgent = navigator.userAgent.toLowerCase();
       const isMobileDevice =
         /android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini/.test(
-          userAgent
+          userAgent,
         ) ||
         "ontouchstart" in window ||
         window.innerWidth <= 768;
@@ -219,7 +212,7 @@ const TrailSystem = ({
   const hsbToRgb = (
     h: number,
     s: number,
-    b: number
+    b: number,
   ): [number, number, number] => {
     h = h / 360;
     const c = b * s;

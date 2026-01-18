@@ -1,22 +1,23 @@
 "use client";
 
-import React, { Fragment, useState } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 
 import PopOutButton from "@/components/PopOutButton";
 import MusicPlayerContainer from "@/components/Navigation/NavbarContainer";
+import { useSidebar } from "@/contexts/SidebarContext";
 
 const Navbar = () => {
-  const [isOpen, setIsOpen] = useState(false);
+  const { leftOpen, toggleLeft } = useSidebar();
 
   return (
     <Fragment>
       <PopOutButton
-        isOpen={isOpen}
-        onToggle={() => setIsOpen(!isOpen)}
+        isOpen={leftOpen}
+        onToggle={toggleLeft}
         placement="left"
         position="top"
       />
-      <MusicPlayerContainer isOpen={isOpen} />
+      <MusicPlayerContainer isOpen={leftOpen} />
     </Fragment>
   );
 };
