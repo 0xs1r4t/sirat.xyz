@@ -9,6 +9,8 @@ createdAt: January 12, 2025
 updatedAt: February 13, 2025
 ---
 
+## Table of Contents
+
 # personal (temporary) philosophy
 
 sometimes you gotta say _“fuck ai”_ and do things by yourself. such as these wonderful icons. i made them with my bare hands. the same can’t be said for this code. claude happens to be an awfully helpful and selfless pair programmer. thnx claude ♡
