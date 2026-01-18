@@ -32,7 +32,7 @@ const RootLayout = ({ children }: Readonly<{ children: React.ReactNode }>) => {
           AuthenticSans.className,
           AuthenticSansCondensed.variable,
           ThatThatNewPixel.variable,
-          Monaco.variable
+          Monaco.variable,
         )}
       >
         <Suspense fallback={<></>}>

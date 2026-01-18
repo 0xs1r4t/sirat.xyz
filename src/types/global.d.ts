@@ -10,17 +10,20 @@ declare global {
     isPlaying?: boolean;
   };
 
-  type PostSummary = {
+  export interface PostMetadata {
     slug: string;
     title: string;
     description: string;
     tags: string[];
     type: string;
+    status: string;
     createdAt: string;
     updatedAt: string;
-  };
+  }
 
-  type Post = PostSummary & {
+  export interface Post extends PostMetadata {
+    content: string;
     html: string;
-  };
+    toc: string;
+  }
 }

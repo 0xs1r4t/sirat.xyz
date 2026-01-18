@@ -3,10 +3,12 @@ import React from "react";
 import ProgressBar from "@/components/Garden/ProgressBar";
 import Heading from "@/components/Heading";
 import LinkPreview from "@/components/Garden/LinkPreview";
+import PostSidebar from "@/components/Garden/PostSidebar";
 
 const Post = ({ post }: { post: Post }) => {
   return (
     <ProgressBar>
+      <PostSidebar description={post.description} tocHtml={post.toc} />
       <article className="w-full">
         <Heading
           title={post.title}
