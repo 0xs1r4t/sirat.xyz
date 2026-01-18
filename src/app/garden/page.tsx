@@ -26,10 +26,14 @@ const Page = async ({ searchParams }: Props) => {
     posts = await getPostsByTag(params.tag);
   }
 
+  const title = "My Digital Garden.";
+  const styles = "lowercase";
+  // const styles="font-authentic-sans-condensed";
+
   if (posts.length === 0) {
     return (
       <Fragment>
-        <Heading title="MY DIGITAL GARDEN" />
+        <Heading title={title} styles={styles} />
         <Search placeholder="Search this garden" />
         <NoPostSummary />
       </Fragment>
@@ -38,7 +42,7 @@ const Page = async ({ searchParams }: Props) => {
 
   return (
     <Fragment>
-      <Heading title="MY DIGITAL GARDEN" />
+      <Heading title={title} styles={styles} />
       <Search placeholder="Search this garden" />
       <Summary summary={posts} />
     </Fragment>

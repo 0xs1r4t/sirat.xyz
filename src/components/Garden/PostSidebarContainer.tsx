@@ -45,23 +45,23 @@ const PostSidebarContainer = ({
             aria-hidden={!isOpen}
           >
             {/* Description */}
-            <div className="flex flex-col border-b-2 pb-2 border-muted-200 max-h-[40%] min-h-[100px]">
-              <h3 className="text-2xl font-that-that-new-pixel px-3 pt-2 pb-1 sticky top-0 bg-muted-100 z-10">
+            <div className="flex flex-col border-b-2 pb-2 border-muted-200 max-h-[40%] min-h-[100px] overflow-y-auto overflow-x-hidden">
+              <h3 className="text-2xl font-that-that-new-pixel px-3 pt-2 pb-1 top-0 underline underline-offset-4 bg-muted-100 z-10">
                 About
               </h3>
-              <div className="px-3 pb-2 overflow-y-auto overflow-x-hidden flex-1">
-                <p className="leading-tight">{description}</p>
+              <div className="px-3 pb-2 flex-1">
+                <p className="text-lg leading-tight">{description}</p>
               </div>
             </div>
 
             {/* Table of Contents */}
-            <div className="flex flex-col flex-1 overflow-hidden">
-              <h3 className="text-2xl font-that-that-new-pixel px-3 pt-2 pb-1 sticky top-0 bg-muted-100 z-10">
+            <div className="flex flex-col flex-1 overflow-y-auto overflow-x-hidden">
+              <h3 className="text-2xl font-that-that-new-pixel px-3 pt-2 pb-1 top-0 underline underline-offset-4 bg-muted-100 z-10">
                 Contents
               </h3>
-              <div className="px-3 pb-2 overflow-y-auto overflow-x-hidden flex-1">
+              <div className="px-3 pb-2 flex-1">
                 <div
-                  className="toc-sidebar"
+                  className="toc-sidebar text-lg leading-tight"
                   dangerouslySetInnerHTML={{ __html: tocHtml }}
                 />
               </div>

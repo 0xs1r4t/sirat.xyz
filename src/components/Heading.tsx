@@ -14,9 +14,9 @@ const Heading = ({
     <div
       aria-label="page title"
       className={cn(
-        `text-6xl font-authentic-sans-condensed font-bold text-center p-4 pb-4 not-prose lg:text-7xl ${
+        `text-6xl font-that-that-new-pixel italic font-bold text-center p-4 pb-4 not-prose lg:text-7xl ${
           styles ? styles : ""
-        }`
+        }`,
       )}
     >
       {title}
