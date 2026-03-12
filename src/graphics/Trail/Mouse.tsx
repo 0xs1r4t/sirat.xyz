@@ -1,6 +1,6 @@
 "use client";
 
-import React, {
+import {
   useCallback,
   useRef,
   useMemo,
@@ -11,90 +11,133 @@ import React, {
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import * as THREE from "three";
 import { usePathname } from "next/navigation";
+import vertexShader from "@graphics/Trail/trail.vert";
+import fragmentShader from "@graphics/Trail/trail.frag";
 
-interface MouseTrailProps {
-  className?: string;
+// Constants
+
+const TRAIL_LENGTH = 25;
+const TRAIL_RADIUS = 80;
+const DEFAULT_THEME = "strawberry-matcha";
+const VALID_THEMES = [
+  "strawberry-matcha",
+  "blueberry-lemon",
+  "neopolitan-ice-cream",
+] as const;
+
+type Theme = (typeof VALID_THEMES)[number];
+
+const THEME_VALUES: Record<Theme, { saturation: number; brightness: number }> =
+  {
+    "strawberry-matcha": { saturation: 0.2, brightness: 1.0 },
+    "blueberry-lemon": { saturation: 0.5, brightness: 1.0 },
+    "neopolitan-ice-cream": { saturation: 0.3, brightness: 1.0 },
+  };
+
+const INTERACTIVE_SELECTOR = "button, a, input, textarea";
+
+// Helpers: color conversion, device detection, theme detection
+
+function hsbToRgb(h: number, s: number, b: number): [number, number, number] {
+  h /= 360;
+  const c = b * s;
+  const x = c * (1 - Math.abs(((h * 6) % 2) - 1));
+  const m = b - c;
+  const [r, g, blue] =
+    h < 1 / 6
+      ? [c, x, 0]
+      : h < 2 / 6
+        ? [x, c, 0]
+        : h < 3 / 6
+          ? [0, c, x]
+          : h < 4 / 6
+            ? [0, x, c]
+            : h < 5 / 6
+              ? [x, 0, c]
+              : [c, 0, x];
+  return [r + m, g + m, blue + m];
 }
 
-// Update MouseTrail component to not require children
-const MouseTrail = ({ className }: { className?: string }) => {
-  const pathname = usePathname();
-  const [theme, setTheme] = useState<string>("strawberry-matcha");
-  const [isMounted, setIsMounted] = useState(false);
-  const mousePosition = useRef({ x: 0, y: 0 });
+function isMobileDevice(): boolean {
+  return (
+    /android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini/.test(
+      navigator.userAgent.toLowerCase(),
+    ) ||
+    "ontouchstart" in window ||
+    window.innerWidth <= 768
+  );
+}
+
+function getActiveTheme(): Theme {
+  const found = Array.from(document.documentElement.classList).find(
+    (cls): cls is Theme => (VALID_THEMES as readonly string[]).includes(cls),
+  );
+  return found ?? DEFAULT_THEME;
+}
+
+// Hooks: theme detection and pointer tracking
+
+function useTheme(): Theme {
+  const [theme, setTheme] = useState<Theme>(DEFAULT_THEME);
 
   useEffect(() => {
-    setIsMounted(true);
+    setTheme(getActiveTheme());
+
+    const observer = new MutationObserver(() => setTheme(getActiveTheme()));
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ["class"],
+    });
+    return () => observer.disconnect();
   }, []);
 
+  return theme;
+}
+
+function usePointer(): React.MutableRefObject<{ x: number; y: number }> {
+  const pointer = useRef({ x: 0, y: 0 });
+
   useEffect(() => {
-    if (!isMounted) return;
-
-    // Get initial theme from class list
-    const htmlElement = document.documentElement;
-    const classList = Array.from(htmlElement.classList);
-    const themeClass = classList.find((cls) =>
-      ["strawberry-matcha", "blueberry-lemon", "neopolitan-ice-cream"].includes(
-        cls,
-      ),
-    );
-    const initialTheme = themeClass || "strawberry-matcha";
-    setTheme(initialTheme);
-    console.log("Mouse trail initial theme:", initialTheme);
-
-    // Watch for class changes
-    const observer = new MutationObserver((mutations) => {
-      mutations.forEach((mutation) => {
-        if (mutation.attributeName === "class") {
-          const classList = Array.from(htmlElement.classList);
-          const themeClass = classList.find((cls) =>
-            [
-              "strawberry-matcha",
-              "blueberry-lemon",
-              "neopolitan-ice-cream",
-            ].includes(cls),
-          );
-          const newTheme = themeClass || "strawberry-matcha";
-          setTheme(newTheme);
-          console.log("Mouse trail theme changed to:", newTheme);
-        }
-      });
-    });
-
-    observer.observe(htmlElement, { attributes: true });
-    return () => observer.disconnect();
-  }, [isMounted]);
-
-  // Only keep mouse move handler here
-  useEffect(() => {
-    if (!isMounted) return;
-
-    const handleMouseMove = (e: MouseEvent) => {
-      mousePosition.current = {
-        x: e.clientX,
-        y: e.clientY,
-      };
+    const onMouseMove = (e: MouseEvent) => {
+      pointer.current = { x: e.clientX, y: e.clientY };
+    };
+    const onTouch = (e: TouchEvent) => {
+      if (e.touches.length > 0) {
+        pointer.current = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+      }
     };
 
-    document.addEventListener("mousemove", handleMouseMove);
+    document.addEventListener("mousemove", onMouseMove);
+    document.addEventListener("touchmove", onTouch, { passive: true });
+    document.addEventListener("touchstart", onTouch, { passive: true });
     return () => {
-      document.removeEventListener("mousemove", handleMouseMove);
+      document.removeEventListener("mousemove", onMouseMove);
+      document.removeEventListener("touchmove", onTouch);
+      document.removeEventListener("touchstart", onTouch);
     };
-  }, [isMounted]);
+  }, []);
 
-  // Don't render the trail if we're on the graphics page
-  if (pathname === "/graphics" || !isMounted) {
-    return null;
-  }
+  return pointer;
+}
+
+// MouseTrail component: sets up canvas and global event handling
+
+const MouseTrail = ({ className }: { className?: string }) => {
+  const pathname = usePathname();
+  const theme = useTheme();
+  const pointer = usePointer();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => setMounted(true), []);
+
+  if (pathname === "/graphics" || !mounted) return null;
 
   return (
     <div
+      className={className}
       style={{
         position: "fixed",
-        top: 0,
-        left: 0,
-        width: "100vw",
-        height: "100vh",
+        inset: 0,
         zIndex: 1,
         pointerEvents: "none",
         touchAction: "none",
@@ -102,184 +145,55 @@ const MouseTrail = ({ className }: { className?: string }) => {
         WebkitUserSelect: "none",
         WebkitTouchCallout: "none",
       }}
-      className={className}
     >
       <Suspense fallback={null}>
         <Canvas
           orthographic
           camera={{ position: [0, 0, 1000], zoom: 1 }}
-          style={{
-            width: "100%",
-            height: "100%",
-            touchAction: "none",
-            userSelect: "none",
-            WebkitUserSelect: "none",
-            WebkitTouchCallout: "none",
-            pointerEvents: "none",
-          }}
+          style={{ width: "100%", height: "100%", pointerEvents: "none" }}
         >
-          <TrailSystem theme={theme} mousePosition={mousePosition} />
+          <TrailSystem theme={theme} pointer={pointer} />
         </Canvas>
       </Suspense>
     </div>
   );
 };
 
+// TrailSystem component: handles the trail logic and rendering
+
 const TrailSystem = ({
   theme,
-  mousePosition,
+  pointer,
 }: {
-  theme: string;
-  mousePosition: React.MutableRefObject<{ x: number; y: number }>;
+  theme: Theme;
+  pointer: React.MutableRefObject<{ x: number; y: number }>;
 }) => {
   const meshRef = useRef<THREE.Points>(null);
-  const { size, viewport, gl } = useThree();
-  const touchStartPosition = useRef<{ x: number; y: number } | null>(null);
+  const { size, viewport } = useThree();
 
-  // Mobile-optimized parameters
-  const [isMobile, setIsMobile] = useState(false);
-  const [supportsWebGL, setSupportsWebGL] = useState(true);
+  const [mobile, setMobile] = useState(false);
+  const [hue, setHue] = useState(300);
 
-  // Adaptive parameters based on device
-  const num = 25;
-  const radius = 80;
-  const [hue, setHue] = useState<number>(300);
-
-  // Mouse position in world coordinates
-  const mousePos = useRef<{ x: number; y: number }>({ x: 0, y: 0 });
-  const targetPos = useRef<{ x: number; y: number }>({ x: 0, y: 0 });
-  const lastUpdateTime = useRef<number>(0);
-
-  // Trail points
-  const points = useRef<{ x: number; y: number }[]>(
-    Array(num)
-      .fill(null)
-      .map(() => ({ x: 0, y: 0 })),
+  const trailPoints = useRef(
+    Array.from({ length: TRAIL_LENGTH }, () => ({ x: 0, y: 0 })),
   );
+  const worldPos = useRef({ x: 0, y: 0 });
+  const lastFrameTime = useRef(0);
 
-  // Device detection
+  // Device detection - only on mount, resize-aware
   useEffect(() => {
-    const checkDevice = () => {
-      const userAgent = navigator.userAgent.toLowerCase();
-      const isMobileDevice =
-        /android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini/.test(
-          userAgent,
-        ) ||
-        "ontouchstart" in window ||
-        window.innerWidth <= 768;
-
-      setIsMobile(isMobileDevice);
-
-      // Check WebGL support
-      try {
-        const canvas = document.createElement("canvas");
-        const context =
-          canvas.getContext("webgl") || canvas.getContext("experimental-webgl");
-        setSupportsWebGL(!!context);
-      } catch (e) {
-        setSupportsWebGL(false);
-      }
-    };
-
-    checkDevice();
-    window.addEventListener("resize", checkDevice);
-    return () => window.removeEventListener("resize", checkDevice);
+    const check = () => setMobile(isMobileDevice());
+    check();
+    window.addEventListener("resize", check);
+    return () => window.removeEventListener("resize", check);
   }, []);
 
-  // Update points array when num changes (mobile vs desktop)
-  useEffect(() => {
-    const newLength = num;
-    if (points.current.length !== newLength) {
-      points.current = Array(newLength)
-        .fill(null)
-        .map((_, i) => points.current[i] || { x: 0, y: 0 });
-    }
-  }, [num]);
-
-  const getThemeValues = useCallback(() => {
-    switch (theme) {
-      case "blueberry-lemon":
-        return { saturation: 0.5, brightness: 1.0 }; // Match p5.js values
-      case "neopolitan-ice-cream":
-        return { saturation: 0.3, brightness: 1.0 };
-      case "strawberry-matcha":
-      default:
-        return { saturation: 0.2, brightness: 1.0 }; // Match p5.js values
-    }
-  }, [theme]);
-
-  // Convert HSB to RGB (matching p5.js HSB color mode)
-  const hsbToRgb = (
-    h: number,
-    s: number,
-    b: number,
-  ): [number, number, number] => {
-    h = h / 360;
-    const c = b * s;
-    const x = c * (1 - Math.abs(((h * 6) % 2) - 1));
-    const m = b - c;
-    let r: number, g: number, blue: number;
-    if (h < 1 / 6) [r, g, blue] = [c, x, 0];
-    else if (h < 2 / 6) [r, g, blue] = [x, c, 0];
-    else if (h < 3 / 6) [r, g, blue] = [0, c, x];
-    else if (h < 4 / 6) [r, g, blue] = [0, x, c];
-    else if (h < 5 / 6) [r, g, blue] = [x, 0, c];
-    else [r, g, blue] = [c, 0, x];
-    return [r + m, g + m, blue + m];
-  };
-
-  // Instance data for positioning and opacity
-  const { positions, opacities, colors, sizes } = useMemo(() => {
-    const positions = new Float32Array(num * 3);
-    const opacities = new Float32Array(num);
-    const colors = new Float32Array(num * 3);
-    const sizes = new Float32Array(num);
-
-    for (let i = 0; i < num; i++) {
-      positions[i * 3] = 0; // x
-      positions[i * 3 + 1] = 0; // y
-      positions[i * 3 + 2] = 0; // z
-
-      // Match p5.js alpha calculation: (num - i) * 1.25 / 100
-      opacities[i] = ((num - i) * 1.25) / 100;
-      sizes[i] = radius;
-    }
-    return { positions, opacities, colors, sizes };
-  }, [num, radius]);
-
-  // Update colors when theme or hue changes
-  useEffect(() => {
-    const { saturation, brightness } = getThemeValues();
-    const [r, g, b] = hsbToRgb(hue, saturation, brightness);
-
-    for (let i = 0; i < num; i++) {
-      colors[i * 3] = r;
-      colors[i * 3 + 1] = g;
-      colors[i * 3 + 2] = b;
-    }
-    if (meshRef.current?.geometry.attributes.color) {
-      meshRef.current.geometry.attributes.color.needsUpdate = true;
-    }
-  }, [hue, theme, colors, num, getThemeValues]);
-
-  // Handle click/tap to change color (with touch support)
+  // Randomise hue on click/tap, skip interactive elements
   useEffect(() => {
     const handleClick = (e: MouseEvent | TouchEvent) => {
-      // Prevent color change if clicking on interactive elements
-      const target = e.target as HTMLElement;
-      if (
-        target.tagName === "BUTTON" ||
-        target.tagName === "A" ||
-        target.closest("button, a, input, textarea")
-      ) {
-        return;
-      }
-      // Match p5.js: p.ceil(p.random(-1, 356))
-      const newHue = Math.ceil(Math.random() * 357 - 1);
-      setHue(newHue);
-      console.log(`the hue of the trail is ${newHue}/360`);
+      if ((e.target as HTMLElement).closest(INTERACTIVE_SELECTOR)) return;
+      setHue(Math.ceil(Math.random() * 357 - 1));
     };
-
     document.addEventListener("click", handleClick);
     document.addEventListener("touchend", handleClick);
     return () => {
@@ -288,135 +202,78 @@ const TrailSystem = ({
     };
   }, []);
 
-  // Add touch handlers here where we have access to the canvas
+  // GPU buffers - stable across renders
+  const { positions, opacities, colors, sizes } = useMemo(() => {
+    const positions = new Float32Array(TRAIL_LENGTH * 3);
+    const opacities = new Float32Array(TRAIL_LENGTH);
+    const colors = new Float32Array(TRAIL_LENGTH * 3);
+    const sizes = new Float32Array(TRAIL_LENGTH);
+
+    for (let i = 0; i < TRAIL_LENGTH; i++) {
+      opacities[i] = ((TRAIL_LENGTH - i) * 1.25) / 100;
+      sizes[i] = TRAIL_RADIUS;
+    }
+    return { positions, opacities, colors, sizes };
+  }, []);
+
+  // Recompute colours whenever hue or theme changes
   useEffect(() => {
-    const handleTouchMove = (e: TouchEvent) => {
-      if (e.touches.length > 0) {
-        const touch = e.touches[0];
-        mousePosition.current = {
-          x: touch.clientX,
-          y: touch.clientY,
-        };
-      }
-    };
-
-    const handleTouchStart = (e: TouchEvent) => {
-      if (e.touches.length > 0) {
-        const touch = e.touches[0];
-        mousePosition.current = {
-          x: touch.clientX,
-          y: touch.clientY,
-        };
-      }
-    };
-
-    document.addEventListener("touchmove", handleTouchMove, { passive: true });
-    document.addEventListener("touchstart", handleTouchStart, {
-      passive: true,
-    });
-
-    return () => {
-      document.removeEventListener("touchmove", handleTouchMove);
-      document.removeEventListener("touchstart", handleTouchStart);
-    };
-  }, [mousePosition]);
-
-  useFrame((state) => {
-    // Throttle updates on mobile for better performance
-    const now = state.clock.elapsedTime * 1000;
-    if (isMobile && now - lastUpdateTime.current < 16.67) {
-      // ~60fps cap on mobile
-      return;
+    const { saturation, brightness } = THEME_VALUES[theme];
+    const [r, g, b] = hsbToRgb(hue, saturation, brightness);
+    for (let i = 0; i < TRAIL_LENGTH; i++) {
+      colors[i * 3] = r;
+      colors[i * 3 + 1] = g;
+      colors[i * 3 + 2] = b;
     }
-    lastUpdateTime.current = now;
+    if (meshRef.current?.geometry.attributes.color) {
+      meshRef.current.geometry.attributes.color.needsUpdate = true;
+    }
+  }, [hue, theme, colors]);
 
-    // Convert client coordinates to world space
-    const clientX = mousePosition.current.x;
-    const clientY = mousePosition.current.y;
+  // Per-frame trail update
+  useFrame(({ clock }) => {
+    const now = clock.elapsedTime * 1000;
+    if (mobile && now - lastFrameTime.current < 16.67) return;
+    lastFrameTime.current = now;
 
-    // Convert to normalized device coordinates (-1 to 1)
-    const x = (clientX / size.width) * 2 - 1;
-    const y = -(clientY / size.height) * 2 + 1;
+    // Client to NDC to world space
+    const ndcX = (pointer.current.x / size.width) * 2 - 1;
+    const ndcY = -(pointer.current.y / size.height) * 2 + 1;
+    worldPos.current.x = (ndcX * viewport.width) / 2;
+    worldPos.current.y = (ndcY * viewport.height) / 2;
 
-    // Convert to world coordinates
-    targetPos.current.x = (x * viewport.width) / 2;
-    targetPos.current.y = (y * viewport.height) / 2;
+    const ease = mobile ? 0.7 : 0.6;
+    let leader = { ...worldPos.current };
 
-    // Direct mouse following (no smoothing like p5.js version)
-    mousePos.current.x = targetPos.current.x;
-    mousePos.current.y = targetPos.current.y;
-
-    // Update trail points with snake-like following (match p5.js ease = 0.7)
-    let leader = { x: mousePos.current.x, y: mousePos.current.y };
-    const trailEase = isMobile ? 0.7 : 0.6; // Slightly faster on mobile for responsiveness
-
-    for (let i = 0; i < num; i++) {
-      const point = points.current[i];
-
-      // Match p5.js SnakeTrail logic
-      const dx = leader.x - point.x;
-      const dy = leader.y - point.y;
-      point.x += dx * trailEase;
-      point.y += dy * trailEase;
-
-      // Update instance positions
-      positions[i * 3] = point.x;
-      positions[i * 3 + 1] = point.y;
-
-      leader = { x: point.x, y: point.y };
+    for (let i = 0; i < TRAIL_LENGTH; i++) {
+      const pt = trailPoints.current[i];
+      pt.x += (leader.x - pt.x) * ease;
+      pt.y += (leader.y - pt.y) * ease;
+      positions[i * 3] = pt.x;
+      positions[i * 3 + 1] = pt.y;
+      leader = { x: pt.x, y: pt.y };
     }
 
-    // Update geometry
     if (meshRef.current?.geometry.attributes.position) {
       meshRef.current.geometry.attributes.position.needsUpdate = true;
     }
   });
 
-  // Shader material that mimics p5.js ellipse rendering
-  const shaderMaterial = useMemo(() => {
-    return new THREE.ShaderMaterial({
-      vertexShader: `
-        attribute float opacity;
-        attribute vec3 color;
-        attribute float size;
-        varying float vOpacity;
-        varying vec3 vColor;
-
-        void main() {
-          vOpacity = opacity;
-          vColor = color;
-
-          vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
-          gl_Position = projectionMatrix * mvPosition;
-          gl_PointSize = size;
-        }
-      `,
-      fragmentShader: `
-        varying float vOpacity;
-        varying vec3 vColor;
-
-        void main() {
-          vec2 center = gl_PointCoord - vec2(0.5);
-          float dist = length(center);
-
-          // Sharp circle edge like p5.js ellipse
-          if (dist > 0.5) {
-            discard;
-          }
-
-          // Solid fill like p5.js, no glow effects
-          gl_FragColor = vec4(vColor, vOpacity);
-        }
-      `,
-      transparent: true,
-      blending: THREE.NormalBlending,
-      depthWrite: false,
-      depthTest: false,
-    });
-  }, []);
+  const material = useMemo(
+    () =>
+      new THREE.ShaderMaterial({
+        vertexShader,
+        fragmentShader,
+        transparent: true,
+        blending: THREE.NormalBlending,
+        depthWrite: false,
+        depthTest: false,
+      }),
+    [],
+  );
 
   return (
-    <points ref={meshRef} material={shaderMaterial}>
+    <points ref={meshRef} material={material}>
       <bufferGeometry>
         <bufferAttribute args={[positions, 3]} attach="attributes-position" />
         <bufferAttribute args={[opacities, 1]} attach="attributes-opacity" />
