@@ -1,5 +1,3 @@
-export {};
-
 declare global {
   type Song = {
     artist: string;
@@ -10,7 +8,7 @@ declare global {
     isPlaying?: boolean;
   };
 
-  export interface PostMetadata {
+  interface PostMetadata {
     slug: string;
     title: string;
     description: string;
@@ -21,9 +19,11 @@ declare global {
     updatedAt: string;
   }
 
-  export interface Post extends PostMetadata {
+  interface Post extends PostMetadata {
     content: string;
     html: string;
     toc: string;
   }
 }
+
+export {};
