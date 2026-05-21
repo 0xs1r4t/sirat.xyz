@@ -16,6 +16,7 @@ import rehypeKatex from "rehype-katex";
 import remarkYoutube from "@/lib/plugins/youtube";
 import remarkPostLink from "@/lib/plugins/post-link";
 import rehypeLinkPreview from "@/lib/plugins/link-preview";
+import rehypeExcalidraw from "@/lib/plugins/excalidraw";
 
 const contentDirectory = path.join(process.cwd(), "content/garden");
 
@@ -100,6 +101,7 @@ export async function getPostBySlug(slug: string): Promise<Post | null> {
       }) // Syntax highlighting (rehype plugin)
       .use(rehypeKatex) // Render math with KaTeX
       .use(rehypeLinkPreview) // Link previews
+      .use(rehypeExcalidraw) // Excalidraw diagrams
       .use(rehypeStringify, { allowDangerousHtml: true }) // Convert to HTML string
       .process(content);
 

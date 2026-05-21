@@ -17,7 +17,8 @@ const Post = ({ post }: { post: Post }) => {
         <span className="p-4">{""}</span>
         <div
           dangerouslySetInnerHTML={{ __html: post.html }}
-          className="text-foreground w-full max-w-full prose prose-fuchsia 
+          suppressHydrationWarning
+          className="text-foreground w-full max-w-full prose
              lg:prose-lg lg:max-w-2xl xl:max-w-3xl mx-auto
              prose-headings:text-foreground 
              prose-headings:font-authentic-sans-condensed 
@@ -25,7 +26,8 @@ const Post = ({ post }: { post: Post }) => {
              prose-pre:border-2 
              prose-pre:border-muted-200 
              prose-a:transition-colors
-             prose-a:duration-200"
+             prose-a:duration-200
+             "
         />
         <LinkPreview />
         <span aria-hidden="true" className="p-4">
