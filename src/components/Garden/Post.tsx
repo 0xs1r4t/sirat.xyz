@@ -17,7 +17,7 @@ const Post = ({ post }: { post: Post }) => {
         <span className="p-4">{""}</span>
         <div
           dangerouslySetInnerHTML={{ __html: post.html }}
-          className="text-foreground w-full max-w-full prose prose-fuchsia 
+          className="text-foreground w-full max-w-full prose
              lg:prose-lg lg:max-w-2xl xl:max-w-3xl mx-auto
              prose-headings:text-foreground 
              prose-headings:font-authentic-sans-condensed 
