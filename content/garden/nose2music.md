@@ -47,6 +47,10 @@ webcam frame → ml5 PoseNet → keypoint[0] (nose) x/y
                              p5.js draws overlay on canvas
 ```
 
+```excalidraw
+/assets/excalidraw/nose2music.excalidraw
+```
+
 ### The Bar System
 
 The canvas is split into 7 equal vertical bars, each assigned a note from a fixed scale:

@@ -25,7 +25,12 @@ const Post = ({ post }: { post: Post }) => {
              prose-pre:border-2 
              prose-pre:border-muted-200 
              prose-a:transition-colors
-             prose-a:duration-200"
+             prose-a:duration-200
+             [.blueberry-lemon_&_figure_svg]:invert
+             [.blueberry-lemon_&_figure_svg]:hue-rotate-180
+              [.dark_&_figure_svg]:invert
+              [.dark_&_figure_svg]:hue-rotate-180
+             "
         />
         <LinkPreview />
         <span aria-hidden="true" className="p-4">
