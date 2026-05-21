@@ -17,6 +17,7 @@ const Post = ({ post }: { post: Post }) => {
         <span className="p-4">{""}</span>
         <div
           dangerouslySetInnerHTML={{ __html: post.html }}
+          suppressHydrationWarning
           className="text-foreground w-full max-w-full prose
              lg:prose-lg lg:max-w-2xl xl:max-w-3xl mx-auto
              prose-headings:text-foreground 
@@ -26,10 +27,6 @@ const Post = ({ post }: { post: Post }) => {
              prose-pre:border-muted-200 
              prose-a:transition-colors
              prose-a:duration-200
-             [.blueberry-lemon_&_figure_svg]:invert
-             [.blueberry-lemon_&_figure_svg]:hue-rotate-180
-              [.dark_&_figure_svg]:invert
-              [.dark_&_figure_svg]:hue-rotate-180
              "
         />
         <LinkPreview />

@@ -37,18 +37,8 @@ The stack is entirely client-side:
 
 The data flow is straightforward:
 
-```
-webcam frame → ml5 PoseNet → keypoint[0] (nose) x/y
-                                        ↓
-                             which bar is the nose in?
-                                        ↓
-                             Tone.js PolySynth → audio
-                                        ↓
-                             p5.js draws overlay on canvas
-```
-
 ```excalidraw
-/assets/excalidraw/nose2music.excalidraw
+images/garden/nose2music/excalidraw
 ```
 
 ### The Bar System
