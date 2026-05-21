@@ -78,8 +78,8 @@ article h2#table-of-contents + ol {
 
 .toc-sidebar a.toc-active {
   background-color: var(--color-muted-200);
-  color: var(--color-background);
-  font-weight: 600;
+  color: var(--color-foreground);
+  font-weight: 900;
 }
 
 .toc-sidebar > ol {

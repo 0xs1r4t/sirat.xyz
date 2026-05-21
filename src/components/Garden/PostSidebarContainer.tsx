@@ -19,16 +19,19 @@ const PostSidebarContainer = ({
   tocHtml,
 }: PostSidebarContainerProps) => {
   useEffect(() => {
+    if (!isOpen) return;
+
     const headings = document.querySelectorAll(
       "article h2, article h3, article h4",
     );
-    const links = document.querySelectorAll(".toc-sidebar a");
 
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
-            links.forEach((l) => l.classList.remove("toc-active"));
+            document
+              .querySelectorAll(".toc-sidebar a")
+              .forEach((l) => l.classList.remove("toc-active"));
             const active = document.querySelector(
               `.toc-sidebar a[href="#${entry.target.id}"]`,
             );
@@ -41,7 +44,7 @@ const PostSidebarContainer = ({
 
     headings.forEach((h) => observer.observe(h));
     return () => observer.disconnect();
-  }, []);
+  }, [isOpen]);
 
   return (
     <AnimatePresence initial={false}>
@@ -80,11 +83,11 @@ const PostSidebarContainer = ({
             </div>
 
             {/* Table of Contents */}
-            <div className="flex flex-col flex-1 overflow-hidden">
+            <div className="flex flex-col min-h-0 flex-1 overflow-hidden">
               <h3 className="sticky top-0 text-2xl italic font-bold font-that-that-new-pixel px-3 pt-2 pb-1 bg-muted-100 z-10 shrink-0">
                 contents
               </h3>
-              <div className="px-3 pb-2 flex-1 overflow-y-auto overflow-x-hidden">
+              <div className="px-3 pb-2 flex-1 min-h-0 overflow-y-auto overflow-x-hidden">
                 <div
                   className="toc-sidebar text-sm leading-snug"
                   dangerouslySetInnerHTML={{ __html: tocHtml }}
