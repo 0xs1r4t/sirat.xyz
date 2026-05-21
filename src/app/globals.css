@@ -1,6 +1,8 @@
 @import "tailwindcss";
 @plugin "@tailwindcss/typography";
 
+@source inline("excalidraw-light excalidraw-dark blueberry-lemon strawberry-matcha neopolitan-ice-cream");
+
 @utility prose {
   --tw-prose-body: var(--color-foreground);
   --tw-prose-headings: var(--color-foreground);
@@ -104,6 +106,8 @@
   html {
     padding: 0;
     margin: 0;
+    scroll-behavior: smooth;
+    scroll-padding-top: 5rem;
   }
 
   html,
