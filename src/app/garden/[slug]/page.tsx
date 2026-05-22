@@ -1,12 +1,19 @@
 import React, { Fragment } from "react";
 import { notFound } from "next/navigation";
-import { getPostBySlug } from "@/lib/markdown";
+import { getAllPosts, getPostBySlug } from "@/lib/markdown";
 import Post from "@/components/Garden/Post";
 import ProgressBar from "@/components/Garden/ProgressBar";
 
 type Props = {
   params: Promise<{ slug: string }>;
 };
+
+export async function generateStaticParams() {
+  const posts = await getAllPosts();
+  return posts.map((post) => ({ slug: post.slug }));
+}
+
+export const dynamic = "force-static";
 
 export async function generateMetadata({ params }: Props) {
   const { slug } = await params;
