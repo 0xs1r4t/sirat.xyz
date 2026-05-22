@@ -16,6 +16,8 @@ import {
   Monaco,
 } from "@/fonts/font-config";
 
+import "katex/dist/katex.min.css";
+
 import "@/styles/code.css";
 import "@/styles/dracula-prism.css";
 import "@/styles/prism-line-numbers.css";
