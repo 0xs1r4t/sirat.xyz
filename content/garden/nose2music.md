@@ -17,7 +17,9 @@ updatedAt: May 21, 2026
 
 Now, I could wax poetic about how it was for increasing accessibility for a specific minority group, but it really wasn't anything like that. It was just one of my first real browser-based creative coding projects, built entirely in client-side JavaScript with no backend. My main goal at the time was to create something cool for the hackathon, and learn a lot within the given time crunch, which I did end up doing.
 
-![how nose2music originally looked](/images/garden/nose2music/old.webp)
+| nose2music's original look                                              | nose2music newer look                                           |
+| ----------------------------------------------------------------------- | --------------------------------------------------------------- |
+| ![how nose2music originally looked](/images/garden/nose2music/old.webp) | ![how nose2music looks now](/images/garden/nose2music/new.webp) |
 
 ## Inspiration
 
@@ -73,7 +75,7 @@ class Bar {
 }
 ```
 
-Every frame, `drawKeypoints()` checks which bar the nose's x-coordinate falls into, calls `play()` on that bar, and `notPlay()` on the rest. Then `triggerSynth()` fires on a Tone.js transport loop (`"4n"` — every quarter note), collects the active notes, and sends them to a `PolySynth`:
+Every frame, `drawKeypoints()` checks which bar the nose's x-coordinate falls into, calls `play()` on that bar, and `notPlay()` on the rest. Then `triggerSynth()` fires on a Tone.js transport loop (`"4n"` - every quarter note), collects the active notes, and sends them to a `PolySynth`:
 
 ```javascript
 function triggerSynth(time) {
@@ -126,7 +128,7 @@ The root cause was clear because I had gotten much better at debugging by then. 
 The fix was moving everything into a button click handler:
 
 ```javascript
-// resumeAudioContext.js — a separate guard
+// resumeAudioContext.js
 let audioContext;
 function initAudioContext() {
   if (!audioContext) {
@@ -194,13 +196,12 @@ if (
   poses[0].pose.keypoints[0].position.x > bars[1].x &&
   poses[0].pose.keypoints[j].position.x < bars[1].x + bars[1].w
 ) {
-  // note: 'j' not '0' — a bug
   bars[1].play();
 }
 // ... repeated 5 more times
 ```
 
-There's even a bug in bar's check — it uses `keypoints[j]` instead of `keypoints[0]`, `j` being the outer loop index. That bar would have behaved unpredictably. The refactored version just does:
+The refactored, non buggy version:
 
 ```javascript
 for (let b = 0; b < numBars; b++) {
@@ -225,4 +226,4 @@ for (let b = 0; b < numBars; b++) {
 - [p5.js](https://p5js.org/)
 - [ml5.js](https://ml5js.org/)
 - [Tone.js](https://tonejs.github.io/)
-- HTML + CSS (Menlo monospace, dark theme, hue-rotate everything)
+- HTML + CSS
