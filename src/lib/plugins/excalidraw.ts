@@ -4,6 +4,7 @@ import type { Root, Element, Text } from "hast";
 import * as fs from "fs";
 import * as path from "path";
 
+const PROJECT_ROOT = process.env.NEXT_PUBLIC_ROOT || process.cwd();
 const DARK_THEMES = ["blueberry-lemon"];
 
 function stripSvgDimensions(svg: string): string {
@@ -93,12 +94,12 @@ const rehypeExcalidraw = () => {
         }
 
         const lightPath = path.join(
-          process.cwd(),
+          PROJECT_ROOT,
           "public",
           `${filename}-light.svg`,
         );
         const darkPath = path.join(
-          process.cwd(),
+          PROJECT_ROOT,
           "public",
           `${filename}-dark.svg`,
         );
