@@ -49,6 +49,11 @@ all vegetation uses **GPU instancing**, with one draw call per foliage type, and
 
 grass uses a **cross-quad** geometry (two quads rotated 90° from each other) for a 3D appearance from any angle, with alpha-masked textures and wind animation driven by layered noise in the vertex shader. flowers are procedurally generated: petal patterns using polar coordinates (`sin(angle * 5.0)` for a 5-petal design), with pink-purple colour ranges and a separately rendered stem.
 
+<video autoplay loop muted playsinline>
+  <source src="/images/garden/fairy-forest-glade/screengrabs/terrainFoliage.webm" type="video/webm" />
+  <source src="/images/garden/fairy-forest-glade/screengrabs/terrainFoliage.mp4" type="video/mp4" />
+</video>
+
 trees have two variants, normal and thick, with OBJ branch models loaded via Assimp and **billboarded leaf clusters** generated around branch vertices. leaves are quad instances in spherical distributions around attachment points, each with a random texture from a set of 4 alpha-masked variants.
 
 ```cpp
@@ -93,6 +98,11 @@ rightLowerWing.parent = &rightUpperWing;
 ```
 
 wing flapping is driven by sine waves with phase offsets. upper and lower wings flap slightly out of sync to look more organic. a separate hover animation bobs the body up and down using `sin(currentTime * hoverSpeed) * hoverAmount`. the fairy is fully controllable: arrow keys for 6DOF movement, `I`/`K` for vertical flight, `J`/`L` for rotation.
+
+<video autoplay loop muted playsinline>
+  <source src="/images/garden/fairy-forest-glade/screengrabs/fairyFireflies.webm" type="video/webm" />
+  <source src="/images/garden/fairy-forest-glade/screengrabs/fairyFireflies.mp4" type="video/mp4" />
+</video>
 
 the hover bob:
 
