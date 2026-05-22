@@ -111,6 +111,18 @@ const rehypeExcalidraw = () => {
           return;
         }
 
+        console.log("[excalidraw] cwd:", PROJECT_ROOT);
+        console.log("[excalidraw] lightPath:", lightPath);
+        console.log("[excalidraw] exists:", fs.existsSync(lightPath));
+        console.log(
+          "[excalidraw] public exists:",
+          fs.existsSync(path.join(PROJECT_ROOT, "public")),
+        );
+        console.log(
+          "[excalidraw] public contents:",
+          fs.readdirSync(path.join(PROJECT_ROOT, "public")),
+        );
+
         try {
           const lightSvg = stripSvgDimensions(
             fs.readFileSync(lightPath, "utf-8"),
