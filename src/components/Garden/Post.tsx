@@ -5,6 +5,8 @@ import Heading from "@/components/Heading";
 import LinkPreview from "@/components/Garden/LinkPreview";
 import PostSidebar from "@/components/Garden/PostSidebar";
 
+import ExcalidrawTheme from "@/components/Garden/plugins/ExcalidrawTheme";
+
 const Post = ({ post }: { post: Post }) => {
   return (
     <ProgressBar>
@@ -29,6 +31,7 @@ const Post = ({ post }: { post: Post }) => {
              prose-a:duration-200
              "
         />
+        <ExcalidrawTheme />
         <LinkPreview />
         <span aria-hidden="true" className="p-4">
           {""}
