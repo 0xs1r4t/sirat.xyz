@@ -16,6 +16,12 @@ import {
   Monaco,
 } from "@/fonts/font-config";
 
+import "@/styles/code.css";
+import "@/styles/dracula-prism.css";
+import "@/styles/prism-line-numbers.css";
+import "@/styles/link-preview.css";
+import "@/styles/toc.css";
+
 import { cn } from "@/lib/utils";
 import Breadcrumb from "@/components/Navigation/Breadcrumb";
 import Navbar from "@/components/Navigation/Navbar";

@@ -27,6 +27,9 @@ const nextConfig = {
       { protocol: "https", hostname: "github.com" },
     ],
   },
+  env: {
+    NEXT_PUBLIC_ROOT: process.cwd(),
+  },
   webpack: (config) => {
     config.resolve.alias = {
       ...config.resolve.alias,
