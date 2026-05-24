@@ -5,7 +5,7 @@ import useSWR from "swr";
 import fetcher from "@/lib/fetcher";
 import { Tooltip } from "@/components/Tooltip";
 import { Filters } from "@/components/Filters";
-import DitherImage from "@graphics/Dither/DitherImage";
+import DitherMedia from "@/graphics/Dither/Media";
 
 const REFRESH_INTERVAL = 214400;
 const ALBUM_SIZE = 144;
@@ -22,7 +22,7 @@ const AlbumArt = ({
   pattern: "4x4" | "8x8";
 }) => (
   <div className="rounded-md w-36 h-36 bg-muted-200 border-2 border-muted-200 z-30 overflow-hidden">
-    <DitherImage
+    <DitherMedia
       src={src}
       alt={alt}
       width={ALBUM_SIZE}

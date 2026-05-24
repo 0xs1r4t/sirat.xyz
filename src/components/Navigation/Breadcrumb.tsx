@@ -60,7 +60,6 @@ const Breadcrumb = () => {
         ) : (
           crumb.replace(/-/g, " ")
         );
-      console.log(pathCrumb);
 
       return (
         <div aria-label={`follow the crumb to "${crumb}"`} key={crumb}>
