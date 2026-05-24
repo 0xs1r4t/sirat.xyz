@@ -24,6 +24,7 @@ export interface PostMetadata {
   slug: string;
   title: string;
   description: string;
+  background?: string;
   tags: string[];
   type: string;
   status: string;
@@ -54,6 +55,7 @@ export async function getAllPosts(): Promise<PostMetadata[]> {
           slug: data.slug,
           title: data.title,
           description: data.description,
+          background: data.background,
           tags: data.tags || [],
           type: data.type,
           status: data.status,
@@ -118,6 +120,7 @@ export async function getPostBySlug(slug: string): Promise<Post | null> {
       slug: data.slug,
       title: data.title,
       description: data.description,
+      background: data.background,
       tags: data.tags || [],
       type: data.type,
       status: data.status,

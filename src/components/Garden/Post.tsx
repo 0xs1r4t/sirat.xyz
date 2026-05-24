@@ -8,13 +8,15 @@ import PostSidebar from "@/components/Garden/PostSidebar";
 import ExcalidrawTheme from "@/components/Garden/plugins/ExcalidrawTheme";
 
 const Post = ({ post }: { post: Post }) => {
+  console.log("background", post.background);
   return (
     <ProgressBar>
       <PostSidebar description={post.description} tocHtml={post.toc} />
       <article className="w-full xl:mr-48 xl:ml-48">
         <Heading
           title={post.title}
-          styles="flex items-center justify-center min-h-[calc(100vh-4rem)]"
+          background={post.background}
+          styles="flex items-center justify-center min-h-[calc(100vh-4rem)] glow-text"
         />
         <span className="p-4">{""}</span>
         <div

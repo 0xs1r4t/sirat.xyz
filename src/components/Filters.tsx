@@ -1,6 +1,6 @@
 import React from "react";
 
-import "../styles/filters.css";
+import "@/styles/filters.css";
 
 export const Filters = () => {
   return (
