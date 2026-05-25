@@ -11,31 +11,36 @@ const Post = ({ post }: { post: Post }) => {
   return (
     <ProgressBar>
       <PostSidebar description={post.description} tocHtml={post.toc} />
-      <article className="w-full xl:mr-48 xl:ml-48">
+      <article className="w-full min-w-0 xl:mx-48">
         <Heading
           title={post.title}
-          styles="flex items-center justify-center min-h-[calc(100vh-4rem)]"
+          background={post.background}
+          styles="flex items-center justify-center min-h-[calc(100vh-4rem)]
+        w-screen relative left-1/2 -translate-x-1/2"
+          post
         />
-        <span className="p-4">{""}</span>
-        <div
-          dangerouslySetInnerHTML={{ __html: post.html }}
-          suppressHydrationWarning
-          className="text-foreground w-full max-w-full prose
-             lg:prose-lg lg:max-w-2xl xl:max-w-3xl mx-auto
-             prose-headings:text-foreground 
-             prose-headings:font-authentic-sans-condensed 
-             prose-pre:font-monaco 
-             prose-pre:border-2 
-             prose-pre:border-muted-200 
-             prose-a:transition-colors
-             prose-a:duration-200
-             "
-        />
-        <ExcalidrawTheme />
-        <LinkPreview />
-        <span aria-hidden="true" className="p-4">
-          {""}
-        </span>
+
+        <div className="px-4 py-6 mx-auto max-w-2xl xl:max-w-3xl">
+          <div
+            dangerouslySetInnerHTML={{ __html: post.html }}
+            suppressHydrationWarning
+            className="text-foreground w-full prose lg:prose-lg
+                       prose-headings:text-foreground
+                       prose-headings:font-authentic-sans-condensed
+                       prose-h2:text-6xl
+                       prose-h3:text-5xl
+                       prose-h4:text-4xl
+                       prose-h5:text-3xl
+                       prose-h6:text-2xl
+                       prose-pre:font-monaco
+                       prose-pre:border-2
+                       prose-pre:border-muted-200
+                       prose-a:transition-colors
+                       prose-a:duration-200"
+          />
+          <ExcalidrawTheme />
+          <LinkPreview />
+        </div>
       </article>
     </ProgressBar>
   );

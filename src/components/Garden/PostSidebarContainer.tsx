@@ -22,7 +22,7 @@ const PostSidebarContainer = ({
     if (!isOpen) return;
 
     const headings = document.querySelectorAll(
-      "article h2, article h3, article h4",
+      "article h2, article h3, article h4, article h5, article h6",
     );
 
     const observer = new IntersectionObserver(

@@ -2,6 +2,7 @@
 slug: fairy-forest-glade
 title: fairy forest glade
 description: my computer graphics final project
+background: /images/garden/fairy-forest-glade/screengrabs/fairyFireflies.webm
 tags: [opengl, computer graphics, c++, procedural generation, cel shading, glsl]
 type: projects
 status: published

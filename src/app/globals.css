@@ -22,12 +22,11 @@
 
   :where(strong) { color: var(--color-foreground); }
   :where(em) { color: var(--color-foreground); }
-  :where(a) { color: var(--color-muted-200); }
   :where(code) {
     font-family: var(--font-monaco), monospace;
-    &::before, &::after { content: none; }
+    &::before, &::after { content: none; } }
   }
-}
+
 
 /* Code block styles */
 @import url("../styles/code.css");
@@ -102,6 +101,7 @@
     --color-muted-100: rgb(255 204 237);
     --color-muted-200: rgb(245 135 229);
   }
+
 
   html {
     padding: 0;
@@ -301,12 +301,20 @@
     -webkit-text-stroke: 2px var(--color-muted-200);
   }
 
+  .text-stroke-muted-extra-thick {
+    -webkit-text-stroke: 10px var(--color-muted-200);
+  }
+
   .text-stroke-foreground-thick {
     -webkit-text-stroke: 2px var(--color-foreground);
   }
 
+  .text-stroke-foreground-extra-thick {
+    -webkit-text-stroke: 10px var(--color-foreground);
+  }
+
   .glow-text {
-    text-shadow: 0px 0px 10px var(--color-muted-200);
+    text-shadow: 0px 0px 12px var(--color-muted-200);
     /* text-shadow: 0px 0px 5px var(--color-foreground); */
   }
 

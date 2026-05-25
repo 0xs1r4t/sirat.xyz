@@ -20,12 +20,8 @@ export function SidebarProvider({ children }: { children: ReactNode }) {
   const toggleLeft = () => {
     const width = window.innerWidth;
     const isLargeScreen = width >= 1280;
-    console.log(
-      `toggleLeft - width: ${width}, isLargeScreen: ${isLargeScreen}, leftOpen: ${leftOpen}`,
-    );
 
     if (!isLargeScreen && !leftOpen) {
-      console.log("Closing right sidebar");
       setRightOpen(false);
     }
     setLeftOpen(!leftOpen);
@@ -34,12 +30,8 @@ export function SidebarProvider({ children }: { children: ReactNode }) {
   const toggleRight = () => {
     const width = window.innerWidth;
     const isLargeScreen = width >= 1280;
-    console.log(
-      `toggleRight - width: ${width}, isLargeScreen: ${isLargeScreen}, rightOpen: ${rightOpen}`,
-    );
 
     if (!isLargeScreen && !rightOpen) {
-      console.log("Closing left sidebar");
       setLeftOpen(false);
     }
     setRightOpen(!rightOpen);

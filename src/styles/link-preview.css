@@ -6,17 +6,22 @@
 
 /* External links styling */
 .external-link {
+  display: inline;
   position: relative;
-  text-decoration: underline;
+  color: var(--color-foreground);
+  text-decoration-style: wavy;
   text-decoration-color: var(--color-muted-200);
   text-underline-offset: 2px;
+  font-size: 1.2em;
+  padding: -0.2em 0 0 0;
+  font-family: var(--font-that-that-new-pixel), sans-serif;
   transition: all 0.2s ease;
-  display: inline-flex;
   align-items: center;
 }
 
 .external-link:hover {
-  color: var(--color-muted-200);
+  font-style: italic;
+  text-shadow: 0px 0px 1px var(--color-foreground);
 }
 
 /* Internal links styling */
@@ -29,5 +34,5 @@
 }
 
 .internal-link:hover {
-  color: var(--color-muted-200);
+  color: var(--color-link-underline-hover);
 }

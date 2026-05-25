@@ -20,7 +20,7 @@ updatedAt: January 16, 2026
 
 ## Table of Contents
 
-# general
+## general
 
 i'm back! i have been here the whole time, but i did voluntarily leave my previous job and move my whole life to a place ~8,300km from my previous home so that i could go back to school (i'm studying to get a master's degree). in my first post, [[about-this-digital-garden]], i had said i'll keep it there to "keep myself accountable", but considering how my next update is being made a whole year later, that clearly wasn't good enough to keep me on top of things.
 
@@ -28,15 +28,15 @@ i will mostly type in lowercase and swear a little here and there because genera
 
 while generative ai eats itself up and produces even more slop than before, i wanted to say that i have been working on some stuff in the last year, mostly class assignments that have used more brain cells of mine than how many i knew i possessed.
 
-# (relevant) stuff i've been working on
+## (relevant) stuff i've been working on
 
-## fun with OpenGL
+### fun with OpenGL
 
 first up is this [fairy forest glade](https://github.com/0xs1r4t/fairy-forest-glade), a project i undertook as a part of my computer graphics class. i had to learn how to code with C++ again because my previous job made my brain cells evaporate with busy work. anyway, now i can kinda use slightly complicated mathematics and OpenGL to make cool graphics, so that's cool.
 
 as a part of this project, i made a procedural terrain that had variable (x, y, (min z, max z)) coordinates, successfully generated a variety of foliage, that too based on LOD (level-of-distance) so that there would be less foliage further away from the camera. i also made sure the foliage was billboarded, i.e. it's normals always face the camera. this allowed to mostly use optimised images instead of heavy, high-poly 3d models of foliage. i will create a separate post for this along with a summarised README for interviewers and randoms.
 
-## gaussian splattering my brains
+### gaussian splattering my brains
 
 second and last on this list is [this project for my computer vision class that has no name](https://github.com/0xs1r4t/npr-ar-cv). i kinda wanted to make it to make some progress for my dissertation that will be due by august this year, and also explore non-generative ai solutions within the ai space for creative/artistic output. pre-2022, this space was pretty fun! i remember GANs (Generative Adversarial Networks) pretty positively, though they were definitely part of the art theft epidemic that continues to this day, perpetrated by big tech companies that willingly fired their ethics teams to win the "agi race" which is just a circle jerk of investors probably giggling like teens and rubbing their hands like comic book villains because their technofeudalism was soooo successful and "omg we actually rule the world now lol let's take all the jobs away uwu".
 
@@ -46,11 +46,11 @@ the results aren't that great but i was able to give a live demo of video → ga
 
 i also did use OpenCV and OpenGL on C++ since i was able to learn it pretty decently with what all i did for my graphics project, and this is my first time using C++ for ai-related code. it's a bit involved so unless i get drastic optimisation, i might not use this combo again. or maybe i will because [WASM + WebNN + WebGPU](https://www.youtu.be/5CvOjKIpnYk&t) is something i'm looking to explore. if i figure out C for ai (or C in general) i might consider it even more because as long as there's no memory leaks, i can probably get max memory and performance gains.
 
-## game engines hate github
+### game engines hate github
 
 i also worked on a few group projects using Unity and Unreal, which has been fun, but i feel like those projects are not MY babies so idk if i should talk about their technical aspects. i DID break my head quite a bit esp due to all the version control issues. these game engines kinda hate github lol.
 
-# (relevant) stuff i will work on
+## (relevant) stuff i will work on
 
 1. i will improve my previous projects. i have some projects from half a decade that are still kinda cool and they definitely deserve to see the light (perhaps with a few updates).
 2. i will continue to work on the two projects i mentioned here to clean them up and have them looking profesh.

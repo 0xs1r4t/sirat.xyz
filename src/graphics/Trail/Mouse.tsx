@@ -134,6 +134,7 @@ const MouseTrail = ({ className }: { className?: string }) => {
 
   return (
     <div
+      aria-hidden="true"
       className={className}
       style={{
         position: "fixed",

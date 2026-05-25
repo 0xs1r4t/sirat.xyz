@@ -12,6 +12,7 @@ declare global {
     slug: string;
     title: string;
     description: string;
+    background?: string;
     tags: string[];
     type: string;
     status: string;
