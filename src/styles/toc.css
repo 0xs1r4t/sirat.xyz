@@ -40,18 +40,7 @@ article h2#table-of-contents,
 article h2#table-of-contents + ol {
   display: none !important;
 }
-
-/* Sidebar TOC specific styles */
-.toc-sidebar ol {
-  list-style: none;
-  padding-left: 0;
-  margin: 0;
-}
-
-.toc-sidebar ol ol {
-  padding-left: 0.75rem;
-  margin-top: 0.25rem;
-}
+/* Match navbar text size */
 
 .toc-sidebar li {
   margin: 0.2rem 0;
@@ -79,16 +68,80 @@ article h2#table-of-contents + ol {
 .toc-sidebar a.toc-active {
   background-color: var(--color-muted-200);
   color: var(--color-foreground);
-  font-weight: 900;
+  font-style: italic;
 }
 
-.toc-sidebar > ol {
-  border-left: 2px solid var(--color-muted-100);
-  padding-left: 0.5rem;
+/* TOC sidebar */
+
+.toc-sidebar ol {
+  list-style: none;
+  padding-left: 0;
+  margin: 0;
 }
 
 .toc-sidebar ol ol {
-  border-left: 2px solid var(--color-muted-100);
-  padding-left: 0.75rem;
-  margin-top: 0.25rem;
+  padding-left: 0;
+  margin-top: 0;
+}
+
+.toc-sidebar li {
+  position: relative;
+  margin: 0.1rem 0;    /* tighter vertical spacing */
+  padding-left: 0.75rem; /* was 1rem, less indent per level */
+}
+
+/* horizontal branch */
+.toc-sidebar li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.6em;
+  width: 0.45rem;      /* shorter branch */
+  height: 1px;
+  background: var(--color-muted-200);
+}
+
+/* vertical trunk */
+.toc-sidebar li::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: var(--color-muted-200);
+  opacity: 0.4;
+}
+
+.toc-sidebar li:last-child::after {
+  bottom: calc(100% - 0.6em);
+  top: 0;
+}
+
+/* all levels same size, no opacity fade */
+.toc-sidebar a {
+  color: var(--color-foreground);
+  text-decoration: none;
+  display: block;
+  line-height: 1.2;
+  padding: 0.08rem 0.2rem;
+  border-radius: 0.25rem;
+  transition: background-color 0.2s ease;
+
+  /* wrap instead of truncate */
+  white-space: normal;
+  overflow: visible;
+  text-overflow: unset;
+  word-break: break-word;
+}
+
+.toc-sidebar a:hover {
+  background-color: var(--color-muted-200);
+  color: var(--color-foreground);
+}
+
+.toc-sidebar a.toc-active {
+  background-color: var(--color-muted-200);
+  color: var(--color-foreground);
+  font-style: italic;
 }

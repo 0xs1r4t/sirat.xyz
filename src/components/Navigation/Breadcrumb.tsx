@@ -60,25 +60,22 @@ const Breadcrumb = () => {
         ) : (
           crumb.replace(/-/g, " ")
         );
-      console.log(pathCrumb);
 
       return (
-        <div aria-label={`follow the crumb to "${crumb}"`} key={crumb}>
-          <button
-            className="flex flex-row gap-1 justify-center items-center"
-            role="button"
+        <div
+          className="flex flex-row gap-1 justify-center items-center"
+          key={crumb}
+        >
+          &nbsp;
+          <Icons.singleChevron aria-hidden="true" />
+          &nbsp;
+          <Link
+            href={currentLink}
+            aria-label={`follow the crumb to "${crumb}"`}
+            className="cursor-pointer hover:bg-muted-200 hover:rounded-md px-1 lg:text-lg"
           >
-            &nbsp;
-            <Icons.singleChevron />
-            &nbsp;
-            <Link
-              href={currentLink}
-              aria-label={`link to the ${crumb} page`}
-              className="cursor-pointer hover:bg-muted-200 hover:rounded-md px-1 lg:text-lg"
-            >
-              {pathCrumb}
-            </Link>
-          </button>
+            {pathCrumb}
+          </Link>
         </div>
       );
     });

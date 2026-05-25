@@ -13,10 +13,11 @@ import rehypePrism from "rehype-prism-plus";
 import rehypeStringify from "rehype-stringify";
 import rehypeKatex from "rehype-katex";
 
-import remarkYoutube from "@/lib/plugins/youtube";
 import remarkPostLink from "@/lib/plugins/post-link";
 import rehypeLinkPreview from "@/lib/plugins/link-preview";
 import rehypeExcalidraw from "@/lib/plugins/excalidraw";
+import remarkYoutube, { prefetchYouTubeTitles } from "@/lib/plugins/youtube";
+import rehypePreTabindex from "@/lib/plugins/pre-tabindex";
 
 const contentDirectory = path.join(process.cwd(), "content/garden");
 
@@ -24,6 +25,7 @@ export interface PostMetadata {
   slug: string;
   title: string;
   description: string;
+  background?: string;
   tags: string[];
   type: string;
   status: string;
@@ -54,6 +56,7 @@ export async function getAllPosts(): Promise<PostMetadata[]> {
           slug: data.slug,
           title: data.title,
           description: data.description,
+          background: data.background,
           tags: data.tags || [],
           type: data.type,
           status: data.status,
@@ -82,23 +85,29 @@ export async function getPostBySlug(slug: string): Promise<Post | null> {
     const fileContents = fs.readFileSync(fullPath, "utf8");
     const { data, content } = matter(fileContents);
 
+    // Pre-parse tree to extract video IDs, fetch titles in parallel
+    const tree = remark().use(remarkGfm).parse(content);
+    const youtubeTitles = await prefetchYouTubeTitles(tree as any);
+
     const processedContent = await remark()
       .use(remarkGfm) // GitHub-flavored markdown
       .use(remarkToc, {
         heading: "table of contents|contents|toc",
         tight: true,
         ordered: true,
-        maxDepth: 4,
+        minDepth: 2,
+        maxDepth: 6,
       }) // Table of contents
       .use(remarkMath) // Parse math syntax
       .use(remarkPostLink) // Internal post links
-      .use(remarkYoutube) // YouTube embeds
+      .use(remarkYoutube, youtubeTitles) // YouTube embeds
       .use(remarkRehype, { allowDangerousHtml: true }) // Convert to rehype and preserve HTML
       .use(rehypeSlug) // Add slugs to headings
       .use(rehypePrism, {
         ignoreMissing: true,
         showLineNumbers: true, // Enable line numbers for all code blocks
       }) // Syntax highlighting (rehype plugin)
+      .use(rehypePreTabindex) // Add tabindex and aria-label to pre elements
       .use(rehypeKatex) // Render math with KaTeX
       .use(rehypeLinkPreview) // Link previews
       .use(rehypeExcalidraw) // Excalidraw diagrams
@@ -110,7 +119,7 @@ export async function getPostBySlug(slug: string): Promise<Post | null> {
     // Extract TOC from generated HTML
     // Extract TOC - it's an <h2> with id "table-of-contents" followed by an <ol>
     const tocMatch = html.match(
-      /<h2 id="table-of-contents">Table of Contents<\/h2>\s*(<ol>[\s\S]*?<\/ol>)/,
+      /<h2 id="table-of-contents">Table of Contents<\/h2>\s*(<ol>[\s\S]*<\/ol>)/,
     );
     const toc = tocMatch ? tocMatch[1] : "";
 
@@ -118,6 +127,7 @@ export async function getPostBySlug(slug: string): Promise<Post | null> {
       slug: data.slug,
       title: data.title,
       description: data.description,
+      background: data.background,
       tags: data.tags || [],
       type: data.type,
       status: data.status,

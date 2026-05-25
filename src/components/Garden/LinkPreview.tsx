@@ -6,34 +6,27 @@ const LinkPreview = () => {
   const [mountedLinks, setMountedLinks] = useState<Set<string>>(new Set());
 
   useEffect(() => {
-    console.log("LinkPreview component mounted");
-
     const links =
       document.querySelectorAll<HTMLAnchorElement>(".external-link");
-    console.log("Found external links:", links.length);
 
     links.forEach((link, index) => {
       const linkId = `link-${index}-${link.href}`;
 
       if (mountedLinks.has(linkId)) {
-        console.log(`Link ${index} already processed, skipping`);
         return;
       }
 
       // Clean up any old nodes
       const textNodes = Array.from(link.childNodes).filter(
         (node) =>
-          node.nodeType === Node.TEXT_NODE && node.textContent?.includes("🔗")
+          node.nodeType === Node.TEXT_NODE && node.textContent?.includes("🔗"),
       );
       textNodes.forEach((node) => node.remove());
 
       if (link.querySelector("img[data-link-favicon]")) {
-        console.log(`Favicon already exists for link ${index}, skipping`);
         setMountedLinks((prev) => new Set(prev).add(linkId));
         return;
       }
-
-      console.log(`Processing link ${index}:`, link.href);
 
       const domain = new URL(link.href).hostname;
 
@@ -43,8 +36,6 @@ const LinkPreview = () => {
       } else {
         faviconUrl = `https://icons.duckduckgo.com/ip3/${domain}.ico`;
       }
-
-      console.log(`Favicon URL for link ${index}:`, faviconUrl);
 
       const favicon = document.createElement("img");
       favicon.src = faviconUrl;
@@ -92,19 +83,16 @@ const LinkPreview = () => {
         `;
 
         link.insertBefore(iconContainer, link.firstChild);
-        console.log(`Inserted custom icon for link ${index}`);
       };
 
       const tryFallback = () => {
         if (!fallbackAttempted) {
           fallbackAttempted = true;
-          console.log(`Trying Google fallback for ${link.href}`);
           favicon.src = `https://www.google.com/s2/favicons?domain=${domain}&sz=16`;
 
           // Give Google 1 second, then check if it worked
           setTimeout(() => {
             if (!imageLoaded || favicon.naturalWidth <= 1) {
-              console.log(`Using custom icon for ${link.href}`);
               insertCustomIcon();
             }
           }, 1000);
@@ -112,27 +100,20 @@ const LinkPreview = () => {
       };
 
       favicon.onerror = () => {
-        console.error(`Failed to load favicon for ${link.href}`);
         tryFallback();
       };
 
       favicon.onload = () => {
-        console.log(
-          `Favicon loaded for ${link.href} - Width: ${favicon.naturalWidth}, Height: ${favicon.naturalHeight}`
-        );
-
         // Check if it's actually a valid image (not a 404 placeholder)
         if (favicon.naturalWidth <= 1 || favicon.naturalHeight <= 1) {
           console.warn(`Favicon loaded but appears blank for ${link.href}`);
           tryFallback();
         } else {
           imageLoaded = true;
-          console.log(`Successfully loaded favicon for ${link.href}`);
         }
       };
 
       link.insertBefore(favicon, link.firstChild);
-      console.log(`Inserted favicon for link ${index}`);
       setMountedLinks((prev) => new Set(prev).add(linkId));
 
       let tooltipTimeout: NodeJS.Timeout;
@@ -159,7 +140,7 @@ const LinkPreview = () => {
 
           try {
             const response = await fetch(
-              `/api/link-preview?url=${encodeURIComponent(url)}`
+              `/api/link-preview?url=${encodeURIComponent(url)}`,
             );
             if (response.ok) {
               const data = await response.json();

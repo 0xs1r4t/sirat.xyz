@@ -20,6 +20,7 @@ const NavbarContainer = ({ isOpen }: NavbarContainerProps) => {
       {isOpen && (
         <LazyMotion features={loadFeatures}>
           <m.div
+            role="navigation"
             aria-label="sidebar"
             initial={{ x: -192, scaleX: 0.5 }} // -48 * 4 = -192
             animate={{
