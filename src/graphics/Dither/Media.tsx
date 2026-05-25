@@ -97,6 +97,7 @@ export interface DitherMediaProps {
   style?: React.CSSProperties;
   /** Override auto-detection from file extension if needed */
   isVideo?: boolean;
+  isDecorative?: boolean;
 }
 
 // DitherMedia
@@ -112,6 +113,7 @@ export default function DitherMedia({
   className,
   style,
   isVideo,
+  isDecorative,
 }: DitherMediaProps) {
   const theme = useTheme();
   const imgRef = useRef<HTMLImageElement>(null);
@@ -183,8 +185,9 @@ export default function DitherMedia({
         height: height ?? "100%",
         ...style,
       }}
-      role="img"
-      aria-label={alt}
+      role={isDecorative ? "presentation" : "img"}
+      aria-label={isDecorative ? undefined : alt}
+      aria-hidden={isDecorative ? true : undefined}
     >
       {treatAsVideo ? (
         <video
@@ -240,6 +243,7 @@ export default function DitherMedia({
             mediaWidth={naturalSize.width}
             mediaHeight={naturalSize.height}
             isVideo={treatAsVideo}
+            isDecorative={isDecorative}
           />
         </Canvas>
       )}
@@ -260,6 +264,7 @@ interface DitherMeshProps {
   mediaWidth: number;
   mediaHeight: number;
   isVideo: boolean;
+  isDecorative?: boolean;
 }
 
 function DitherMesh({

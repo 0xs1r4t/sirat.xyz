@@ -170,49 +170,6 @@ The most recent update:
 - Tidied up the CSS.
 - Switched from `.toMaster()` (deprecated in Tone.js v14) to `.toDestination()`. This is the version currently deployed.
 
-## sketchOld.js vs sketch.js
-
-`sketchOld.js` is kept in the repo as a reference for the original hackathon code. The two files tell a readable before/after story:
-
-|                     | `sketchOld.js`                                 | `sketch.js`                                        |
-| ------------------- | ---------------------------------------------- | -------------------------------------------------- |
-| **Synth init**      | Top-level `new Tone.PolySynth(...).toMaster()` | Inside async button handler, `.toDestination()`    |
-| **Transport start** | Inside `modelReady()` callback                 | Inside button handler, after `await Tone.loaded()` |
-| **Bar collision**   | 7 separate `if` blocks, hardcoded indices      | Loop over `bars[]` array                           |
-| **Avatar drawing**  | `drawPoses()` draws nose image only            | Draws nose + left/right eye images                 |
-| **Audio toggle**    | None, plays immediately                        | Play/Stop toggle button                            |
-
-The bar collision code in the old version is especially telling of a hackathon crunch:
-
-```javascript
-// sketchOld.js
-if (
-  poses[0].pose.keypoints[0].position.x > bars[0].x &&
-  poses[0].pose.keypoints[0].position.x < bars[0].x + bars[0].w
-) {
-  bars[0].play();
-}
-if (
-  poses[0].pose.keypoints[0].position.x > bars[1].x &&
-  poses[0].pose.keypoints[j].position.x < bars[1].x + bars[1].w
-) {
-  bars[1].play();
-}
-// ... repeated 5 more times
-```
-
-The refactored, non buggy version:
-
-```javascript
-for (let b = 0; b < numBars; b++) {
-  if (nose.x > bars[b].x && nose.x < bars[b].x + bars[b].w) {
-    bars[b].play();
-  } else {
-    bars[b].notPlay();
-  }
-}
-```
-
 ## Try It Out
 
 1. [Live demo](https://git.sirat.xyz/nose2music/)

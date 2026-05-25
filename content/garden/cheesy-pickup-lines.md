@@ -21,7 +21,7 @@ updatedAt: January 18, 2026
 
 ## Table of Contents
 
-# my project from back in the day
+## my project from back in the day
 
 https://www.youtu.be/wuUqQecIvdY
 

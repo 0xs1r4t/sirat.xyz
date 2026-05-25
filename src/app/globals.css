@@ -22,12 +22,11 @@
 
   :where(strong) { color: var(--color-foreground); }
   :where(em) { color: var(--color-foreground); }
-  :where(a) { color: var(--color-muted-200); }
   :where(code) {
     font-family: var(--font-monaco), monospace;
-    &::before, &::after { content: none; }
+    &::before, &::after { content: none; } }
   }
-}
+
 
 /* Code block styles */
 @import url("../styles/code.css");
@@ -102,6 +101,7 @@
     --color-muted-100: rgb(255 204 237);
     --color-muted-200: rgb(245 135 229);
   }
+
 
   html {
     padding: 0;

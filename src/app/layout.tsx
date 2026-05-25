@@ -62,12 +62,15 @@ const RootLayout = ({ children }: Readonly<{ children: React.ReactNode }>) => {
             <Suspense fallback={<></>}>
               <MouseTrail />
             </Suspense>
-            <div className="fixed top-0 z-10 flex justify-between w-full">
-              <span className="flex flex-row justify-start">
+            <header className="fixed top-0 z-10 flex justify-between w-full">
+              <nav
+                aria-label="breadcrumb"
+                className="flex flex-row justify-start"
+              >
                 <Breadcrumb />
-              </span>
+              </nav>
               <ThemeSwitcher />
-            </div>
+            </header>
             <div className="flex flex-row">
               <Navbar />
             </div>

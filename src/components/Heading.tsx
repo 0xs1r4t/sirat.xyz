@@ -18,7 +18,7 @@ const Heading = ({
   post?: boolean;
 }) => {
   return (
-    <div
+    <h1
       aria-label="page title"
       className={cn(
         "relative overflow-hidden rounded-xl",
@@ -39,6 +39,7 @@ const Heading = ({
             intensity={0.8}
             useTint={true}
             className="GradientMap absolute inset-0 w-full h-full"
+            isDecorative
           />
           {/*  edge vignette */}
           <div
@@ -49,7 +50,7 @@ const Heading = ({
         </>
       )}
       <>
-        {post && (
+        {post && background && (
           <span
             className="absolute inset-0 flex items-center justify-center
                  font-that-that-new-pixel italic leading-none
@@ -64,14 +65,14 @@ const Heading = ({
         <span
           className={cn(
             "relative z-[2] w-full text-center",
-            post && "glow-text",
+            post && background && "glow-text",
           )}
         >
           {title}
           {children ?? <span aria-hidden="true">{""}</span>}
         </span>
       </>
-    </div>
+    </h1>
   );
 };
 

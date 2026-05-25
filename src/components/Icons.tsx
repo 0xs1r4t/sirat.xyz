@@ -69,11 +69,12 @@ export const Icons = {
   ),
   singleChevron: (props: IconProps) => (
     <svg
+      aria-hidden="true"
+      role="graphics-symbol"
       width="16"
       height="16"
       viewBox="0 0 26 27"
       fill="currentColor"
-      aria-label="single chevron icon"
       xmlns="http://www.w3.org/2000/svg"
       {...props}
     >
@@ -96,7 +97,6 @@ export const Icons = {
       aria-hidden="true"
       role="graphics-symbol"
       viewBox="0 0 16 16"
-      aria-label="double chevron icon"
       className="block w-4 h-4 fill-none shrink-0"
       xmlns="http://www.w3.org/2000/svg"
       {...props}
