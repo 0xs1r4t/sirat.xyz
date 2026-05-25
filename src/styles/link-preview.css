@@ -13,6 +13,7 @@
   text-decoration-color: var(--color-muted-200);
   text-underline-offset: 2px;
   font-size: 1.2em;
+  padding: -0.2em 0 0 0;
   font-family: var(--font-that-that-new-pixel), sans-serif;
   transition: all 0.2s ease;
   align-items: center;

@@ -95,7 +95,8 @@ export async function getPostBySlug(slug: string): Promise<Post | null> {
         heading: "table of contents|contents|toc",
         tight: true,
         ordered: true,
-        maxDepth: 4,
+        minDepth: 2,
+        maxDepth: 6,
       }) // Table of contents
       .use(remarkMath) // Parse math syntax
       .use(remarkPostLink) // Internal post links
@@ -118,7 +119,7 @@ export async function getPostBySlug(slug: string): Promise<Post | null> {
     // Extract TOC from generated HTML
     // Extract TOC - it's an <h2> with id "table-of-contents" followed by an <ol>
     const tocMatch = html.match(
-      /<h2 id="table-of-contents">Table of Contents<\/h2>\s*(<ol>[\s\S]*?<\/ol>)/,
+      /<h2 id="table-of-contents">Table of Contents<\/h2>\s*(<ol>[\s\S]*<\/ol>)/,
     );
     const toc = tocMatch ? tocMatch[1] : "";
 
