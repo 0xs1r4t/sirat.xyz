@@ -24,7 +24,7 @@ const Home = async () => {
   return (
     <div className="flex flex-col items-center justify-center h-[75vh]">
       <Garden posts={gardenPosts} />
-      <p>
+      {/* <p>
         <Link
           aria-label="garden"
           href="/garden"
@@ -35,8 +35,8 @@ const Home = async () => {
           </span>
           &nbsp;digital garden
         </Link>{" "}
-      </p>
-      <p>
+      </p> */}
+      {/* <p>
         <Link
           aria-label="graphics"
           href="/graphics"
@@ -47,7 +47,7 @@ const Home = async () => {
           </span>
           &nbsp;visual experiments
         </Link>{" "}
-      </p>
+      </p> */}
       {/* <IntroCard /> */}
     </div>
   );

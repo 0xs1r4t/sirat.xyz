@@ -25,13 +25,13 @@ export interface FlowerHead extends Vec3 {
 /** World-space centers of every flower's head (the clickable blossom). */
 export function flowerHeads(
   placements: FlowerPlacement[],
-  flowerHeight: number,
+  // flowerHeight: number,
 ): FlowerHead[] {
   return placements.map((p, index) => ({
     index,
     slug: p.slug,
     x: p.x,
-    y: p.y + flowerHeight * 0.72, // blossom sits near the top of the quad
+    y: p.y, // + flowerHeight * 0.72, // blossom sits near the top of the quad
     z: p.z,
   }));
 }

@@ -6,24 +6,16 @@ import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { OrbitControls } from "@react-three/drei";
 import * as THREE from "three";
 
-import { sampleHeight } from "@/lib/garden/terrain";
-import {
-  GARDEN,
-  getGardenTerrain,
-  layoutFlowers,
-  type GardenPost,
-} from "@/lib/garden/meadow";
+import { sampleHeight, generateTerrain } from "@/lib/garden/terrain";
+import { GARDEN, layoutFlowers, type GardenPost } from "@/lib/garden/meadow";
 import { flowerHeads, pickFlower } from "@/lib/garden/picking";
 import { useGardenTheme } from "@graphics/Garden/useGardenTheme";
 import Terrain from "@graphics/Garden/Terrain";
 import { Grass, Flowers } from "@graphics/Garden/Foliage";
-
 import { useGardenControls } from "@graphics/Garden/Controls";
-import { generateTerrain } from "@/lib/garden/terrain";
 
 export interface GardenSceneProps {
   posts: GardenPost[];
-  immersive: boolean;
   reducedMotion: boolean;
   /** DOM tooltip inside the stage container; Scene drives its transform */
   tooltipRef: React.RefObject<HTMLDivElement | null>;
@@ -31,11 +23,10 @@ export interface GardenSceneProps {
   onHoverPost: (post: GardenPost | null) => void;
 }
 
-const HIT_RADIUS = 0.55; // ≈ 44px at flower-band distance from the strip camera
+const HIT_RADIUS = 0.55; // ≈ 44px at flower-band distance from the camera
 
 function GardenRig({
   posts,
-  immersive,
   reducedMotion,
   tooltipRef,
   onHoverPost,
@@ -59,8 +50,6 @@ function GardenRig({
     tuftWidth,
     tuftHeight,
     slopeThreshold,
-    flowerWidth,
-    flowerHeight,
     windSpeed,
     windStrength,
   } = useGardenControls();
@@ -78,11 +67,12 @@ function GardenRig({
       ),
     [gridWidth, gridHeight, scale, heightScale, octaves, frequency],
   );
+
   const { heads, eye, target } = useMemo(() => {
     const placements = layoutFlowers(posts, terrainData);
-    const heads = flowerHeads(placements, GARDEN.flower.height);
+    const heads = flowerHeads(placements);
 
-    // The strip camera stands ON the terrain at eye level.
+    // The camera stands ON the terrain at eye level as its initial pose.
     const c = GARDEN.camera;
     const eyeGround = sampleHeight(terrainData, 0, c.stripZ);
     const targetGround = sampleHeight(terrainData, 0, c.targetZ);
@@ -99,23 +89,14 @@ function GardenRig({
     return { heads, eye, target };
   }, [posts, terrainData]);
 
-  // ── Camera: eye-level strip framing; snap back when immersive exits ───────
+  // ── Camera: set initial eye-level pose once; OrbitControls owns it after ──
   useEffect(() => {
-    if (!immersive) {
-      camera.position.copy(eye);
-      camera.lookAt(target);
-    }
-  }, [immersive, camera, eye, target]);
-
-  useFrame(({ clock }) => {
-    if (immersive) return; // OrbitControls owns the camera in immersive mode
-    const drift = reducedMotion ? 0 : Math.sin(clock.elapsedTime * 0.08) * 0.7;
-    camera.position.set(eye.x + drift, eye.y, eye.z);
+    camera.position.copy(eye);
     camera.lookAt(target);
-  });
+  }, [camera, eye, target]);
 
   // ── Picking: pointermove (desktop hover) + pointerdown (mobile tap
-  //    resolves hover before click — plan §7/§10.5) + click-to-navigate ──────
+  //    resolves hover before click) + click-to-navigate ──────────────────────
   useEffect(() => {
     const el = gl.domElement;
     const raycaster = new THREE.Raycaster();
@@ -175,7 +156,7 @@ function GardenRig({
     };
   }, [gl, camera, heads, posts, onHoverPost, router]);
 
-  // ── Tooltip tracking: world → screen each frame, clamped to the stage ─────
+  // ── Tooltip tracking: world → screen each frame, clamped to the viewport ──
   const worldPos = useMemo(() => new THREE.Vector3(), []);
   useFrame(() => {
     const tip = tooltipRef.current;
@@ -191,7 +172,7 @@ function GardenRig({
     let px = (worldPos.x * 0.5 + 0.5) * rect.width;
     let py = (-worldPos.y * 0.5 + 0.5) * rect.height;
 
-    // Clamp so the card never clips outside the stage (plan §7).
+    // Clamp so the card never clips outside the viewport.
     const w = tip.offsetWidth || 240;
     const h = tip.offsetHeight || 120;
     const margin = 8;
@@ -221,19 +202,18 @@ function GardenRig({
           terrainData={terrainData}
           palette={palette}
           hoveredIndex={hoveredIndex}
-          windStrength={reducedMotion ? 0 : GARDEN.wind.strength}
+          windSpeed={reducedMotion ? 0 : windSpeed}
+          windStrength={reducedMotion ? 0 : windStrength}
         />
       </Suspense>
-      {immersive && (
-        <OrbitControls
-          target={[target.x, target.y, target.z]}
-          minDistance={3}
-          maxDistance={30}
-          maxPolarAngle={Math.PI / 2 - 0.04}
-          enableDamping
-          dampingFactor={0.05}
-        />
-      )}
+      <OrbitControls
+        target={[target.x, target.y, target.z]}
+        minDistance={3}
+        maxDistance={30}
+        maxPolarAngle={Math.PI / 2 - 0.04}
+        enableDamping
+        dampingFactor={0.05}
+      />
     </>
   );
 }

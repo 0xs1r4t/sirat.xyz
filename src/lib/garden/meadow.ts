@@ -11,9 +11,9 @@ import {
  */
 export const GARDEN = {
   terrain: {
-    // 64×44 grid at 0.7 world units/cell → ~44 × 30 world units
-    gridWidth: 64,
-    gridHeight: 44,
+    // 16×16 grid at 0.7 world units/cell → ~16 × 16 world units
+    gridWidth: 16,
+    gridHeight: 16,
     scale: 0.7,
     heightScale: 2.4, // gentle hills — a garden, not the alps
     octaves: 5,
