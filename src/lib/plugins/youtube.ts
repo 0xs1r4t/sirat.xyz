@@ -40,18 +40,23 @@ function extractVideoIds(tree: Root): Map<string, string> {
 
 // Build iframe HTML with accessible title
 function buildIframe(videoId: string, title: string): string {
-  return `<figure aria-label="${title.replace(/"/g, "&quot;")}">
-    <div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; max-width: 100%; margin: 2rem 0;">
+  const escapedTitle = title.replace(/"/g, "&quot;");
+  const escapedCaption = title.replace(/</g, "&lt;");
+  return `<figure>
+    <div
+      role="presentation"
+      style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; max-width: 100%; margin: 2rem 0;"
+    >
       <iframe
         src="https://www.youtube.com/embed/${videoId}"
-        title="${title.replace(/"/g, "&quot;")}"
+        title="${escapedTitle}"
         style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0;"
         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
         allowfullscreen
         loading="lazy"
       ></iframe>
     </div>
-    <figcaption>${title.replace(/</g, "&lt;")}</figcaption>
+    <figcaption>${escapedCaption}</figcaption>
   </figure>`;
 }
 

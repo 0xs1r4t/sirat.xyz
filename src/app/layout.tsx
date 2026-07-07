@@ -20,7 +20,6 @@ import "katex/dist/katex.min.css";
 
 import "@/styles/code.css";
 import "@/styles/dracula-prism.css";
-import "@/styles/prism-line-numbers.css";
 import "@/styles/link-preview.css";
 import "@/styles/toc.css";
 
