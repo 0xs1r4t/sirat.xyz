@@ -5,7 +5,7 @@ description: so much for holding myself accountable lol. anyway here's what i've
 tags:
   [
     graphics,
-    generative ai (hate),
+    generative ai,
     art,
     computer vision,
     projects,
@@ -13,7 +13,7 @@ tags:
     life reset,
   ]
 type: life updates
-status: published
+status:
 createdAt: January 16, 2026
 updatedAt: January 16, 2026
 ---
