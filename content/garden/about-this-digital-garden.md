@@ -4,7 +4,7 @@ title: about this digital repository (garden) of posts
 description: i swear i will add things to this blog(?). useful things...
 tags: [ai, art, introduction, updates]
 type: life updates
-status: published
+status: cancelled
 createdAt: January 12, 2025
 updatedAt: February 13, 2025
 ---
