@@ -11,11 +11,7 @@ import {
   type TerrainData,
 } from "@/lib/garden/terrain";
 import { mulberry32 } from "@/lib/garden/noise";
-import {
-  layoutFlowers,
-  GARDEN,
-  type GardenPost,
-} from "@/lib/garden/meadow";
+import { layoutFlowers, GARDEN, type GardenPost } from "@/lib/garden/meadow";
 import type { GardenPalette } from "@graphics/Garden/useGardenTheme";
 import { GARDEN_FOG_DENSITY, TEXTURES } from "@graphics/Garden/constants";
 
@@ -64,7 +60,10 @@ function generateGrassPositions(
 }
 
 /** Shared billboard quad, anchored at its base. */
-function makeQuad(width: number, height: number): THREE.InstancedBufferGeometry {
+function makeQuad(
+  width: number,
+  height: number,
+): THREE.InstancedBufferGeometry {
   const hw = width / 2;
   const geo = new THREE.InstancedBufferGeometry();
   geo.setAttribute(
@@ -96,6 +95,10 @@ interface GrassProps {
   palette: GardenPalette;
   windSpeed?: number;
   windStrength?: number;
+  count?: number;
+  tuftWidth?: number;
+  tuftHeight?: number;
+  slopeThreshold?: number;
 }
 
 export function Grass({
@@ -103,18 +106,22 @@ export function Grass({
   palette,
   windSpeed = GARDEN.wind.speed,
   windStrength = GARDEN.wind.strength,
+  count = GARDEN.grass.count,
+  tuftWidth = GARDEN.grass.tuftWidth,
+  tuftHeight = GARDEN.grass.tuftHeight,
+  slopeThreshold = GARDEN.grass.slopeThreshold,
 }: GrassProps) {
   const matRef = useRef<THREE.ShaderMaterial>(null);
   const grassTex = useTexture(TEXTURES.grass);
 
   const { geo, mat } = useMemo(() => {
     const g = GARDEN.grass;
-    const geo = makeQuad(g.tuftWidth, g.tuftHeight);
+    const geo = makeQuad(tuftWidth, tuftHeight);
     const data = generateGrassPositions(
-      g.count,
+      count,
       terrainData,
       g.seed,
-      g.slopeThreshold,
+      slopeThreshold,
     );
     geo.instanceCount = data.count;
     geo.setAttribute(
@@ -147,7 +154,17 @@ export function Grass({
     });
 
     return { geo, mat };
-  }, [terrainData, palette, grassTex, windSpeed, windStrength]);
+  }, [
+    terrainData,
+    palette,
+    grassTex,
+    windSpeed,
+    windStrength,
+    count,
+    tuftWidth,
+    tuftHeight,
+    slopeThreshold,
+  ]);
 
   useEffect(() => {
     return () => {
@@ -262,7 +279,15 @@ export function Flowers({
     });
 
     return { geo, mat, slugs: placements.map((p) => p.slug) };
-  }, [posts, terrainData, palette, flowerTex0, flowerTex1, windSpeed, windStrength]);
+  }, [
+    posts,
+    terrainData,
+    palette,
+    flowerTex0,
+    flowerTex1,
+    windSpeed,
+    windStrength,
+  ]);
 
   useEffect(() => {
     return () => {

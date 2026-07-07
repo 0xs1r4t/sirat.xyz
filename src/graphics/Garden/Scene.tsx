@@ -1,12 +1,6 @@
 "use client";
 
-import React, {
-  Suspense,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import React, { Suspense, useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { OrbitControls } from "@react-three/drei";
@@ -23,6 +17,9 @@ import { flowerHeads, pickFlower } from "@/lib/garden/picking";
 import { useGardenTheme } from "@graphics/Garden/useGardenTheme";
 import Terrain from "@graphics/Garden/Terrain";
 import { Grass, Flowers } from "@graphics/Garden/Foliage";
+
+import { useGardenControls } from "@graphics/Garden/Controls";
+import { generateTerrain } from "@/lib/garden/terrain";
 
 export interface GardenSceneProps {
   posts: GardenPost[];
@@ -51,8 +48,36 @@ function GardenRig({
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
   const hoveredRef = useRef<number | null>(null);
 
+  const {
+    gridWidth,
+    gridHeight,
+    scale,
+    heightScale,
+    octaves,
+    frequency,
+    grassCount,
+    tuftWidth,
+    tuftHeight,
+    slopeThreshold,
+    flowerWidth,
+    flowerHeight,
+    windSpeed,
+    windStrength,
+  } = useGardenControls();
+
   // ── Deterministic world data ───────────────────────────────────────────────
-  const terrainData = useMemo(() => getGardenTerrain(), []);
+  const terrainData = useMemo(
+    () =>
+      generateTerrain(
+        gridWidth,
+        gridHeight,
+        scale,
+        heightScale,
+        octaves,
+        frequency,
+      ),
+    [gridWidth, gridHeight, scale, heightScale, octaves, frequency],
+  );
   const { heads, eye, target } = useMemo(() => {
     const placements = layoutFlowers(posts, terrainData);
     const heads = flowerHeads(placements, GARDEN.flower.height);
@@ -184,7 +209,12 @@ function GardenRig({
         <Grass
           terrainData={terrainData}
           palette={palette}
-          windStrength={reducedMotion ? 0 : GARDEN.wind.strength}
+          windSpeed={reducedMotion ? 0 : windSpeed}
+          windStrength={reducedMotion ? 0 : windStrength}
+          count={grassCount}
+          tuftWidth={tuftWidth}
+          tuftHeight={tuftHeight}
+          slopeThreshold={slopeThreshold}
         />
         <Flowers
           posts={posts}
