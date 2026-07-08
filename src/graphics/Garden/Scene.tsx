@@ -1,14 +1,24 @@
 "use client";
 
-import React, { Suspense, useEffect, useMemo, useRef, useState } from "react";
-import { useRouter } from "next/navigation";
+import React, {
+  Suspense,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { OrbitControls } from "@react-three/drei";
 import * as THREE from "three";
 
 import { sampleHeight, generateTerrain } from "@/lib/garden/terrain";
 import { GARDEN, layoutFlowers, type GardenPost } from "@/lib/garden/meadow";
-import { flowerHeads, pickFlower } from "@/lib/garden/picking";
+import {
+  flowerHeads,
+  pickFlower,
+  pickFlowerOnClick,
+} from "@/lib/garden/picking";
 import { useGardenTheme } from "@graphics/Garden/useGardenTheme";
 import Terrain from "@graphics/Garden/Terrain";
 import { Grass, Flowers } from "@graphics/Garden/Foliage";
@@ -21,23 +31,33 @@ export interface GardenSceneProps {
   tooltipRef: React.RefObject<HTMLDivElement | null>;
   /** fires when the hovered flower changes (post | null) */
   onHoverPost: (post: GardenPost | null) => void;
+  /** fires when a flower is clicked/focused, or null when focus is cleared */
+  onFocusPost: (post: GardenPost | null) => void;
 }
 
 const HIT_RADIUS = 0.55; // ≈ 44px at flower-band distance from the camera
+const FOCUS_LERP = 0.06; // camera easing per frame toward focus pose
+const FOCUS_DISTANCE = 3.2; // how far back the camera stands from a focused flower
+const FOCUS_HEIGHT = 1.3; // eye height above the flower's ground point when focused
 
 function GardenRig({
   posts,
   reducedMotion,
   tooltipRef,
   onHoverPost,
+  onFocusPost,
 }: GardenSceneProps) {
   const palette = useGardenTheme();
-  const router = useRouter();
   const camera = useThree((s) => s.camera);
   const gl = useThree((s) => s.gl);
 
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
   const hoveredRef = useRef<number | null>(null);
+
+  const [focusedIndex, setFocusedIndex] = useState<number | null>(null);
+  const focusedRef = useRef<number | null>(null);
+
+  const controlsRef = useRef<any>(null);
 
   const {
     gridWidth,
@@ -72,7 +92,7 @@ function GardenRig({
     const placements = layoutFlowers(posts, terrainData);
     const heads = flowerHeads(placements);
 
-    // The camera stands ON the terrain at eye level as its initial pose.
+    // The camera stands ON the terrain at eye level as its initial (resting) pose.
     const c = GARDEN.camera;
     const eyeGround = sampleHeight(terrainData, 0, c.stripZ);
     const targetGround = sampleHeight(terrainData, 0, c.targetZ);
@@ -93,10 +113,51 @@ function GardenRig({
   useEffect(() => {
     camera.position.copy(eye);
     camera.lookAt(target);
+    if (controlsRef.current) {
+      controlsRef.current.target.copy(target);
+      controlsRef.current.update();
+    }
   }, [camera, eye, target]);
 
-  // ── Picking: pointermove (desktop hover) + pointerdown (mobile tap
-  //    resolves hover before click) + click-to-navigate ──────────────────────
+  // ── Focus poses: computed once per heads/terrain change ────────────────────
+  const focusPoses = useMemo(() => {
+    return heads.map((head) => {
+      const dirFromCenter = new THREE.Vector3(head.x, 0, head.z);
+      const len = dirFromCenter.length();
+      const backDir =
+        len > 0.001
+          ? dirFromCenter.clone().normalize()
+          : new THREE.Vector3(0, 0, 1);
+
+      const eyePos = new THREE.Vector3(
+        head.x + backDir.x * FOCUS_DISTANCE,
+        head.y + FOCUS_HEIGHT,
+        head.z + backDir.z * FOCUS_DISTANCE,
+      );
+      const lookAt = new THREE.Vector3(head.x, head.y, head.z);
+      return { eyePos, lookAt };
+    });
+  }, [heads]);
+
+  const clearFocus = useCallback(() => {
+    focusedRef.current = null;
+    setFocusedIndex(null);
+    onFocusPost(null);
+    if (controlsRef.current) controlsRef.current.enabled = true;
+  }, [onFocusPost]);
+
+  const setFocus = useCallback(
+    (index: number) => {
+      focusedRef.current = index;
+      setFocusedIndex(index);
+      onFocusPost(posts[index]);
+      if (controlsRef.current) controlsRef.current.enabled = false;
+    },
+    [onFocusPost, posts],
+  );
+
+  // ── Picking: pointermove (desktop hover) + pointerdown/up (tap resolves
+  //    hover before click) + click-to-focus (no more router navigation) ─────
   useEffect(() => {
     const el = gl.domElement;
     const raycaster = new THREE.Raycaster();
@@ -123,25 +184,46 @@ function GardenRig({
     };
 
     const onPointerMove = (e: PointerEvent) => {
+      if (focusedRef.current !== null) return; // freeze hover while focused
       const hit = pickAt(e.clientX, e.clientY);
       setHover(hit ? hit.index : null);
     };
     const onPointerDown = (e: PointerEvent) => {
       const hit = pickAt(e.clientX, e.clientY);
-      setHover(hit ? hit.index : null);
+      if (focusedRef.current === null) setHover(hit ? hit.index : null);
       downAt = { x: e.clientX, y: e.clientY, index: hit ? hit.index : null };
     };
     const onPointerUp = (e: PointerEvent) => {
-      if (!downAt || downAt.index === null) return;
+      if (!downAt) return;
       const moved = Math.hypot(e.clientX - downAt.x, e.clientY - downAt.y);
-      const hit = pickAt(e.clientX, e.clientY);
-      // A tap/click (not an orbit drag) on the same flower → navigate.
-      if (moved < 8 && hit && hit.index === downAt.index) {
-        router.push(`/garden/${hit.slug}`);
+      const isTap = moved < 8;
+
+      if (isTap) {
+        const hit =
+          pickFlowerOnClick(
+            raycaster.ray.origin,
+            raycaster.ray.direction,
+            heads,
+            HIT_RADIUS,
+          ) ?? pickAt(e.clientX, e.clientY);
+
+        if (hit) {
+          // Tapping the already-focused flower again clears focus.
+          if (focusedRef.current === hit.index) {
+            clearFocus();
+          } else {
+            setFocus(hit.index);
+          }
+        } else if (focusedRef.current !== null) {
+          // Tapping empty ground while focused clears focus.
+          clearFocus();
+        }
       }
       downAt = null;
     };
-    const onPointerLeave = () => setHover(null);
+    const onPointerLeave = () => {
+      if (focusedRef.current === null) setHover(null);
+    };
 
     el.addEventListener("pointermove", onPointerMove);
     el.addEventListener("pointerdown", onPointerDown);
@@ -154,17 +236,48 @@ function GardenRig({
       el.removeEventListener("pointerleave", onPointerLeave);
       el.style.cursor = "";
     };
-  }, [gl, camera, heads, posts, onHoverPost, router]);
+  }, [gl, camera, heads, posts, onHoverPost, clearFocus, setFocus]);
 
-  // ── Tooltip tracking: world → screen each frame, clamped to the viewport ──
+  // ── Escape key clears focus ─────────────────────────────────────────────
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape" && focusedRef.current !== null) clearFocus();
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [clearFocus]);
+
+  // ── Per-frame: lerp camera toward focus pose, or tooltip tracking ─────────
   const worldPos = useMemo(() => new THREE.Vector3(), []);
+  const lookAtScratch = useMemo(() => new THREE.Vector3(), []);
+
   useFrame(() => {
+    const index = focusedRef.current;
+
+    if (index !== null) {
+      const pose = focusPoses[index];
+      camera.position.lerp(pose.eyePos, FOCUS_LERP);
+      lookAtScratch.lerp(pose.lookAt, FOCUS_LERP);
+      camera.lookAt(lookAtScratch);
+
+      // Tooltip is centered via CSS when focused; Scene doesn't drive its transform.
+      const tip = tooltipRef.current;
+      if (tip) {
+        tip.style.transform = "";
+        tip.style.visibility = "visible";
+      }
+      return;
+    }
+
+    // Not focused: reset lookAt scratch to the resting target so re-focus starts clean.
+    lookAtScratch.copy(target);
+
     const tip = tooltipRef.current;
     if (!tip) return;
-    const index = hoveredRef.current;
-    if (index === null) return; // Garden hides it via state
+    const hoverIdx = hoveredRef.current;
+    if (hoverIdx === null) return; // Garden hides it via state
 
-    const head = heads[index];
+    const head = heads[hoverIdx];
     worldPos.set(head.x, head.y + 0.25, head.z).project(camera);
 
     const rect = gl.domElement.getBoundingClientRect();
@@ -172,7 +285,6 @@ function GardenRig({
     let px = (worldPos.x * 0.5 + 0.5) * rect.width;
     let py = (-worldPos.y * 0.5 + 0.5) * rect.height;
 
-    // Clamp so the card never clips outside the viewport.
     const w = tip.offsetWidth || 240;
     const h = tip.offsetHeight || 120;
     const margin = 8;
@@ -201,12 +313,13 @@ function GardenRig({
           posts={posts}
           terrainData={terrainData}
           palette={palette}
-          hoveredIndex={hoveredIndex}
+          hoveredIndex={focusedIndex ?? hoveredIndex}
           windSpeed={reducedMotion ? 0 : windSpeed}
           windStrength={reducedMotion ? 0 : windStrength}
         />
       </Suspense>
       <OrbitControls
+        ref={controlsRef}
         target={[target.x, target.y, target.z]}
         minDistance={3}
         maxDistance={30}
@@ -221,9 +334,6 @@ function GardenRig({
 export default function Scene(props: GardenSceneProps) {
   return (
     <Canvas
-      // Transparent canvas + NoToneMapping: the fog color comes straight
-      // from --color-background, so distant terrain melts into the page
-      // pixel-for-pixel. ACES would shift that and reintroduce a seam.
       gl={{
         antialias: true,
         alpha: true,

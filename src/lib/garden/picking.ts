@@ -72,3 +72,12 @@ export function pickFlower(
   }
   return best;
 }
+
+export function pickFlowerOnClick(
+  origin: Vec3,
+  dir: Vec3,
+  heads: FlowerHead[],
+  radius = 0.55,
+): FlowerHead | null {
+  return pickFlower(origin, dir, heads, radius);
+}

@@ -3,7 +3,7 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import dynamic from "next/dynamic";
 import type { GardenPost } from "@/lib/garden/meadow";
-import PostTooltip from "@/graphics/Garden/PostTooltip";
+import Summary from "@/components/Garden/Summary";
 
 const Scene = dynamic(() => import("@/graphics/Garden/Scene"), {
   ssr: false,
@@ -41,8 +41,16 @@ const Garden = ({ posts }: GardenProps) => {
         reducedMotion={reducedMotion}
         tooltipRef={tooltipRef}
         onHoverPost={onHoverPost}
+        onFocusPost={(post) => {
+          setHoveredPost(post);
+          tooltipRef.current?.scrollIntoView({ behavior: "smooth" });
+        }}
       />
-      <PostTooltip ref={tooltipRef} post={hoveredPost} />
+      <Summary
+        ref={tooltipRef}
+        garden={true}
+        summary={hoveredPost ? [hoveredPost] : []}
+      />
     </div>
   );
 };
