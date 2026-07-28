@@ -8,9 +8,19 @@ import React, {
   useRef,
   useState,
 } from "react";
-import { Canvas, useFrame, useThree } from "@react-three/fiber";
+import { Canvas, extend, useFrame, useThree } from "@react-three/fiber";
 import { OrbitControls } from "@react-three/drei";
-import * as THREE from "three";
+// The webgpu entry point is a superset of "three" (same core classes —
+// Vector3, Color, Raycaster, etc. — plus WebGPURenderer and the Node
+// material system). Only this file needs it, since it's the only place
+// that constructs the renderer; Terrain/Foliage/etc. keep importing
+// plain "three" for the shared core classes.
+import * as THREE from "three/webgpu";
+
+// Registers the webgpu-flavoured THREE namespace (WebGPURenderer, Node
+// materials, ...) as JSX intrinsics for the reconciler — required once we
+// stop using the plain "three" catalog r3f ships by default.
+extend(THREE as any);
 
 import { sampleHeight, generateTerrain } from "@/lib/garden/terrain";
 import { GARDEN, layoutFlowers, type GardenPost } from "@/lib/garden/meadow";
@@ -343,14 +353,19 @@ function GardenRig({
 export default function Scene(props: GardenSceneProps) {
   return (
     <Canvas
-      gl={{
-        antialias: true,
-        alpha: true,
-        toneMapping: THREE.NoToneMapping,
-        outputColorSpace: THREE.SRGBColorSpace,
-        powerPreference: "high-performance",
+      gl={async (defaultProps) => {
+        const renderer = new THREE.WebGPURenderer({
+          ...(defaultProps as any),
+          antialias: true,
+          alpha: true,
+          powerPreference: "high-performance",
+        });
+        await renderer.init();
+        renderer.toneMapping = THREE.NoToneMapping;
+        renderer.outputColorSpace = THREE.SRGBColorSpace;
+        renderer.setClearColor(0x000000, 0);
+        return renderer;
       }}
-      onCreated={({ gl }) => gl.setClearColor(0x000000, 0)}
       dpr={[1, 2]}
       camera={{ fov: GARDEN.camera.fov, near: 0.1, far: 150 }}
       style={{ width: "100%", height: "100%", background: "transparent" }}

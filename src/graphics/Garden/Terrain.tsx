@@ -1,8 +1,9 @@
 "use client";
 
-import { useEffect, useMemo, useRef } from "react";
+import { useEffect, useMemo } from "react";
 import { useFrame } from "@react-three/fiber";
-import * as THREE from "three";
+import * as THREE from "three/webgpu";
+import { dot, max, mix, normalWorld, positionWorld, uniform } from "three/tsl";
 
 import type { TerrainData } from "@/lib/garden/terrain";
 import { GARDEN } from "@/lib/garden/meadow";
@@ -12,13 +13,9 @@ import {
   NIGHT_MOON_DISTANCE,
   NIGHT_MOON_SPEED,
 } from "@graphics/Garden/constants";
-
-import colorsGlsl from "@graphics/Garden/shaders/colors.glsl";
-import fogGlsl from "@graphics/Garden/shaders/fog.glsl";
-import terrainVert from "@graphics/Garden/shaders/terrain.vert";
-import terrainFrag from "@graphics/Garden/shaders/terrain.frag";
-
-const terrainFragFull = colorsGlsl + "\n" + fogGlsl + "\n" + terrainFrag;
+import { celShade4Band } from "@graphics/Garden/tsl/colors";
+import { applyGardenFog } from "@graphics/Garden/tsl/fog";
+import { getTerrainColor } from "@graphics/Garden/tsl/terrain";
 
 interface TerrainProps {
   terrainData: TerrainData;
@@ -29,15 +26,13 @@ interface TerrainProps {
 const scratchMoonDir = new THREE.Vector3();
 
 /** The rectangular plane the garden grows on — mesh data straight from the
- *  ported terrain generator, cel-shaded with the colors.glsl palette. */
+ *  ported terrain generator, cel-shaded with the tsl/colors.ts palette. */
 export default function Terrain({
   terrainData,
   palette,
   fogDensity = GARDEN.fog.density,
 }: TerrainProps) {
-  const matRef = useRef<THREE.ShaderMaterial>(null);
-
-  const { geo, mat } = useMemo(() => {
+  const { geo, mat, lightPosUniform, fogDensityUniform } = useMemo(() => {
     const geo = new THREE.BufferGeometry();
     geo.setAttribute(
       "position",
@@ -47,24 +42,49 @@ export default function Terrain({
       "normal",
       new THREE.BufferAttribute(terrainData.normals, 3),
     );
-    geo.setAttribute("color", new THREE.BufferAttribute(terrainData.colors, 3));
     geo.setAttribute("uv", new THREE.BufferAttribute(terrainData.uvs, 2));
     geo.setIndex(new THREE.BufferAttribute(terrainData.indices, 1));
+    // Note: terrain.frag never actually reads its VertexColor varying (the
+    // fragment colour comes entirely from the height-band ramp below), so
+    // unlike the Phase 1 port, the "color" attribute isn't uploaded here.
 
-    const mat = new THREE.ShaderMaterial({
-      vertexShader: terrainVert,
-      fragmentShader: terrainFragFull,
-      uniforms: {
-        lightPos: { value: DAY_LIGHT_POS.clone() },
-        uHeightScale: { value: terrainData.heightScale },
-        uFogColor: { value: palette.background },
-        uFogDensity: { value: fogDensity },
-      },
-      vertexColors: true,
-      side: THREE.FrontSide,
-    });
+    const lightPosUniform = uniform(DAY_LIGHT_POS.clone());
+    const heightScaleUniform = uniform(terrainData.heightScale);
+    const fogColorUniform = uniform(palette.background);
+    const fogDensityUniform = uniform(fogDensity);
 
-    return { geo, mat };
+    const mat = new THREE.MeshBasicNodeMaterial();
+    mat.side = THREE.FrontSide;
+
+    // No positionNode override — terrain has no vertex displacement, so the
+    // material's default local→world→clip pipeline (position/normal
+    // attributes straight through) already matches terrain.vert exactly.
+    const norm = normalWorld.normalize();
+    const lightDir = lightPosUniform.sub(positionWorld).normalize();
+    const NdotL = dot(norm, lightDir).mul(0.5).add(0.5); // half-lambert
+
+    const heightRatio = positionWorld.y.div(max(heightScaleUniform, 0.001));
+    const baseColor = getTerrainColor(heightRatio);
+
+    const shaded = celShade4Band(
+      NdotL,
+      baseColor.mul(0.4),
+      baseColor.mul(0.65),
+      baseColor.mul(0.85),
+      baseColor.mul(1.0),
+    );
+
+    const slope = norm.y; // 1.0 = flat, 0.0 = cliff
+    const slopeDarkened = shaded.mul(mix(0.5, 1.0, slope));
+
+    mat.colorNode = applyGardenFog(
+      slopeDarkened,
+      positionWorld,
+      fogColorUniform,
+      fogDensityUniform,
+    );
+
+    return { geo, mat, lightPosUniform, fogDensityUniform };
     // fogDensity intentionally omitted: it's a live-mutated uniform (see
     // the useFrame below), not a material-rebuild dependency.
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -82,9 +102,6 @@ export default function Terrain({
   // for the light themes. A per-frame uniform mutation, not a material
   // rebuild, so switching themes never re-triggers shader compilation.
   useFrame(({ clock }) => {
-    const uniforms = matRef.current?.uniforms;
-    if (!uniforms) return;
-
     if (palette.isDark.current) {
       const angle = clock.elapsedTime * NIGHT_MOON_SPEED;
       scratchMoonDir
@@ -94,23 +111,15 @@ export default function Terrain({
           Math.sin(angle) * 0.5,
         )
         .normalize();
-      uniforms.lightPos.value
+      lightPosUniform.value
         .copy(scratchMoonDir)
         .multiplyScalar(-NIGHT_MOON_DISTANCE);
     } else {
-      uniforms.lightPos.value.copy(DAY_LIGHT_POS);
+      lightPosUniform.value.copy(DAY_LIGHT_POS);
     }
 
-    uniforms.uFogDensity.value = fogDensity;
+    fogDensityUniform.value = fogDensity;
   });
 
-  return (
-    <mesh
-      geometry={geo}
-      material={mat}
-      ref={(m) => {
-        if (m) matRef.current = m.material as THREE.ShaderMaterial;
-      }}
-    />
-  );
+  return <mesh geometry={geo} material={mat} />;
 }

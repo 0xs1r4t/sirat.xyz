@@ -3,7 +3,26 @@
 import { useEffect, useMemo, useRef } from "react";
 import { useFrame } from "@react-three/fiber";
 import { useTexture } from "@react-three/drei";
-import * as THREE from "three";
+import * as THREE from "three/webgpu";
+import {
+  and,
+  attribute,
+  cameraPosition,
+  cameraViewMatrix,
+  cross,
+  dot,
+  float,
+  greaterThanEqual,
+  length,
+  lessThanEqual,
+  mix,
+  positionGeometry,
+  texture,
+  uniform,
+  uv,
+  vec2,
+  vec3,
+} from "three/tsl";
 
 import {
   sampleHeight,
@@ -14,16 +33,9 @@ import { mulberry32 } from "@/lib/garden/noise";
 import { layoutFlowers, GARDEN, type GardenPost } from "@/lib/garden/meadow";
 import type { GardenPalette } from "@graphics/Garden/useGardenTheme";
 import { FOLIAGE_LIGHT_DIR, TEXTURES } from "@graphics/Garden/constants";
-
-import colorsGlsl from "@graphics/Garden/shaders/colors.glsl";
-import fogGlsl from "@graphics/Garden/shaders/fog.glsl";
-import grassVert from "@graphics/Garden/shaders/grass.vert";
-import grassFrag from "@graphics/Garden/shaders/grass.frag";
-import flowerVert from "@graphics/Garden/shaders/flower.vert";
-import flowerFrag from "@graphics/Garden/shaders/flower.frag";
-
-const grassFragFull = colorsGlsl + "\n" + fogGlsl + "\n" + grassFrag;
-const flowerFragFull = fogGlsl + "\n" + flowerFrag;
+import { GRASS_DARK, GRASS_MID, GRASS_TIP, celShadeSmoothBands } from "@graphics/Garden/tsl/colors";
+import { applyGardenFog } from "@graphics/Garden/tsl/fog";
+import { computeWind } from "@graphics/Garden/tsl/wind";
 
 // ── Grass scatter — port of web-terrain's generatePositions ─────────────────
 // Slope-checked random scatter across the terrain slab.
@@ -88,8 +100,39 @@ function makeQuad(
 }
 
 // ═════════════════════════════════════════════════════════════════════════════
-// Grass
+// Grass — TSL port of grass.vert/grass.frag (docs/garden-webgpu-plan.md 3.5)
 // ═════════════════════════════════════════════════════════════════════════════
+
+/** Matches C++ LODConfig density carpet: 100% under 8 units, smooth falloff to farDist. */
+const computeDensityThreshold = (dist: any, nearDist: any, farDist: any) => {
+  const ultraNear = float(8);
+  const tNear: any = dist.sub(ultraNear).div(float(nearDist).sub(ultraNear).max(0.001));
+  const nearVal: any = mix(1, 0.6, tNear);
+  const tFar: any = dist
+    .sub(nearDist)
+    .div(float(farDist).sub(nearDist).max(0.001))
+    .clamp(0, 1);
+  const farVal: any = mix(0.6, 0, tFar);
+  return dist.lessThan(ultraNear).select(1, dist.lessThan(nearDist).select(nearVal, farVal));
+};
+
+/**
+ * Deterministic hash matching the GLSL original's bitwise position hash
+ * (`uint(pos.x * 73856093.0) ^ uint(pos.z * 19349663.0)`).
+ */
+const densityHash = (pos: any) => {
+  const hx: any = pos.x.abs().mul(73856093).toUint();
+  const hz: any = pos.z.abs().mul(19349663).toUint();
+  const h: any = hx.bitXor(hz);
+  return h.mod(1000).toFloat().div(1000);
+};
+
+/** Matches the GLSL original's distance-scale falloff (1.0 -> 0.7 over 15-45 units). */
+const computeDistanceScale = (dist: any) => {
+  const t: any = dist.sub(15).div(30).clamp(0, 1);
+  return dist.lessThanEqual(15).select(1, mix(1, 0.7, t));
+};
+
 interface GrassProps {
   terrainData: TerrainData;
   palette: GardenPalette;
@@ -113,10 +156,15 @@ export function Grass({
   slopeThreshold = GARDEN.grass.slopeThreshold,
   fogDensity = GARDEN.fog.density,
 }: GrassProps) {
-  const matRef = useRef<THREE.ShaderMaterial>(null);
   const grassTex = useTexture(TEXTURES.grass);
 
-  const { geo, mat } = useMemo(() => {
+  const {
+    geo,
+    mat,
+    windSpeedUniform,
+    windStrengthUniform,
+    fogDensityUniform,
+  } = useMemo(() => {
     const g = GARDEN.grass;
     const geo = makeQuad(tuftWidth, tuftHeight);
     const data = generateGrassPositions(
@@ -135,27 +183,110 @@ export function Grass({
       new THREE.InstancedBufferAttribute(data.windPhases, 1),
     );
 
-    const mat = new THREE.ShaderMaterial({
-      vertexShader: grassVert,
-      fragmentShader: grassFragFull,
-      uniforms: {
-        time: { value: 0 },
-        windSpeed: { value: windSpeed },
-        windStrength: { value: windStrength },
-        lightDir: { value: FOLIAGE_LIGHT_DIR.clone() },
-        nearDist: { value: 14 },
-        farDist: { value: 26 },
-        grassTexture: { value: grassTex },
-        uFogColor: { value: palette.background },
-        uFogDensity: { value: fogDensity },
-      },
-      transparent: true,
-      depthWrite: true,
-      side: THREE.DoubleSide,
-      alphaTest: 0.01,
-    });
+    const windSpeedUniform = uniform(windSpeed);
+    const windStrengthUniform = uniform(windStrength);
+    const lightDirUniform = uniform(FOLIAGE_LIGHT_DIR.clone());
+    const nearDistUniform = uniform(14);
+    const farDistUniform = uniform(26);
+    const fogColorUniform = uniform(palette.background);
+    const fogDensityUniform = uniform(fogDensity);
 
-    return { geo, mat };
+    const mat = new THREE.MeshBasicNodeMaterial();
+    mat.transparent = true;
+    mat.depthWrite = true;
+    mat.side = THREE.DoubleSide;
+    // The GLSL original had two alpha cutoffs — an explicit `discard` at
+    // 0.2 inside the fragment shader, and a separate material `alphaTest`
+    // of 0.01. Since both compared the same value (the mask's red
+    // channel), the 0.2 discard always dominated; collapsing them into one
+    // `alphaTest = 0.2` keeps identical behaviour through the simpler,
+    // well-supported mechanism instead of hand-rolling a Discard() node.
+    mat.alphaTest = 0.2;
+
+    const instanceOffset: any = attribute("instanceOffset", "vec3");
+    const windPhase: any = attribute("windPhase", "float");
+
+    const distFromCamera: any = length(cameraPosition.sub(instanceOffset));
+    const densityThreshold = computeDensityThreshold(
+      distFromCamera,
+      nearDistUniform,
+      farDistUniform,
+    );
+    const culled = greaterThanEqual(densityHash(instanceOffset), densityThreshold);
+
+    const heightFactor: any = positionGeometry.y;
+    const heightInfluence: any = heightFactor.mul(heightFactor);
+    const windPacked: any = computeWind(
+      instanceOffset,
+      windSpeedUniform,
+      windStrengthUniform,
+      heightInfluence,
+      windPhase,
+    );
+    const windOffset3: any = vec3(windPacked.x, 0, windPacked.y);
+    const windInfluence: any = windPacked.z;
+    const instancePosWithWind: any = instanceOffset.add(windOffset3);
+
+    // Per-instance cylindrical billboard: each blade fans toward the
+    // camera individually (Phase 1 item 1.8).
+    const toCameraFlat: any = vec3(
+      cameraPosition.sub(instancePosWithWind).x,
+      0,
+      cameraPosition.sub(instancePosWithWind).z,
+    ).normalize();
+    const cameraRight: any = cross(vec3(0, 1, 0), toCameraFlat).normalize();
+    const cameraUp = vec3(0, 1, 0);
+
+    const distScale = computeDistanceScale(distFromCamera);
+    const scale: any = culled.select(float(0), distScale);
+
+    const fragPos: any = instancePosWithWind
+      .add(cameraRight.mul(positionGeometry.x.mul(scale)))
+      .add(cameraUp.mul(positionGeometry.y.mul(scale)));
+
+    mat.positionNode = fragPos;
+
+    // ── Fragment ──────────────────────────────────────────────────────────
+    const texColor = texture(grassTex, uv());
+    const alpha = texColor.r;
+
+    const safeLight: any = lightDirUniform.negate().normalize();
+    let lightIntensity: any = dot(safeLight, vec3(0, 1, 0)).mul(0.5).add(0.5);
+    lightIntensity = lightIntensity.add(windInfluence.mul(heightFactor).mul(0.15));
+
+    const windTint: any = vec3(0.1, 0.15, 0.05)
+      .mul(windInfluence)
+      .mul(heightFactor)
+      .mul(0.2);
+
+    let baseColor: any = mix(GRASS_DARK, GRASS_MID, heightFactor.mul(0.5));
+    const tipColor: any = mix(GRASS_MID, GRASS_TIP, heightFactor.sub(0.7).div(0.3));
+    baseColor = heightFactor.greaterThan(0.7).select(tipColor, baseColor);
+    baseColor = baseColor.add(windTint);
+
+    let color: any = celShadeSmoothBands(
+      lightIntensity,
+      baseColor.mul(0.7),
+      baseColor.mul(1.2),
+      4,
+    );
+
+    const highlightCond = and(heightFactor.greaterThan(0.8), windInfluence.greaterThan(0.6));
+    const highlight: any = vec3(0.1, 0.12, 0.08).mul(heightFactor.sub(0.8)).mul(2);
+    color = color.add(highlightCond.select(highlight, vec3(0, 0, 0)));
+
+    color = applyGardenFog(color, fragPos, fogColorUniform, fogDensityUniform);
+
+    mat.colorNode = color;
+    mat.opacityNode = alpha;
+
+    return {
+      geo,
+      mat,
+      windSpeedUniform,
+      windStrengthUniform,
+      fogDensityUniform,
+    };
     // fogDensity intentionally omitted: it's a live-mutated uniform (see
     // the useFrame below), not a material-rebuild dependency.
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -178,28 +309,17 @@ export function Grass({
     };
   }, [geo, mat]);
 
-  useFrame(({ clock }) => {
-    if (!matRef.current) return;
-    matRef.current.uniforms.time.value = clock.elapsedTime;
-    matRef.current.uniforms.windSpeed.value = windSpeed;
-    matRef.current.uniforms.windStrength.value = windStrength;
-    matRef.current.uniforms.uFogDensity.value = fogDensity;
+  useFrame(() => {
+    windSpeedUniform.value = windSpeed;
+    windStrengthUniform.value = windStrength;
+    fogDensityUniform.value = fogDensity;
   });
 
-  return (
-    <mesh
-      geometry={geo}
-      material={mat}
-      frustumCulled={false}
-      ref={(m) => {
-        if (m) matRef.current = m.material as THREE.ShaderMaterial;
-      }}
-    />
-  );
+  return <mesh geometry={geo} material={mat} frustumCulled={false} />;
 }
 
 // ═════════════════════════════════════════════════════════════════════════════
-// Flowers — one per published post
+// Flowers — one per published post. TSL port of flower.vert/flower.frag.
 // ═════════════════════════════════════════════════════════════════════════════
 interface FlowersProps {
   posts: GardenPost[];
@@ -221,20 +341,24 @@ export function Flowers({
   windStrength = GARDEN.wind.flowerStrength,
   fogDensity = GARDEN.fog.density,
 }: FlowersProps) {
-  const matRef = useRef<THREE.ShaderMaterial>(null);
   const hoverAttrRef = useRef<THREE.InstancedBufferAttribute | null>(null);
 
   const flowerTex0 = useTexture(TEXTURES.flower0);
   const flowerTex1 = useTexture(TEXTURES.flower1);
-  // ShaderMaterial writes raw, undecoded output (matching the C++
-  // pipeline), so the texture must be sampled raw too — an sRGB decode here
-  // with no re-encode on write darkens/oversaturates the flowers relative
-  // to the source PNGs. Revisited under the TSL migration (Phase 2, where
-  // NodeMaterial output IS auto-encoded and this flips back to SRGB).
-  flowerTex0.colorSpace = THREE.NoColorSpace;
-  flowerTex1.colorSpace = THREE.NoColorSpace;
+  // NodeMaterial output IS auto-encoded (linear -> display), so the
+  // texture needs its normal sRGB decode back — the Phase 1 NoColorSpace
+  // workaround (for the raw-output ShaderMaterial pipeline) is reverted.
+  flowerTex0.colorSpace = THREE.SRGBColorSpace;
+  flowerTex1.colorSpace = THREE.SRGBColorSpace;
 
-  const { geo, mat, slugs } = useMemo(() => {
+  const {
+    geo,
+    mat,
+    slugs,
+    windSpeedUniform,
+    windStrengthUniform,
+    fogDensityUniform,
+  } = useMemo(() => {
     const placements = layoutFlowers(posts, terrainData);
     const count = placements.length;
 
@@ -273,25 +397,73 @@ export function Flowers({
     geo.setAttribute("instanceHover", hoverAttr);
     hoverAttrRef.current = hoverAttr;
 
-    const mat = new THREE.ShaderMaterial({
-      vertexShader: flowerVert,
-      fragmentShader: flowerFragFull,
-      uniforms: {
-        time: { value: 0 },
-        windSpeed: { value: windSpeed },
-        windStrength: { value: windStrength },
-        flowerTexture0: { value: flowerTex0 },
-        flowerTexture1: { value: flowerTex1 },
-        uFogColor: { value: palette.background },
-        uFogDensity: { value: fogDensity },
-      },
-      transparent: true,
-      depthWrite: true,
-      side: THREE.DoubleSide,
-      alphaTest: 0.01,
-    });
+    const windSpeedUniform = uniform(windSpeed);
+    const windStrengthUniform = uniform(windStrength);
+    const fogColorUniform = uniform(palette.background);
+    const fogDensityUniform = uniform(fogDensity);
 
-    return { geo, mat, slugs: placements.map((p) => p.slug) };
+    const mat = new THREE.MeshBasicNodeMaterial();
+    mat.transparent = true;
+    mat.depthWrite = true;
+    mat.side = THREE.DoubleSide;
+    mat.alphaTest = 0.01;
+
+    const instanceOffset: any = attribute("instanceOffset", "vec3");
+    const instanceRand: any = attribute("instanceRand", "float");
+    const instanceHover: any = attribute("instanceHover", "float");
+    const textureIndexAttr: any = attribute("textureIndex", "float");
+
+    const heightFactor: any = positionGeometry.y;
+    const heightInfluence: any = heightFactor.mul(heightFactor);
+    const variationSeed: any = instanceRand.mul(6.2831853);
+    const windPacked: any = computeWind(
+      instanceOffset,
+      windSpeedUniform,
+      windStrengthUniform,
+      heightInfluence,
+      variationSeed,
+    );
+    const windOffset3: any = vec3(windPacked.x, 0, windPacked.y);
+    const windInfluence: any = windPacked.z;
+    const instancePosWithWind: any = instanceOffset.add(windOffset3);
+
+    // Hover gently scales the whole flower up from its root.
+    const scale: any = float(1).add(instanceHover.mul(0.18));
+
+    // Y-locked billboard sharing one right-vector across all instances
+    // (matches the C++ original's flower.vert — flowers don't get the
+    // per-instance cylindrical treatment grass does).
+    const viewMatrix: any = cameraViewMatrix;
+    const cameraRight: any = vec3(viewMatrix[0][0], viewMatrix[1][0], viewMatrix[2][0]);
+    const cameraUp = vec3(0, 1, 0);
+
+    const fragPos: any = instancePosWithWind
+      .add(cameraRight.mul(positionGeometry.x.mul(scale)))
+      .add(cameraUp.mul(positionGeometry.y.mul(scale)));
+
+    mat.positionNode = fragPos;
+
+    // ── Fragment ──────────────────────────────────────────────────────────
+    const tex0 = texture(flowerTex0, uv());
+    const tex1 = texture(flowerTex1, uv());
+    const texColor: any = lessThanEqual(textureIndexAttr, 0.5).select(tex0, tex1);
+
+    const windShimmer: any = windInfluence.mul(heightFactor).mul(0.1);
+    const finalColor: any = texColor.rgb.mul(
+      float(1).add(windShimmer).add(instanceHover.mul(0.15)),
+    );
+
+    mat.colorNode = applyGardenFog(finalColor, fragPos, fogColorUniform, fogDensityUniform);
+    mat.opacityNode = texColor.a;
+
+    return {
+      geo,
+      mat,
+      slugs: placements.map((p) => p.slug),
+      windSpeedUniform,
+      windStrengthUniform,
+      fogDensityUniform,
+    };
     // fogDensity intentionally omitted: it's a live-mutated uniform (see
     // the useFrame below), not a material-rebuild dependency.
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -312,13 +484,10 @@ export function Flowers({
     };
   }, [geo, mat]);
 
-  useFrame(({ clock }, delta) => {
-    if (matRef.current) {
-      matRef.current.uniforms.time.value = clock.elapsedTime;
-      matRef.current.uniforms.windSpeed.value = windSpeed;
-      matRef.current.uniforms.windStrength.value = windStrength;
-      matRef.current.uniforms.uFogDensity.value = fogDensity;
-    }
+  useFrame((_, delta) => {
+    windSpeedUniform.value = windSpeed;
+    windStrengthUniform.value = windStrength;
+    fogDensityUniform.value = fogDensity;
 
     // Ease each flower's hover value toward its target — the smooth
     // hover-scale animation from the plan (§5, instanceHover).
@@ -345,9 +514,6 @@ export function Flowers({
       frustumCulled={false}
       renderOrder={1}
       userData={{ slugs }}
-      ref={(m) => {
-        if (m) matRef.current = m.material as THREE.ShaderMaterial;
-      }}
     />
   );
 }
