@@ -2,8 +2,9 @@
 
 import { useControls, folder } from "leva";
 import { GARDEN } from "@/lib/garden/meadow";
+import type { GardenControlValues } from "@graphics/Garden/gardenControlValues";
 
-export function useGardenControls() {
+export function useGardenControls(): GardenControlValues {
   return useControls({
     Terrain: folder({
       gridWidth: {

@@ -2,6 +2,7 @@
 
 import React, {
   Suspense,
+  lazy,
   useCallback,
   useEffect,
   useMemo,
@@ -32,7 +33,23 @@ import {
 import { useGardenTheme } from "@graphics/Garden/useGardenTheme";
 import Terrain from "@graphics/Garden/Terrain";
 import { Grass, Flowers } from "@graphics/Garden/Foliage";
-import { useGardenControls } from "@graphics/Garden/Controls";
+import {
+  GARDEN_CONTROL_DEFAULTS,
+  type GardenControlValues,
+} from "@graphics/Garden/gardenControlValues";
+
+// Dev-only: Leva's panel + bundle only loads for visitors who are actually
+// in debug mode (see the `debug` state in Scene below), not every hero load.
+// Plain React.lazy (not next/dynamic) on purpose — next/dynamic's compiler
+// adds a webpackPrefetch hint that fetches the chunk eagerly regardless of
+// whether the lazy component ever renders, defeating the point of gating it.
+const LevaGardenControls = lazy(
+  () => import("@graphics/Garden/LevaGardenControls"),
+);
+
+// Same reasoning as LevaGardenControls above — keep GPU-timestamp
+// instrumentation (docs/garden-perf-benchmark.md) out of the eager bundle.
+const GpuTimer = lazy(() => import("@graphics/Garden/GpuTimer"));
 
 export interface GardenSceneProps {
   posts: GardenPost[];
@@ -56,7 +73,8 @@ function GardenRig({
   tooltipRef,
   onHoverPost,
   onFocusPost,
-}: GardenSceneProps) {
+  controls,
+}: GardenSceneProps & { controls: GardenControlValues }) {
   const palette = useGardenTheme();
   const camera = useThree((s) => s.camera);
   const gl = useThree((s) => s.gl);
@@ -85,7 +103,7 @@ function GardenRig({
     flowerWindSpeed,
     flowerWindStrength,
     fogDensity,
-  } = useGardenControls();
+  } = controls;
 
   // ── Deterministic world data ───────────────────────────────────────────────
   const terrainData = useMemo(
@@ -350,7 +368,18 @@ function GardenRig({
   );
 }
 
+// Debug mode: always on in dev, opt-in via `?debug` in production. Read once
+// per mount (lazy initializer) — it never changes for the component's
+// lifetime, so branching on it below doesn't touch hook call order.
+function isGardenDebugMode() {
+  if (process.env.NODE_ENV !== "production") return true;
+  if (typeof window === "undefined") return false;
+  return new URLSearchParams(window.location.search).has("debug");
+}
+
 export default function Scene(props: GardenSceneProps) {
+  const [debug] = useState(isGardenDebugMode);
+
   return (
     <Canvas
       gl={async (defaultProps) => {
@@ -359,6 +388,9 @@ export default function Scene(props: GardenSceneProps) {
           antialias: true,
           alpha: true,
           powerPreference: "high-performance",
+          // GPU timestamp queries (docs/garden-perf-benchmark.md) have a
+          // small overhead — only pay it in debug mode, never for visitors.
+          trackTimestamp: debug,
         });
         await renderer.init();
         renderer.toneMapping = THREE.NoToneMapping;
@@ -370,7 +402,16 @@ export default function Scene(props: GardenSceneProps) {
       camera={{ fov: GARDEN.camera.fov, near: 0.1, far: 150 }}
       style={{ width: "100%", height: "100%", background: "transparent" }}
     >
-      <GardenRig {...props} />
+      {debug ? (
+        <Suspense fallback={null}>
+          <LevaGardenControls
+            render={(controls) => <GardenRig {...props} controls={controls} />}
+          />
+          <GpuTimer />
+        </Suspense>
+      ) : (
+        <GardenRig {...props} controls={GARDEN_CONTROL_DEFAULTS} />
+      )}
     </Canvas>
   );
 }
