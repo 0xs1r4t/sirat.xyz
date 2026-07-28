@@ -13,11 +13,7 @@ import {
 import { mulberry32 } from "@/lib/garden/noise";
 import { layoutFlowers, GARDEN, type GardenPost } from "@/lib/garden/meadow";
 import type { GardenPalette } from "@graphics/Garden/useGardenTheme";
-import {
-  FOLIAGE_LIGHT_DIR,
-  GARDEN_FOG_DENSITY,
-  TEXTURES,
-} from "@graphics/Garden/constants";
+import { FOLIAGE_LIGHT_DIR, TEXTURES } from "@graphics/Garden/constants";
 
 import colorsGlsl from "@graphics/Garden/shaders/colors.glsl";
 import fogGlsl from "@graphics/Garden/shaders/fog.glsl";
@@ -103,6 +99,7 @@ interface GrassProps {
   tuftWidth?: number;
   tuftHeight?: number;
   slopeThreshold?: number;
+  fogDensity?: number;
 }
 
 export function Grass({
@@ -114,6 +111,7 @@ export function Grass({
   tuftWidth = GARDEN.grass.tuftWidth,
   tuftHeight = GARDEN.grass.tuftHeight,
   slopeThreshold = GARDEN.grass.slopeThreshold,
+  fogDensity = GARDEN.fog.density,
 }: GrassProps) {
   const matRef = useRef<THREE.ShaderMaterial>(null);
   const grassTex = useTexture(TEXTURES.grass);
@@ -149,7 +147,7 @@ export function Grass({
         farDist: { value: 26 },
         grassTexture: { value: grassTex },
         uFogColor: { value: palette.background },
-        uFogDensity: { value: GARDEN_FOG_DENSITY },
+        uFogDensity: { value: fogDensity },
       },
       transparent: true,
       depthWrite: true,
@@ -158,6 +156,9 @@ export function Grass({
     });
 
     return { geo, mat };
+    // fogDensity intentionally omitted: it's a live-mutated uniform (see
+    // the useFrame below), not a material-rebuild dependency.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     terrainData,
     palette,
@@ -182,6 +183,7 @@ export function Grass({
     matRef.current.uniforms.time.value = clock.elapsedTime;
     matRef.current.uniforms.windSpeed.value = windSpeed;
     matRef.current.uniforms.windStrength.value = windStrength;
+    matRef.current.uniforms.uFogDensity.value = fogDensity;
   });
 
   return (
@@ -207,6 +209,7 @@ interface FlowersProps {
   hoveredIndex: number | null;
   windSpeed?: number;
   windStrength?: number;
+  fogDensity?: number;
 }
 
 export function Flowers({
@@ -216,6 +219,7 @@ export function Flowers({
   hoveredIndex,
   windSpeed = GARDEN.wind.flowerSpeed,
   windStrength = GARDEN.wind.flowerStrength,
+  fogDensity = GARDEN.fog.density,
 }: FlowersProps) {
   const matRef = useRef<THREE.ShaderMaterial>(null);
   const hoverAttrRef = useRef<THREE.InstancedBufferAttribute | null>(null);
@@ -279,7 +283,7 @@ export function Flowers({
         flowerTexture0: { value: flowerTex0 },
         flowerTexture1: { value: flowerTex1 },
         uFogColor: { value: palette.background },
-        uFogDensity: { value: GARDEN_FOG_DENSITY },
+        uFogDensity: { value: fogDensity },
       },
       transparent: true,
       depthWrite: true,
@@ -288,6 +292,9 @@ export function Flowers({
     });
 
     return { geo, mat, slugs: placements.map((p) => p.slug) };
+    // fogDensity intentionally omitted: it's a live-mutated uniform (see
+    // the useFrame below), not a material-rebuild dependency.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     posts,
     terrainData,
@@ -310,6 +317,7 @@ export function Flowers({
       matRef.current.uniforms.time.value = clock.elapsedTime;
       matRef.current.uniforms.windSpeed.value = windSpeed;
       matRef.current.uniforms.windStrength.value = windStrength;
+      matRef.current.uniforms.uFogDensity.value = fogDensity;
     }
 
     // Ease each flower's hover value toward its target — the smooth
