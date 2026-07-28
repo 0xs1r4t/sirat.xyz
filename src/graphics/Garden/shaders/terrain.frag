@@ -1,8 +1,10 @@
 // Ported from web-terrain-generator shaders/terrain/terrain.frag.
 // Two adaptations for the garden:
-//  1. Height bands are relative to uHeightScale (the original's absolute
-//     1.5/4/7/10 thresholds assumed heightScale ≈ 5–12; the garden's gentle
-//     2.4 slab would otherwise sit entirely in the lowest band).
+//  1. Height bands are relative to uHeightScale instead of absolute world
+//     units, so they hold at any heightScale. Thresholds 0.3/0.8/1.4/2.0 are
+//     the original C++ absolutes (1.5/4/7/10) divided by its heightScale of
+//     5 — the top two bands (brown highlands, grey peaks) are unreachable by
+//     the normalized [0,1] noise output, exactly like the original.
 //  2. Themed fog toward --color-background at the end.
 varying vec3 FragPos;
 varying vec3 Normal;
@@ -15,19 +17,19 @@ uniform float uHeightScale;
 // Get terrain color based on height ratio (same ramp, normalized)
 vec3 getTerrainColor(float heightRatio) {
     // Low (valleys) - dark mossy green
-    if (heightRatio < 0.15) {
+    if (heightRatio < 0.3) {
         return vec3(0.2, 0.3, 0.15);
     }
     // Mid-low (plains) - grass
-    else if (heightRatio < 0.4) {
+    else if (heightRatio < 0.8) {
         return GRASS_DARK;
     }
     // Mid (gentle hills) - lighter grass
-    else if (heightRatio < 0.7) {
+    else if (heightRatio < 1.4) {
         return GRASS_MID;
     }
     // High (hills) - brownish grass
-    else if (heightRatio < 0.9) {
+    else if (heightRatio < 2.0) {
         return vec3(0.45, 0.5, 0.35);
     }
     // Peaks - rocky/grey

@@ -13,7 +13,11 @@ import {
 import { mulberry32 } from "@/lib/garden/noise";
 import { layoutFlowers, GARDEN, type GardenPost } from "@/lib/garden/meadow";
 import type { GardenPalette } from "@graphics/Garden/useGardenTheme";
-import { GARDEN_FOG_DENSITY, TEXTURES } from "@graphics/Garden/constants";
+import {
+  FOLIAGE_LIGHT_DIR,
+  GARDEN_FOG_DENSITY,
+  TEXTURES,
+} from "@graphics/Garden/constants";
 
 import colorsGlsl from "@graphics/Garden/shaders/colors.glsl";
 import fogGlsl from "@graphics/Garden/shaders/fog.glsl";
@@ -140,7 +144,7 @@ export function Grass({
         time: { value: 0 },
         windSpeed: { value: windSpeed },
         windStrength: { value: windStrength },
-        lightDir: { value: new THREE.Vector3(20, 30, 10).normalize() },
+        lightDir: { value: FOLIAGE_LIGHT_DIR.clone() },
         nearDist: { value: 14 },
         farDist: { value: 26 },
         grassTexture: { value: grassTex },
@@ -210,16 +214,21 @@ export function Flowers({
   terrainData,
   palette,
   hoveredIndex,
-  windSpeed = GARDEN.wind.speed,
-  windStrength = GARDEN.wind.strength,
+  windSpeed = GARDEN.wind.flowerSpeed,
+  windStrength = GARDEN.wind.flowerStrength,
 }: FlowersProps) {
   const matRef = useRef<THREE.ShaderMaterial>(null);
   const hoverAttrRef = useRef<THREE.InstancedBufferAttribute | null>(null);
 
   const flowerTex0 = useTexture(TEXTURES.flower0);
   const flowerTex1 = useTexture(TEXTURES.flower1);
-  flowerTex0.colorSpace = THREE.SRGBColorSpace;
-  flowerTex1.colorSpace = THREE.SRGBColorSpace;
+  // ShaderMaterial writes raw, undecoded output (matching the C++
+  // pipeline), so the texture must be sampled raw too — an sRGB decode here
+  // with no re-encode on write darkens/oversaturates the flowers relative
+  // to the source PNGs. Revisited under the TSL migration (Phase 2, where
+  // NodeMaterial output IS auto-encoded and this flips back to SRGB).
+  flowerTex0.colorSpace = THREE.NoColorSpace;
+  flowerTex1.colorSpace = THREE.NoColorSpace;
 
   const { geo, mat, slugs } = useMemo(() => {
     const placements = layoutFlowers(posts, terrainData);

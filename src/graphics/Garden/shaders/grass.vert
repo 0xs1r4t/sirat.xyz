@@ -47,6 +47,12 @@ float computeDensityThreshold(float dist, float nearDist, float farDist) {
     }
 }
 
+// Matches C++ grass.vert's distance scale falloff (1.0 -> 0.7 over 15-45 units)
+float computeDistanceScale(float dist) {
+    if (dist <= 15.0) return 1.0;
+    return mix(1.0, 0.7, clamp((dist - 15.0) / 30.0, 0.0, 1.0));
+}
+
 // Deterministic hash matching C++'s bitwise position hash
 // (abs() guards the float→uint cast for negative world coords in GLSL ES 3.00)
 float densityHash(vec3 pos) {
@@ -68,10 +74,6 @@ void main() {
         return;
     }
 
-    // Y-locked cylindrical billboard
-    vec3 cameraRight = vec3(viewMatrix[0][0], viewMatrix[1][0], viewMatrix[2][0]);
-    vec3 cameraUp    = vec3(0.0, 1.0, 0.0);
-
     // 3-octave simplex wind
     vec2 windUV = instanceOffset.xz * 0.5 + time * windSpeed * vec2(0.6, 0.4);
     float wind1    = noise(windUV) * 0.5 + 0.5;
@@ -90,10 +92,21 @@ void main() {
     vec3 windOffset3         = vec3(windDirection.x, 0.0, windDirection.y);
     vec3 instancePosWithWind = instanceOffset + windOffset3;
 
-    vec3 billboardPos = instancePosWithWind + cameraRight * position.x + cameraUp * position.y;
+    // Per-instance cylindrical billboard: each blade fans toward the camera
+    // individually instead of sharing one screen-aligned right vector.
+    vec3 toCamera = cameraPosition - instancePosWithWind;
+    toCamera.y = 0.0;
+    toCamera = normalize(toCamera);
+    vec3 cameraRight = normalize(cross(vec3(0.0, 1.0, 0.0), toCamera));
+    vec3 cameraUp    = vec3(0.0, 1.0, 0.0);
+
+    float distScale = computeDistanceScale(dist);
+    vec3 billboardPos = instancePosWithWind
+        + cameraRight * (position.x * distScale)
+        + cameraUp * (position.y * distScale);
 
     FragPos       = billboardPos;
-    HeightFactor  = uv.y;
+    HeightFactor  = position.y;
     WindInfluence = (wind1 + wind2) * 0.5;
 
     gl_Position = projectionMatrix * viewMatrix * vec4(FragPos, 1.0);

@@ -72,6 +72,9 @@ function GardenRig({
     slopeThreshold,
     windSpeed,
     windStrength,
+    flowerWindSpeed,
+    flowerWindStrength,
+    fogDensity,
   } = useGardenControls();
 
   // ── Deterministic world data ───────────────────────────────────────────────
@@ -297,7 +300,11 @@ function GardenRig({
 
   return (
     <>
-      <Terrain terrainData={terrainData} palette={palette} />
+      <Terrain
+        terrainData={terrainData}
+        palette={palette}
+        fogDensity={fogDensity}
+      />
       <Suspense fallback={null}>
         <Grass
           terrainData={terrainData}
@@ -308,14 +315,16 @@ function GardenRig({
           tuftWidth={tuftWidth}
           tuftHeight={tuftHeight}
           slopeThreshold={slopeThreshold}
+          fogDensity={fogDensity}
         />
         <Flowers
           posts={posts}
           terrainData={terrainData}
           palette={palette}
           hoveredIndex={focusedIndex ?? hoveredIndex}
-          windSpeed={reducedMotion ? 0 : windSpeed}
-          windStrength={reducedMotion ? 0 : windStrength}
+          windSpeed={reducedMotion ? 0 : flowerWindSpeed}
+          windStrength={reducedMotion ? 0 : flowerWindStrength}
+          fogDensity={fogDensity}
         />
       </Suspense>
       <OrbitControls

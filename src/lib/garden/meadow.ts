@@ -11,24 +11,32 @@ import {
  */
 export const GARDEN = {
   terrain: {
-    // 16×16 grid at 0.7 world units/cell → ~16 × 16 world units
-    gridWidth: 16,
-    gridHeight: 16,
-    scale: 0.7,
-    heightScale: 2.4, // gentle hills — a garden, not the alps
-    octaves: 5,
-    frequency: 1.5,
+    // 50×50 grid at 1.0 world units/cell → the original demo's footprint
+    // (fairy-forest-glade main.cpp: Terrain(50, 50, 1.0f, 5.0f)).
+    gridWidth: 50,
+    gridHeight: 50,
+    scale: 1.0,
+    heightScale: 5.0,
+    octaves: 6,
+    // C++ terrain.h's frequency=0.05, sampled at frequency*1.5 in
+    // terrain.cpp → effective 0.075/cell. Anything near 1.0+ makes
+    // adjacent vertices sample near-uncorrelated noise (jittery bumps
+    // instead of rolling hills) — this is the #1 cause of the shape drift
+    // from the original. See docs/garden-webgpu-plan.md item 1.1.
+    frequency: 0.075,
   },
   grass: {
-    count: 24000,
-    tuftWidth: 0.55, // Grass.png is a multi-blade tuft, roughly square
-    tuftHeight: 0.55,
+    // ~30 instances/m² over the 50×50 slab, matching the original's
+    // 300000 * areaRatio(50x50/100x100=0.25) = 75000.
+    count: 75000,
+    tuftWidth: 0.4, // fairy-forest-glade main.cpp: Foliage(..., height=0.8, width=0.4)
+    tuftHeight: 0.8,
     slopeThreshold: 0.55,
     seed: 1,
   },
   flower: {
-    width: 0.6, // web-terrain Foliage defaults
-    height: 0.8,
+    width: 1.0, // fairy-forest-glade main.cpp: Foliage(..., height=1.0, width=1.0)
+    height: 1.0,
     band: { zMin: 1.0, zMax: 5.0 }, // world z, in front of the strip camera
     maxHalfSpread: 13,
   },
@@ -39,7 +47,20 @@ export const GARDEN = {
     targetHeight: 1.0,
     fov: 45,
   },
-  wind: { speed: 1.2, strength: 0.25 }, // web-terrain Scene defaults
+  wind: {
+    speed: 1.2, // grass — fairy-forest-glade grass.vert: windSpeed=1.2, windStrength=0.25
+    strength: 0.25,
+    flowerSpeed: 0.8, // flowers are sturdier — fairy-forest-glade flower.vert: windSpeed=0.8, windStrength=0.15
+    flowerStrength: 0.15,
+  },
+  fog: {
+    // Exp²-fog density shared by every garden material. Light enough that
+    // the terrain slab reads as an object when orbiting in immersive mode,
+    // dense enough that the strip view melts into --color-background
+    // before the far edge. Not in the C++ original (no fog there) — this
+    // is a web-only concession for sitting the garden on the page.
+    density: 0.045,
+  },
 } as const;
 
 let cachedTerrain: TerrainData | null = null;

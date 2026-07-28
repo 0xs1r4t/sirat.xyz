@@ -1,15 +1,24 @@
 import * as THREE from "three";
 
 /**
- * Exp²-fog density shared by every garden material.
- * Light enough that the terrain slab reads as an object when orbiting in
- * immersive mode, dense enough that the strip view melts into
- * --color-background before the far edge.
+ * Terrain directional light — two presets picked per theme by Terrain.tsx:
+ *  - day: static high overhead light for the light themes (strawberry-matcha,
+ *    neopolitan-ice-cream) — cel bands sit in the bright/highlight range.
+ *  - night: animated moon below the horizon for the dark theme
+ *    (blueberry-lemon), ported verbatim from fairy-forest-glade's main.cpp —
+ *    the source of the original's moody, shadow-banded terrain.
  */
-export const GARDEN_FOG_DENSITY = 0.045;
+export const DAY_LIGHT_POS = new THREE.Vector3(20, 30, 10);
+export const NIGHT_MOON_DISTANCE = 20;
+export const NIGHT_MOON_SPEED = 0.05;
 
-/** Directional light position, matching web-terrain's default. */
-export const LIGHT_POS = new THREE.Vector3(20, 30, 10);
+/**
+ * Foliage (grass/flower) directional light — ported verbatim from
+ * main.cpp's `grassShader.setVec3("lightDir", ...)`. Constant across themes
+ * in the original (it isn't derived from the moon), so it stays constant
+ * here too.
+ */
+export const FOLIAGE_LIGHT_DIR = new THREE.Vector3(0.3, -0.7, 0.5);
 
 /** Texture locations, following the existing public/images/textures layout. */
 export const TEXTURES = {

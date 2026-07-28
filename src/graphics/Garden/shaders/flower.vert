@@ -40,7 +40,7 @@ void main() {
     TexCoords    = uv;
     TexIndex     = textureIndex;
     Hover        = instanceHover;
-    HeightFactor = uv.y;
+    HeightFactor = position.y;
 
     vec3 cameraRight = vec3(viewMatrix[0][0], viewMatrix[1][0], viewMatrix[2][0]);
     vec3 cameraUp    = vec3(0.0, 1.0, 0.0);
