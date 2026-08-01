@@ -7,8 +7,7 @@ import PostSidebar from "@/components/Garden/PostSidebar";
 
 import ExcalidrawTheme from "@/components/Garden/plugins/ExcalidrawTheme";
 
-const Post = ({ post }: { post: Post }) => {
-  return (
+const Post = ({ post }: { post: Post }) => (
     <ProgressBar>
       <PostSidebar description={post.description} tocHtml={post.toc} />
       <article className="w-full min-w-0 xl:mx-48">
@@ -44,6 +43,5 @@ const Post = ({ post }: { post: Post }) => {
       </article>
     </ProgressBar>
   );
-};
 
 export default Post;

@@ -21,7 +21,7 @@ interface Props {
   children: React.ReactElement;
 }
 
-export function Tooltip({ children, label, placement }: Props) {
+export const Tooltip = ({ children, label, placement }: Props) => {
   const [open, setOpen] = useState(false);
 
   const { refs, floatingStyles, context } = useFloating({
@@ -66,4 +66,4 @@ export function Tooltip({ children, label, placement }: Props) {
         )}
     </Fragment>
   );
-}
+};

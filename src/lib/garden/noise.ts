@@ -5,21 +5,15 @@
  * so the terrain is identical on every build and every client.
  */
 
-function fract(n: number): number {
-  return n - Math.floor(n);
-}
-function mix(a: number, b: number, t: number): number {
-  return a + t * (b - a);
-}
-function clamp(v: number, lo: number, hi: number): number {
-  return Math.max(lo, Math.min(hi, v));
-}
+const fract = (n: number): number => n - Math.floor(n);
+const mix = (a: number, b: number, t: number): number => a + t * (b - a);
+const clamp = (v: number, lo: number, hi: number): number =>
+  Math.max(lo, Math.min(hi, v));
 
-function hash2D(px: number, py: number): number {
-  return fract(Math.sin(px * 12.9898 + py * 78.233) * 43758.5453123);
-}
+const hash2D = (px: number, py: number): number =>
+  fract(Math.sin(px * 12.9898 + py * 78.233) * 43758.5453123);
 
-function noise2D(px: number, py: number): number {
+const noise2D = (px: number, py: number): number => {
   const ix = Math.floor(px),
     iy = Math.floor(py);
   let fx = fract(px),
@@ -31,15 +25,15 @@ function noise2D(px: number, py: number): number {
   const c = hash2D(ix, iy + 1),
     d = hash2D(ix + 1, iy + 1);
   return mix(mix(a, b, fx), mix(c, d, fx), fy);
-}
+};
 
-export function fbm(
+export const fbm = (
   px: number,
   py: number,
   octaves = 6,
   lacunarity = 2.0,
   gain = 0.5,
-): number {
+): number => {
   let amplitude = 0.5,
     frequency = 1.0,
     value = 0.0,
@@ -51,17 +45,17 @@ export function fbm(
     amplitude *= gain;
   }
   return value / maxValue;
-}
+};
 
-export function warpedFBM(px: number, py: number, octaves = 6): number {
+export const warpedFBM = (px: number, py: number, octaves = 6): number => {
   const qx = fbm(px, py, octaves);
   const qy = fbm(px + 5.2, py + 1.3, octaves);
   const rx = fbm(px + 4 * qx + 1.7, py + 4 * qy + 9.2, octaves);
   const ry = fbm(px + 4 * qx + 8.3, py + 4 * qy + 2.8, octaves);
   return fbm(px + 4 * rx, py + 4 * ry, octaves);
-}
+};
 
-export function ridgedNoise(px: number, py: number, octaves = 6): number {
+export const ridgedNoise = (px: number, py: number, octaves = 6): number => {
   let amplitude = 0.5,
     frequency = 1.0,
     value = 0.0,
@@ -76,15 +70,13 @@ export function ridgedNoise(px: number, py: number, octaves = 6): number {
     amplitude *= 0.5;
   }
   return value;
-}
+};
 
 /** Deterministic PRNG, ported from web-terrain `Foliage.tsx` (mulberry32). */
-export function mulberry32(seed: number): () => number {
-  return () => {
-    seed |= 0;
-    seed = (seed + 0x6d2b79f5) | 0;
-    let t = Math.imul(seed ^ (seed >>> 15), 1 | seed);
-    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
-    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
-  };
-}
+export const mulberry32 = (seed: number): (() => number) => () => {
+  seed |= 0;
+  seed = (seed + 0x6d2b79f5) | 0;
+  let t = Math.imul(seed ^ (seed >>> 15), 1 | seed);
+  t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+  return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+};

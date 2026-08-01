@@ -152,6 +152,4 @@ import { Fragment } from "react";
 //   return <NextReactP5Wrapper sketch={sketch} />;
 // };
 
-export const Snake = () => {
-  return <Fragment></Fragment>;
-};
+export const Snake = () => <Fragment></Fragment>;

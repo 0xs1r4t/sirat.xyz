@@ -6,8 +6,7 @@ import type { Root, Text, Parent } from "mdast";
  * Usage: [[about-this-digital-garden]]
  */
 
-const remarkPostLink = () => {
-  return (tree: Root) => {
+const remarkPostLink = () => (tree: Root) => {
     visit(
       tree,
       "text",
@@ -57,6 +56,5 @@ const remarkPostLink = () => {
       }
     );
   };
-};
 
 export default remarkPostLink;

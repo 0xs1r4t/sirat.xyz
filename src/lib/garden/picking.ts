@@ -23,30 +23,29 @@ export interface FlowerHead extends Vec3 {
 }
 
 /** World-space centers of every flower's head (the clickable blossom). */
-export function flowerHeads(
+export const flowerHeads = (
   placements: FlowerPlacement[],
   // flowerHeight: number,
-): FlowerHead[] {
-  return placements.map((p, index) => ({
+): FlowerHead[] =>
+  placements.map((p, index) => ({
     index,
     slug: p.slug,
     x: p.x,
     y: p.y, // + flowerHeight * 0.72, // blossom sits near the top of the quad
     z: p.z,
   }));
-}
 
 /**
  * Nearest ray↔sphere hit, or null.
  * `radius` is generous (≈ the whole blossom plus margin) — the 3D
  * equivalent of a 44px tap target.
  */
-export function pickFlower(
+export const pickFlower = (
   origin: Vec3,
   dir: Vec3, // must be normalized
   heads: FlowerHead[],
   radius = 0.55,
-): FlowerHead | null {
+): FlowerHead | null => {
   let best: FlowerHead | null = null;
   let bestT = Infinity;
   const r2 = radius * radius;
@@ -71,13 +70,11 @@ export function pickFlower(
     }
   }
   return best;
-}
+};
 
-export function pickFlowerOnClick(
+export const pickFlowerOnClick = (
   origin: Vec3,
   dir: Vec3,
   heads: FlowerHead[],
   radius = 0.55,
-): FlowerHead | null {
-  return pickFlower(origin, dir, heads, radius);
-}
+): FlowerHead | null => pickFlower(origin, dir, heads, radius);

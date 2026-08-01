@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 
-export async function GET(request: NextRequest) {
+export const GET = async (request: NextRequest) => {
   const url = request.nextUrl.searchParams.get("url");
 
   if (!url) {
@@ -33,10 +33,10 @@ export async function GET(request: NextRequest) {
       description: descriptionMatch?.[1] || "",
       image: imageMatch?.[1] || "",
     });
-  } catch (error) {
+  } catch {
     return NextResponse.json(
       { error: "Failed to fetch preview" },
       { status: 500 }
     );
   }
-}
+};

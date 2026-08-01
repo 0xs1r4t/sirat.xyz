@@ -5,12 +5,10 @@ import * as path from "path";
 
 const PROJECT_ROOT = process.env.NEXT_PUBLIC_ROOT || process.cwd();
 
-function stripSvgDimensions(svg: string): string {
-  return svg.replace(/\s+width="[^"]*"/, "").replace(/\s+height="[^"]*"/, "");
-}
+const stripSvgDimensions = (svg: string): string =>
+  svg.replace(/\s+width="[^"]*"/, "").replace(/\s+height="[^"]*"/, "");
 
-const rehypeExcalidraw = () => {
-  return async (tree: Root) => {
+const rehypeExcalidraw = () => async (tree: Root) => {
     const nodes: { node: Element; index: number; parent: any }[] = [];
 
     visit(tree, "element", (node: Element, index, parent: any) => {
@@ -110,18 +108,15 @@ const rehypeExcalidraw = () => {
       }),
     );
   };
-};
 
-function errorNode(message: string): Element {
-  return {
-    type: "element",
-    tagName: "p",
-    properties: {
-      style:
-        "color: red; font-family: monospace; font-size: 0.875rem; border: 1px solid red; border-radius: 0.25rem; padding: 0.5rem;",
-    },
-    children: [{ type: "text", value: message }],
-  };
-}
+const errorNode = (message: string): Element => ({
+  type: "element",
+  tagName: "p",
+  properties: {
+    style:
+      "color: red; font-family: monospace; font-size: 0.875rem; border: 1px solid red; border-radius: 0.25rem; padding: 0.5rem;",
+  },
+  children: [{ type: "text", value: message }],
+});
 
 export default rehypeExcalidraw;

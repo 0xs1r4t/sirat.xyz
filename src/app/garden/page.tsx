@@ -9,9 +9,9 @@ export const metadata = {
   title: "digital garden",
 };
 
-type Props = {
+interface Props {
   searchParams: Promise<{ q?: string; tag?: string }>;
-};
+}
 
 const Page = async ({ searchParams }: Props) => {
   const params = await searchParams;

@@ -52,7 +52,7 @@ const DARK_THEME_CLASS = "blueberry-lemon";
  * three's linear working space here would silently darken/desaturate it
  * before it ever reaches the shader.
  */
-function parseCssColor(raw: string, out: THREE.Color): void {
+const parseCssColor = (raw: string, out: THREE.Color): void => {
   const value = raw.trim();
   if (!value) return;
   if (value.startsWith("#")) {
@@ -68,19 +68,17 @@ function parseCssColor(raw: string, out: THREE.Color): void {
       THREE.LinearSRGBColorSpace,
     );
   }
-}
+};
 
-export function createGardenPalette(): GardenPalette {
-  return {
-    background: new THREE.Color("#e8f1d8"),
-    foreground: new THREE.Color("#273821"),
-    muted100: new THREE.Color("#f3c6fc"),
-    muted200: new THREE.Color("#de7ef9"),
-    isDark: { current: false },
-  };
-}
+export const createGardenPalette = (): GardenPalette => ({
+  background: new THREE.Color("#e8f1d8"),
+  foreground: new THREE.Color("#273821"),
+  muted100: new THREE.Color("#f3c6fc"),
+  muted200: new THREE.Color("#de7ef9"),
+  isDark: { current: false },
+});
 
-function refreshPalette(palette: GardenPalette): void {
+const refreshPalette = (palette: GardenPalette): void => {
   const style = getComputedStyle(document.documentElement);
   const [bg, fg, m100, m200] = VAR_NAMES.map((name) =>
     style.getPropertyValue(name),
@@ -92,10 +90,10 @@ function refreshPalette(palette: GardenPalette): void {
   palette.isDark.current = document.documentElement.classList.contains(
     DARK_THEME_CLASS,
   );
-}
+};
 
 /** Stable palette whose colors track the active theme. Client-only. */
-export function useGardenTheme(): GardenPalette {
+export const useGardenTheme = (): GardenPalette => {
   const palette = useMemo(createGardenPalette, []);
 
   useEffect(() => {
@@ -109,4 +107,4 @@ export function useGardenTheme(): GardenPalette {
   }, [palette]);
 
   return palette;
-}
+};

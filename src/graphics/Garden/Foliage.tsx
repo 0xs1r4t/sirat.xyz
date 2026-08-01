@@ -20,7 +20,6 @@ import {
   texture,
   uniform,
   uv,
-  vec2,
   vec3,
 } from "three/tsl";
 
@@ -39,12 +38,12 @@ import { computeWind } from "@graphics/Garden/tsl/wind";
 
 // ── Grass scatter — port of web-terrain's generatePositions ─────────────────
 // Slope-checked random scatter across the terrain slab.
-function generateGrassPositions(
+const generateGrassPositions = (
   count: number,
   td: TerrainData,
   seed: number,
   slopeThreshold: number,
-) {
+) => {
   const rng = mulberry32(seed);
   const hw = (td.width * td.scale) / 2;
   const hh = (td.height * td.scale) / 2;
@@ -69,13 +68,13 @@ function generateGrassPositions(
     windPhases: new Float32Array(phases),
     count: pos.length / 3,
   };
-}
+};
 
 /** Shared billboard quad, anchored at its base. */
-function makeQuad(
+const makeQuad = (
   width: number,
   height: number,
-): THREE.InstancedBufferGeometry {
+): THREE.InstancedBufferGeometry => {
   const hw = width / 2;
   const geo = new THREE.InstancedBufferGeometry();
   geo.setAttribute(
@@ -97,7 +96,7 @@ function makeQuad(
   );
   geo.setIndex([0, 1, 2, 0, 2, 3]);
   return geo;
-}
+};
 
 // ═════════════════════════════════════════════════════════════════════════════
 // Grass — TSL port of grass.vert/grass.frag (docs/garden-webgpu-plan.md 3.5)
@@ -145,7 +144,7 @@ interface GrassProps {
   fogDensity?: number;
 }
 
-export function Grass({
+export const Grass = ({
   terrainData,
   palette,
   windSpeed = GARDEN.wind.speed,
@@ -155,7 +154,7 @@ export function Grass({
   tuftHeight = GARDEN.grass.tuftHeight,
   slopeThreshold = GARDEN.grass.slopeThreshold,
   fogDensity = GARDEN.fog.density,
-}: GrassProps) {
+}: GrassProps) => {
   const grassTex = useTexture(TEXTURES.grass);
 
   const {
@@ -302,12 +301,10 @@ export function Grass({
     slopeThreshold,
   ]);
 
-  useEffect(() => {
-    return () => {
+  useEffect(() => () => {
       geo.dispose();
       mat.dispose();
-    };
-  }, [geo, mat]);
+    }, [geo, mat]);
 
   useFrame(() => {
     windSpeedUniform.value = windSpeed;
@@ -316,7 +313,7 @@ export function Grass({
   });
 
   return <mesh geometry={geo} material={mat} frustumCulled={false} />;
-}
+};
 
 // ═════════════════════════════════════════════════════════════════════════════
 // Flowers — one per published post. TSL port of flower.vert/flower.frag.
@@ -332,7 +329,7 @@ interface FlowersProps {
   fogDensity?: number;
 }
 
-export function Flowers({
+export const Flowers = ({
   posts,
   terrainData,
   palette,
@@ -340,7 +337,7 @@ export function Flowers({
   windSpeed = GARDEN.wind.flowerSpeed,
   windStrength = GARDEN.wind.flowerStrength,
   fogDensity = GARDEN.fog.density,
-}: FlowersProps) {
+}: FlowersProps) => {
   const hoverAttrRef = useRef<THREE.InstancedBufferAttribute | null>(null);
 
   const flowerTex0 = useTexture(TEXTURES.flower0);
@@ -477,12 +474,10 @@ export function Flowers({
     windStrength,
   ]);
 
-  useEffect(() => {
-    return () => {
+  useEffect(() => () => {
       geo.dispose();
       mat.dispose();
-    };
-  }, [geo, mat]);
+    }, [geo, mat]);
 
   useFrame((_, delta) => {
     windSpeedUniform.value = windSpeed;
@@ -516,4 +511,4 @@ export function Flowers({
       userData={{ slugs }}
     />
   );
-}
+};

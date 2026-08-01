@@ -25,8 +25,10 @@ interface TerrainProps {
 
 const scratchMoonDir = new THREE.Vector3();
 
-/** The rectangular plane the garden grows on — mesh data straight from the
- *  ported terrain generator, cel-shaded with the tsl/colors.ts palette. */
+/**
+ * The rectangular plane the garden grows on — mesh data straight from the
+ *  ported terrain generator, cel-shaded with the tsl/colors.ts palette.
+ */
 export default function Terrain({
   terrainData,
   palette,
@@ -90,12 +92,10 @@ export default function Terrain({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [terrainData, palette]);
 
-  useEffect(() => {
-    return () => {
+  useEffect(() => () => {
       geo.dispose();
       mat.dispose();
-    };
-  }, [geo, mat]);
+    }, [geo, mat]);
 
   // Theme-driven light preset: below-horizon animated moon for the dark
   // theme (ported from fairy-forest-glade's main.cpp), static overhead sun

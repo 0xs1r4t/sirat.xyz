@@ -67,14 +67,14 @@ const FOCUS_LERP = 0.06; // camera easing per frame toward focus pose
 const FOCUS_DISTANCE = 3.2; // how far back the camera stands from a focused flower
 const FOCUS_HEIGHT = 1.3; // eye height above the flower's ground point when focused
 
-function GardenRig({
+const GardenRig = ({
   posts,
   reducedMotion,
   tooltipRef,
   onHoverPost,
   onFocusPost,
   controls,
-}: GardenSceneProps & { controls: GardenControlValues }) {
+}: GardenSceneProps & { controls: GardenControlValues }) => {
   const palette = useGardenTheme();
   const camera = useThree((s) => s.camera);
   const gl = useThree((s) => s.gl);
@@ -151,8 +151,7 @@ function GardenRig({
   }, [camera, eye, target]);
 
   // ── Focus poses: computed once per heads/terrain change ────────────────────
-  const focusPoses = useMemo(() => {
-    return heads.map((head) => {
+  const focusPoses = useMemo(() => heads.map((head) => {
       const dirFromCenter = new THREE.Vector3(head.x, 0, head.z);
       const len = dirFromCenter.length();
       const backDir =
@@ -167,8 +166,7 @@ function GardenRig({
       );
       const lookAt = new THREE.Vector3(head.x, head.y, head.z);
       return { eyePos, lookAt };
-    });
-  }, [heads]);
+    }), [heads]);
 
   const clearFocus = useCallback(() => {
     focusedRef.current = null;
@@ -366,16 +364,16 @@ function GardenRig({
       />
     </>
   );
-}
+};
 
 // Debug mode: always on in dev, opt-in via `?debug` in production. Read once
 // per mount (lazy initializer) — it never changes for the component's
 // lifetime, so branching on it below doesn't touch hook call order.
-function isGardenDebugMode() {
+const isGardenDebugMode = () => {
   if (process.env.NODE_ENV !== "production") return true;
   if (typeof window === "undefined") return false;
   return new URLSearchParams(window.location.search).has("debug");
-}
+};
 
 export default function Scene(props: GardenSceneProps) {
   const [debug] = useState(isGardenDebugMode);

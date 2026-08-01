@@ -6,11 +6,11 @@ import * as THREE from "three/webgpu";
 
 const MAX_SAMPLES = 3600; // ~60s at 60fps, generous cap on the ring buffer
 
-function percentile(sorted: number[], p: number): number {
+const percentile = (sorted: number[], p: number): number => {
   if (sorted.length === 0) return NaN;
   const idx = Math.min(sorted.length - 1, Math.floor(p * sorted.length));
   return sorted[idx];
-}
+};
 
 // Dev-only instrumentation for docs/garden-perf-benchmark.md. Only ever
 // mounted behind the same `debug` gate as Leva (see Scene.tsx) — never
@@ -18,7 +18,7 @@ function percentile(sorted: number[], p: number): number {
 // over the samples collected since the last press (or mount), plus the
 // latest GPU timestamp, draw call count, and triangle count; the window
 // resets after each print so consecutive benchmark runs don't bleed together.
-export default function GpuTimer() {
+const GpuTimer = () => {
   const gl = useThree((s) => s.gl) as unknown as THREE.WebGPURenderer;
   const frameSamplesRef = useRef<number[]>([]);
   const lastTimeRef = useRef<number | null>(null);
@@ -51,4 +51,6 @@ export default function GpuTimer() {
   }, [gl]);
 
   return null;
-}
+};
+
+export default GpuTimer;

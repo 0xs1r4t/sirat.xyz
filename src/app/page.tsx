@@ -1,10 +1,7 @@
 import React from "react";
-import Link from "next/link";
 import { getPublishedPosts } from "@/lib/markdown";
 import type { GardenPost } from "@/lib/garden/meadow";
 import Garden from "@graphics/Garden/Garden";
-import IntroCard from "@/components/Landing/IntroCard";
-import { Icons } from "@/components/Icons";
 
 const Home = async () => {
   const posts = await getPublishedPosts();

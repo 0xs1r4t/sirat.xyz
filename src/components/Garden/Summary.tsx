@@ -5,14 +5,13 @@ import Tags from "@/components/Garden/Tags";
 import Date from "@/components/Garden/Date";
 import type { GardenPost } from "@/lib/garden/meadow";
 
-type SummaryProps = {
+interface SummaryProps {
   summary: GardenPost[];
   garden: boolean;
   ref?: React.RefObject<HTMLDivElement | null>;
-};
+}
 
-const Summary = ({ summary, garden, ref }: SummaryProps) => {
-  return (
+const Summary = ({ summary, garden, ref }: SummaryProps) => (
     <section
       ref={ref}
       role="feed"
@@ -50,10 +49,7 @@ const Summary = ({ summary, garden, ref }: SummaryProps) => {
       ))}
     </section>
   );
-};
 
-export const NoPostSummary = () => {
-  return <div>no posts here</div>;
-};
+export const NoPostSummary = () => <div>no posts here</div>;
 
 export default Summary;
