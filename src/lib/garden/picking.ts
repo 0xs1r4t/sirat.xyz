@@ -11,12 +11,14 @@
  */
 import type { FlowerPlacement } from "@/lib/garden/meadow";
 
+/** Plain xyz triple — deliberately not a THREE.Vector3, so picking stays unit-testable. */
 export interface Vec3 {
   x: number;
   y: number;
   z: number;
 }
 
+/** A flower's clickable hit-sphere center, with the post it belongs to. */
 export interface FlowerHead extends Vec3 {
   index: number;
   slug: string;
@@ -72,6 +74,7 @@ export const pickFlower = (
   return best;
 };
 
+/** Same hit-test as {@link pickFlower}, for the tap/click path. */
 export const pickFlowerOnClick = (
   origin: Vec3,
   dir: Vec3,

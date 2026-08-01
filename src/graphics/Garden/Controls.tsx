@@ -4,6 +4,7 @@ import { useControls, folder } from "leva";
 import { GARDEN } from "@/lib/garden/meadow";
 import type { GardenControlValues } from "@graphics/Garden/gardenControlValues";
 
+/** Leva debug-panel bindings for every tunable garden parameter. */
 export const useGardenControls = (): GardenControlValues =>
   useControls({
     Terrain: folder({

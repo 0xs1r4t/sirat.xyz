@@ -70,6 +70,7 @@ const parseCssColor = (raw: string, out: THREE.Color): void => {
   }
 };
 
+/** Builds the default palette; call once and let {@link useGardenTheme} keep it live. */
 export const createGardenPalette = (): GardenPalette => ({
   background: new THREE.Color("#e8f1d8"),
   foreground: new THREE.Color("#273821"),

@@ -144,6 +144,7 @@ interface GrassProps {
   fogDensity?: number;
 }
 
+/** Instanced grass carpet: scattered, wind-animated blades over the terrain slab. */
 export const Grass = ({
   terrainData,
   palette,
@@ -329,6 +330,7 @@ interface FlowersProps {
   fogDensity?: number;
 }
 
+/** One billboarded, wind-animated flower instance per published post. */
 export const Flowers = ({
   posts,
   terrainData,

@@ -42,6 +42,7 @@ const THEME_TINTS: Record<Theme, { tint: THREE.Vector3; contrast: number }> = {
 
 const VIDEO_EXTENSIONS = /\.(mp4|webm|ogg|mov|gif)$/i;
 
+/** Detects whether a media `src` is a video, by file extension. */
 export const isVideoSrc = (src: string): boolean =>
   VIDEO_EXTENSIONS.test(src);
 
@@ -84,6 +85,7 @@ const useContainerSize = (ref: React.RefObject<HTMLDivElement | null>) => {
 
 // Props
 
+/** Props for {@link DitherMedia}. */
 export interface DitherMediaProps {
   src: string;
   alt: string;
@@ -101,6 +103,7 @@ export interface DitherMediaProps {
 
 // DitherMedia
 
+/** Renders an image or video through a WebGL dither effect, themed to the active palette. */
 export default function DitherMedia({
   src,
   alt,

@@ -101,6 +101,7 @@ export const hashSlug = (slug: string): number => {
   return (h >>> 0) / 4294967296;
 };
 
+/** One flower's world-space position and deterministic per-post variation. */
 export interface FlowerPlacement {
   slug: string;
   x: number;

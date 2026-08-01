@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
+/** Applies CORS headers and CSP to API/garden routes for embedded YouTube content. */
 export const middleware = (request: NextRequest) => {
   const response = NextResponse.next();
 

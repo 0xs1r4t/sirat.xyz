@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 
+/** Fetches Open Graph title/description/image for a link preview card. */
 export const GET = async (request: NextRequest) => {
   const url = request.nextUrl.searchParams.get("url");
 

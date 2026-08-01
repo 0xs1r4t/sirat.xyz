@@ -27,6 +27,7 @@ const noise2D = (px: number, py: number): number => {
   return mix(mix(a, b, fx), mix(c, d, fx), fy);
 };
 
+/** Fractal Brownian motion: layered octaves of value noise. */
 export const fbm = (
   px: number,
   py: number,
@@ -47,6 +48,7 @@ export const fbm = (
   return value / maxValue;
 };
 
+/** Domain-warped {@link fbm} — feeds fbm's own output back in as offsets for organic, non-grid-aligned terrain. */
 export const warpedFBM = (px: number, py: number, octaves = 6): number => {
   const qx = fbm(px, py, octaves);
   const qy = fbm(px + 5.2, py + 1.3, octaves);
@@ -55,6 +57,7 @@ export const warpedFBM = (px: number, py: number, octaves = 6): number => {
   return fbm(px + 4 * rx, py + 4 * ry, octaves);
 };
 
+/** Ridged multifractal noise — sharp ridgelines instead of {@link fbm}'s smooth hills. */
 export const ridgedNoise = (px: number, py: number, octaves = 6): number => {
   let amplitude = 0.5,
     frequency = 1.0,

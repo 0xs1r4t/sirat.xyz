@@ -22,6 +22,7 @@ interface Props {
   children: React.ReactElement;
 }
 
+/** Floating-UI tooltip that shows `label` on hover/focus of its child element. */
 export const Tooltip = ({ children, label, placement }: Props) => {
   const [open, setOpen] = useState(false);
 

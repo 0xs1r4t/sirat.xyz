@@ -60,7 +60,7 @@ const buildIframe = (videoId: string, title: string): string => {
   </figure>`;
 };
 
-// Async wrapper — call this before passing tree to remark
+/** Fetches titles for every YouTube link in the tree; call before the sync remark pass. */
 export const prefetchYouTubeTitles = async (
   tree: Root,
 ): Promise<Map<string, string>> => {

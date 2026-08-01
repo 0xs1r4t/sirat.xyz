@@ -26,5 +26,6 @@ import { color } from "three/tsl";
 export const srgb = (hex: string | number) =>
   color(new THREE.Color().set(hex));
 
+/** Same as {@link srgb}, from separate r/g/b components instead of a hex/string. */
 export const srgbRGB = (r: number, g: number, b: number) =>
   color(new THREE.Color().setRGB(r, g, b, THREE.SRGBColorSpace));

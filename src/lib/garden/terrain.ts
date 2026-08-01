@@ -6,6 +6,7 @@
  */
 import { warpedFBM, ridgedNoise } from "@/lib/garden/noise";
 
+/** Flat vertex/index buffers plus a lookup heightmap for the terrain slab. */
 export interface TerrainData {
   positions: Float32Array;
   normals: Float32Array;
@@ -30,6 +31,7 @@ const heightColour = (yPos: number, hs: number): [number, number, number] => {
   return [0.42, 0.43, 0.4];
 };
 
+/** Builds the terrain's geometry buffers via warped fBm + ridged-noise blend. */
 export const generateTerrain = (
   width = 50,
   height = 50,
@@ -132,6 +134,7 @@ export const generateTerrain = (
   };
 };
 
+/** Bilinearly-interpolated terrain height at an arbitrary world (x, z). */
 export const sampleHeight = (
   td: TerrainData,
   wx: number,
@@ -158,6 +161,7 @@ export const sampleHeight = (
   );
 };
 
+/** Surface normal at (x, z), estimated from finite-difference height samples. */
 export const sampleNormal = (
   td: TerrainData,
   wx: number,

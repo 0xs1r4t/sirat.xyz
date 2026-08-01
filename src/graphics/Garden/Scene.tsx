@@ -53,6 +53,7 @@ const LevaGardenControls = lazy(
 // instrumentation (docs/garden-perf-benchmark.md) out of the eager bundle.
 const GpuTimer = lazy(() => import("@graphics/Garden/GpuTimer"));
 
+/** Props for {@link Scene} (and the rig/controls it renders internally). */
 export interface GardenSceneProps {
   posts: GardenPost[];
   reducedMotion: boolean;
@@ -377,6 +378,7 @@ const isGardenDebugMode = () => {
   return new URLSearchParams(window.location.search).has("debug");
 };
 
+/** WebGPU canvas root: sets up the renderer, then mounts the garden rig. */
 export default function Scene(props: GardenSceneProps) {
   const [debug] = useState(isGardenDebugMode);
 

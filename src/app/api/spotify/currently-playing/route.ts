@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { type SimplifiedArtist, type Track } from "@spotify/web-api-ts-sdk";
 import { getSpotifyApi } from "@/lib/spotify";
 
+/** Returns the user's currently playing Spotify track, if any. */
 export const GET = async (request: NextRequest) => {
   const path = request.nextUrl.searchParams.get("path") || "/";
   revalidatePath(path);
