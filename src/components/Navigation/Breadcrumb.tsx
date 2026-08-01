@@ -37,7 +37,7 @@ const Breadcrumb = () => {
       currentLink += `/${crumb}`;
 
       const pathCrumb: string | React.ReactNode =
-        crumb == "garden" ? (
+        crumb === "garden" ? (
           isMobile ? (
             <Icons.digiGarden size={22} />
           ) : (
@@ -46,7 +46,7 @@ const Breadcrumb = () => {
               &nbsp;garden
             </span>
           )
-        ) : crumb == "graphics" ? (
+        ) : crumb === "graphics" ? (
           isMobile ? (
             <Icons.palette size={22} />
           ) : (

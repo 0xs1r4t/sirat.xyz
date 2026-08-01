@@ -14,8 +14,7 @@ const PEAK = srgbRGB(0.5, 0.5, 0.45);
  * [0,1] noise output — exactly like the original (docs/garden-webgpu-plan.md
  * item 1.4).
  */
-export const getTerrainColor = Fn(([heightRatio]: [any]) => {
-  return heightRatio
+export const getTerrainColor = Fn(([heightRatio]: [any]) => heightRatio
     .lessThan(0.3)
     .select(
       VALLEY,
@@ -27,5 +26,4 @@ export const getTerrainColor = Fn(([heightRatio]: [any]) => {
             .lessThan(1.4)
             .select(GRASS_MID, heightRatio.lessThan(2.0).select(HIGHLANDS, PEAK)),
         ),
-    );
-});
+    ));

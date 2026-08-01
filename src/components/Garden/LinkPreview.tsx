@@ -166,7 +166,7 @@ const LinkPreview = () => {
                 `;
               }
             }
-          } catch (e) {
+          } catch {
             if (tooltip) {
               tooltip.innerHTML = `
                 <div class="text-sm text-foreground">${url}</div>

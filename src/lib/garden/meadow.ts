@@ -66,7 +66,7 @@ export const GARDEN = {
 let cachedTerrain: TerrainData | null = null;
 
 /** The garden's single terrain instance — deterministic, so cache it. */
-export function getGardenTerrain(): TerrainData {
+export const getGardenTerrain = (): TerrainData => {
   if (!cachedTerrain) {
     const t = GARDEN.terrain;
     cachedTerrain = generateTerrain(
@@ -79,7 +79,7 @@ export function getGardenTerrain(): TerrainData {
     );
   }
   return cachedTerrain;
-}
+};
 
 /** Serializable subset of PostMetadata that crosses the server → client boundary. */
 export interface GardenPost {
@@ -92,15 +92,16 @@ export interface GardenPost {
 }
 
 /** FNV-1a → [0, 1). Deterministic across builds/sessions. */
-export function hashSlug(slug: string): number {
+export const hashSlug = (slug: string): number => {
   let h = 0x811c9dc5;
   for (let i = 0; i < slug.length; i++) {
     h ^= slug.charCodeAt(i);
     h = Math.imul(h, 0x01000193);
   }
   return (h >>> 0) / 4294967296;
-}
+};
 
+/** One flower's world-space position and deterministic per-post variation. */
 export interface FlowerPlacement {
   slug: string;
   x: number;
@@ -119,10 +120,10 @@ export interface FlowerPlacement {
  * the slot and picks its depth in the flower band — a slug always blooms
  * in the same place, rooted on the real terrain via sampleHeight.
  */
-export function layoutFlowers(
+export const layoutFlowers = (
   posts: GardenPost[],
   terrain: TerrainData = getGardenTerrain(),
-): FlowerPlacement[] {
+): FlowerPlacement[] => {
   const n = posts.length;
   if (n === 0) return [];
 
@@ -154,4 +155,4 @@ export function layoutFlowers(
       textureIndex: rand < 0.5 ? 0 : 1,
     };
   });
-}
+};

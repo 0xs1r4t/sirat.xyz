@@ -152,6 +152,5 @@ import { Fragment } from "react";
 //   return <NextReactP5Wrapper sketch={sketch} />;
 // };
 
-export const Snake = () => {
-  return <Fragment></Fragment>;
-};
+/** Disabled — the p5 snake sketch below is commented out; renders nothing. */
+export const Snake = () => <Fragment></Fragment>;

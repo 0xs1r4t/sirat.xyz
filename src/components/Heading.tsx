@@ -16,8 +16,7 @@ const Heading = ({
   styles?: string;
   background?: string | null;
   post?: boolean;
-}) => {
-  return (
+}) => (
     <h1
       aria-label="page title"
       className={cn(
@@ -74,6 +73,5 @@ const Heading = ({
       </>
     </h1>
   );
-};
 
 export default Heading;

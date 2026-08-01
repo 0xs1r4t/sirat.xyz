@@ -23,10 +23,9 @@ import { color } from "three/tsl";
  * instead, so the conversion happens in the node graph itself rather than
  * needing to be redone by hand on every update.
  */
-export function srgb(hex: string | number) {
-  return color(new THREE.Color().set(hex));
-}
+export const srgb = (hex: string | number) =>
+  color(new THREE.Color().set(hex));
 
-export function srgbRGB(r: number, g: number, b: number) {
-  return color(new THREE.Color().setRGB(r, g, b, THREE.SRGBColorSpace));
-}
+/** Same as {@link srgb}, from separate r/g/b components instead of a hex/string. */
+export const srgbRGB = (r: number, g: number, b: number) =>
+  color(new THREE.Color().setRGB(r, g, b, THREE.SRGBColorSpace));

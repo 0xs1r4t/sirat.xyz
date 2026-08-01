@@ -46,8 +46,7 @@ const navLinks: Record<NavNames, NavInfo> = {
   },
 };
 
-const SocialLinks = () => {
-  return (
+const SocialLinks = () => (
     <Fragment>
       {Object.entries(navLinks).map(([key, value]) => (
         <Tooltip
@@ -74,6 +73,5 @@ const SocialLinks = () => {
       ))}
     </Fragment>
   );
-};
 
 export default SocialLinks;

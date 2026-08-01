@@ -1,8 +1,7 @@
 import { visit } from "unist-util-visit";
 import type { Root, Element } from "hast";
 
-const rehypePreTabindex = () => {
-  return (tree: Root) => {
+const rehypePreTabindex = () => (tree: Root) => {
     visit(tree, "element", (node: Element) => {
       if (node.tagName !== "pre") return;
       node.properties = node.properties ?? {};
@@ -23,6 +22,5 @@ const rehypePreTabindex = () => {
       }
     });
   };
-};
 
 export default rehypePreTabindex;

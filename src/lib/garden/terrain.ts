@@ -6,6 +6,7 @@
  */
 import { warpedFBM, ridgedNoise } from "@/lib/garden/noise";
 
+/** Flat vertex/index buffers plus a lookup heightmap for the terrain slab. */
 export interface TerrainData {
   positions: Float32Array;
   normals: Float32Array;
@@ -19,27 +20,26 @@ export interface TerrainData {
   heightScale: number;
 }
 
-function mix(a: number, b: number, t: number) {
-  return a + t * (b - a);
-}
+const mix = (a: number, b: number, t: number) => a + t * (b - a);
 
-function heightColour(yPos: number, hs: number): [number, number, number] {
+const heightColour = (yPos: number, hs: number): [number, number, number] => {
   const r = yPos / hs;
   if (r < 0.2) return [0.2, 0.25, 0.18];
   if (r < 0.4) return [0.25, 0.35, 0.22];
   if (r < 0.6) return [0.3, 0.42, 0.28];
   if (r < 0.8) return [0.35, 0.4, 0.32];
   return [0.42, 0.43, 0.4];
-}
+};
 
-export function generateTerrain(
+/** Builds the terrain's geometry buffers via warped fBm + ridged-noise blend. */
+export const generateTerrain = (
   width = 50,
   height = 50,
   scale = 1.0,
   heightScale = 5.0,
   octaves = 6,
   frequency = 1.5,
-): TerrainData {
+): TerrainData => {
   const vCount = width * height;
   const positions = new Float32Array(vCount * 3);
   const normals = new Float32Array(vCount * 3);
@@ -132,9 +132,14 @@ export function generateTerrain(
     scale,
     heightScale,
   };
-}
+};
 
-export function sampleHeight(td: TerrainData, wx: number, wz: number): number {
+/** Bilinearly-interpolated terrain height at an arbitrary world (x, z). */
+export const sampleHeight = (
+  td: TerrainData,
+  wx: number,
+  wz: number,
+): number => {
   const { width, height, scale, heightMap } = td;
   const gx = (wx + (width * scale) / 2) / scale;
   const gz = (wz + (height * scale) / 2) / scale;
@@ -154,13 +159,14 @@ export function sampleHeight(td: TerrainData, wx: number, wz: number): number {
     (h10 - h00) * fx +
     (h01 + (h11 - h01) * fx - (h00 + (h10 - h00) * fx)) * fz
   );
-}
+};
 
-export function sampleNormal(
+/** Surface normal at (x, z), estimated from finite-difference height samples. */
+export const sampleNormal = (
   td: TerrainData,
   wx: number,
   wz: number,
-): [number, number, number] {
+): [number, number, number] => {
   const e = td.scale;
   const hL = sampleHeight(td, wx - e, wz),
     hR = sampleHeight(td, wx + e, wz);
@@ -171,4 +177,4 @@ export function sampleNormal(
     nz = hD - hU;
   const len = Math.sqrt(nx * nx + ny * ny + nz * nz) || 1;
   return [nx / len, ny / len, nz / len];
-}
+};

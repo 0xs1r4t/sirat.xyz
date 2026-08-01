@@ -1,9 +1,12 @@
 import { GARDEN } from "@/lib/garden/meadow";
 
-// Split out from Controls.tsx (which imports "leva") so Scene.tsx can pull
-// the production defaults without statically importing leva's module graph —
-// ES module imports always evaluate the whole target file, so importing
-// anything from a leva-importing module drags leva along even if unused.
+/**
+ * Live-tunable garden parameters exposed via Leva's debug panel. Split out
+ * from Controls.tsx (which imports "leva") so Scene.tsx can pull the
+ * production defaults without statically importing leva's module graph — ES
+ * module imports always evaluate the whole target file, so importing
+ * anything from a leva-importing module drags leva along even if unused.
+ */
 export interface GardenControlValues {
   gridWidth: number;
   gridHeight: number;

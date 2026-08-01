@@ -1,8 +1,8 @@
 import { visit } from "unist-util-visit";
-import type { Root, Paragraph, Link, Text } from "mdast";
+import type { Root, Paragraph, Link, Text, Parent } from "mdast";
 
 // Fetch title from YouTube oEmbed — free, no API key needed
-async function fetchYouTubeTitle(videoId: string): Promise<string> {
+const fetchYouTubeTitle = async (videoId: string): Promise<string> => {
   try {
     const res = await fetch(
       `https://www.youtube.com/oembed?url=https://www.youtube.com/watch?v=${videoId}&format=json`,
@@ -14,13 +14,13 @@ async function fetchYouTubeTitle(videoId: string): Promise<string> {
   } catch {
     return "YouTube video";
   }
-}
+};
 
 const youtubeRegex =
   /^https?:\/\/(?:www\.)?(?:youtube\.com\/watch\?v=|youtu\.be\/)([a-zA-Z0-9_-]{11})(?:\S*)?$/;
 
 // Extract all video IDs from tree (sync)
-function extractVideoIds(tree: Root): Map<string, string> {
+const extractVideoIds = (tree: Root): Map<string, string> => {
   const ids = new Map<string, string>(); // videoId → url
   visit(tree, "paragraph", (node: Paragraph) => {
     if (node.children.length !== 1) return;
@@ -36,10 +36,10 @@ function extractVideoIds(tree: Root): Map<string, string> {
     if (match) ids.set(match[1], url);
   });
   return ids;
-}
+};
 
 // Build iframe HTML with accessible title
-function buildIframe(videoId: string, title: string): string {
+const buildIframe = (videoId: string, title: string): string => {
   const escapedTitle = title.replace(/"/g, "&quot;");
   const escapedCaption = title.replace(/</g, "&lt;");
   return `<figure>
@@ -58,12 +58,12 @@ function buildIframe(videoId: string, title: string): string {
     </div>
     <figcaption>${escapedCaption}</figcaption>
   </figure>`;
-}
+};
 
-// Async wrapper — call this before passing tree to remark
-export async function prefetchYouTubeTitles(
+/** Fetches titles for every YouTube link in the tree; call before the sync remark pass. */
+export const prefetchYouTubeTitles = async (
   tree: Root,
-): Promise<Map<string, string>> {
+): Promise<Map<string, string>> => {
   const ids = extractVideoIds(tree);
   const titles = new Map<string, string>();
   await Promise.all(
@@ -72,15 +72,14 @@ export async function prefetchYouTubeTitles(
     }),
   );
   return titles;
-}
+};
 
 // Sync remark plugin — takes pre-fetched titles
-const remarkYoutube = (titles: Map<string, string> = new Map()) => {
-  return (tree: Root) => {
+const remarkYoutube = (titles: Map<string, string> = new Map()) => (tree: Root) => {
     visit(
       tree,
       "paragraph",
-      (node: Paragraph, index: number | undefined, parent: any) => {
+      (node: Paragraph, index: number | undefined, parent: Parent | undefined) => {
         if (!parent || index === undefined) return;
         if (node.children.length !== 1) return;
 
@@ -106,6 +105,5 @@ const remarkYoutube = (titles: Map<string, string> = new Map()) => {
       },
     );
   };
-};
 
 export default remarkYoutube;
