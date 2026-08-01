@@ -7,7 +7,7 @@ interface PostTooltipProps {
   post: GardenPost | null;
 }
 
-function formatDate(iso: string): string {
+const formatDate = (iso: string): string => {
   const d = new Date(iso);
   if (Number.isNaN(d.getTime())) return iso;
   return d.toLocaleDateString("en-GB", {
@@ -15,7 +15,7 @@ function formatDate(iso: string): string {
     month: "short",
     year: "numeric",
   });
-}
+};
 
 /**
  * Themed tooltip for the hovered flower — title, date, tag chips, one-line

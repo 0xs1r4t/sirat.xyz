@@ -1,6 +1,6 @@
 "use client";
 
-import React, { Fragment, useEffect, useState } from "react";
+import React, { Fragment } from "react";
 import PopOutButton from "@/components/PopOutButton";
 import PostSidebarContainer from "@/components/Garden/PostSidebarContainer";
 import { useSidebar } from "@/contexts/SidebarContext";

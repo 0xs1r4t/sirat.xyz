@@ -9,9 +9,9 @@ export const metadata = {
   title: "digital garden",
 };
 
-type Props = {
+interface Props {
   searchParams: Promise<{ q?: string; tag?: string }>;
-};
+}
 
 const Page = async ({ searchParams }: Props) => {
   const params = await searchParams;
@@ -44,7 +44,7 @@ const Page = async ({ searchParams }: Props) => {
     <Fragment>
       <Heading title={title} styles={styles} />
       <Search placeholder="Search this garden" />
-      <Summary summary={posts} />
+      <Summary summary={posts} garden={false} />
     </Fragment>
   );
 };

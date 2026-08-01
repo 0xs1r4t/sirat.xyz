@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { type SimplifiedArtist } from "@spotify/web-api-ts-sdk";
 import { getSpotifyApi } from "@/lib/spotify";
 
+/** Returns the most recently played Spotify track. */
 export const GET = async (request: NextRequest) => {
   const path = request.nextUrl.searchParams.get("path") || "/";
   revalidatePath(path);

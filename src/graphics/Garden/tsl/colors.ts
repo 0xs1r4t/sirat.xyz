@@ -48,13 +48,11 @@ export const celShadeSmoothBands = Fn(
 
 /** Cel-shade with an explicit 3-band colour ramp. */
 export const celShade3Band = Fn(
-  ([NdotL, darkColor, midColor, lightColor]: [any, any, any, any]) => {
-    return select(
+  ([NdotL, darkColor, midColor, lightColor]: [any, any, any, any]) => select(
       NdotL.greaterThan(0.7),
       lightColor,
       select(NdotL.greaterThan(0.3), midColor, darkColor),
-    );
-  },
+    ),
 );
 
 /** Cel-shade with an explicit 4-band colour ramp. */
@@ -67,8 +65,7 @@ export const celShade4Band = Fn(
       any,
       any,
     ],
-  ) => {
-    return select(
+  ) => select(
       NdotL.greaterThan(0.8),
       lightColor,
       select(
@@ -76,6 +73,5 @@ export const celShade4Band = Fn(
         midColor,
         select(NdotL.greaterThan(0.2), darkColor, shadowColor),
       ),
-    );
-  },
+    ),
 );

@@ -1,8 +1,7 @@
 import { visit } from "unist-util-visit";
 import type { Root, Element } from "hast";
 
-const rehypeLinkPreview = () => {
-  return (tree: Root) => {
+const rehypeLinkPreview = () => (tree: Root) => {
     visit(tree, "element", (node: Element) => {
       if (node.tagName === "a" && node.properties?.href) {
         const href = node.properties.href as string;
@@ -21,21 +20,20 @@ const rehypeLinkPreview = () => {
               ...node.properties,
               "data-link-preview": href,
               "data-favicon": faviconUrl,
-              className: "external-link",
+              className: ["external-link"],
             };
-          } catch (e) {
+          } catch {
             // Invalid URL, skip
           }
         } else {
           // Mark internal links
           node.properties = {
             ...node.properties,
-            className: "internal-link",
+            className: ["internal-link"],
           };
         }
       }
     });
   };
-};
 
 export default rehypeLinkPreview;

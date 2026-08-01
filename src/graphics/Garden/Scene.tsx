@@ -10,7 +10,9 @@ import React, {
   useState,
 } from "react";
 import { Canvas, extend, useFrame, useThree } from "@react-three/fiber";
+import type { ConstructorRepresentation } from "@react-three/fiber";
 import { OrbitControls } from "@react-three/drei";
+import type { OrbitControls as OrbitControlsImpl } from "three-stdlib";
 // The webgpu entry point is a superset of "three" (same core classes —
 // Vector3, Color, Raycaster, etc. — plus WebGPURenderer and the Node
 // material system). Only this file needs it, since it's the only place
@@ -21,7 +23,7 @@ import * as THREE from "three/webgpu";
 // Registers the webgpu-flavoured THREE namespace (WebGPURenderer, Node
 // materials, ...) as JSX intrinsics for the reconciler — required once we
 // stop using the plain "three" catalog r3f ships by default.
-extend(THREE as any);
+extend(THREE as unknown as Record<string, ConstructorRepresentation>);
 
 import { sampleHeight, generateTerrain } from "@/lib/garden/terrain";
 import { GARDEN, layoutFlowers, type GardenPost } from "@/lib/garden/meadow";
@@ -51,6 +53,7 @@ const LevaGardenControls = lazy(
 // instrumentation (docs/garden-perf-benchmark.md) out of the eager bundle.
 const GpuTimer = lazy(() => import("@graphics/Garden/GpuTimer"));
 
+/** Props for {@link Scene} (and the rig/controls it renders internally). */
 export interface GardenSceneProps {
   posts: GardenPost[];
   reducedMotion: boolean;
@@ -67,14 +70,14 @@ const FOCUS_LERP = 0.06; // camera easing per frame toward focus pose
 const FOCUS_DISTANCE = 3.2; // how far back the camera stands from a focused flower
 const FOCUS_HEIGHT = 1.3; // eye height above the flower's ground point when focused
 
-function GardenRig({
+const GardenRig = ({
   posts,
   reducedMotion,
   tooltipRef,
   onHoverPost,
   onFocusPost,
   controls,
-}: GardenSceneProps & { controls: GardenControlValues }) {
+}: GardenSceneProps & { controls: GardenControlValues }) => {
   const palette = useGardenTheme();
   const camera = useThree((s) => s.camera);
   const gl = useThree((s) => s.gl);
@@ -85,7 +88,7 @@ function GardenRig({
   const [focusedIndex, setFocusedIndex] = useState<number | null>(null);
   const focusedRef = useRef<number | null>(null);
 
-  const controlsRef = useRef<any>(null);
+  const controlsRef = useRef<OrbitControlsImpl | null>(null);
 
   const {
     gridWidth,
@@ -151,8 +154,7 @@ function GardenRig({
   }, [camera, eye, target]);
 
   // ── Focus poses: computed once per heads/terrain change ────────────────────
-  const focusPoses = useMemo(() => {
-    return heads.map((head) => {
+  const focusPoses = useMemo(() => heads.map((head) => {
       const dirFromCenter = new THREE.Vector3(head.x, 0, head.z);
       const len = dirFromCenter.length();
       const backDir =
@@ -167,8 +169,7 @@ function GardenRig({
       );
       const lookAt = new THREE.Vector3(head.x, head.y, head.z);
       return { eyePos, lookAt };
-    });
-  }, [heads]);
+    }), [heads]);
 
   const clearFocus = useCallback(() => {
     focusedRef.current = null;
@@ -366,17 +367,18 @@ function GardenRig({
       />
     </>
   );
-}
+};
 
 // Debug mode: always on in dev, opt-in via `?debug` in production. Read once
 // per mount (lazy initializer) — it never changes for the component's
 // lifetime, so branching on it below doesn't touch hook call order.
-function isGardenDebugMode() {
+const isGardenDebugMode = () => {
   if (process.env.NODE_ENV !== "production") return true;
   if (typeof window === "undefined") return false;
   return new URLSearchParams(window.location.search).has("debug");
-}
+};
 
+/** WebGPU canvas root: sets up the renderer, then mounts the garden rig. */
 export default function Scene(props: GardenSceneProps) {
   const [debug] = useState(isGardenDebugMode);
 
@@ -384,7 +386,7 @@ export default function Scene(props: GardenSceneProps) {
     <Canvas
       gl={async (defaultProps) => {
         const renderer = new THREE.WebGPURenderer({
-          ...(defaultProps as any),
+          ...(defaultProps as unknown as THREE.WebGPURendererParameters),
           antialias: true,
           alpha: true,
           powerPreference: "high-performance",

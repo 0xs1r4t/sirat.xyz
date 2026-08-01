@@ -5,16 +5,17 @@ const SPOTIFY_CLIENT_SECRET = process.env.SPOTIFY_CLIENT_SECRET as string;
 const SPOTIFY_REFRESH_TOKEN = process.env.SPOTIFY_REFRESH_TOKEN as string;
 
 const TOKEN_ENDPOINT = "https://accounts.spotify.com/api/token";
-const basic_token = Buffer.from(
+const basicToken = Buffer.from(
   `${SPOTIFY_CLIENT_ID}:${SPOTIFY_CLIENT_SECRET}`
 ).toString("base64");
 
+/** Exchanges the stored refresh token for a fresh Spotify access token. */
 export const getAccessToken = async (): Promise<AccessToken> => {
   const response = await fetch(TOKEN_ENDPOINT, {
     method: "POST",
     headers: {
       "Content-Type": "application/x-www-form-urlencoded",
-      Authorization: `Basic ${basic_token}`,
+      Authorization: `Basic ${basicToken}`,
     },
     body: new URLSearchParams({
       grant_type: "refresh_token",
@@ -25,7 +26,8 @@ export const getAccessToken = async (): Promise<AccessToken> => {
   return response.json();
 };
 
+/** Authenticated Spotify SDK client, ready to call the player endpoints. */
 export const getSpotifyApi = async (): Promise<SpotifyApi> => {
-  const access_token = await getAccessToken();
-  return SpotifyApi.withAccessToken(SPOTIFY_CLIENT_ID, access_token);
+  const accessToken = await getAccessToken();
+  return SpotifyApi.withAccessToken(SPOTIFY_CLIENT_ID, accessToken);
 };

@@ -3,8 +3,7 @@ import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { AuthenticSansCondensed } from "@/fonts/font-config";
 
-const Tags = ({ tags }: { tags: string[] }) => {
-  return (
+const Tags = ({ tags }: { tags: string[] }) => (
     <ul className="flex flex-row flex-wrap">
       {tags.map((tag: string) => (
         <li key={tag} className="list-none">
@@ -21,6 +20,5 @@ const Tags = ({ tags }: { tags: string[] }) => {
       ))}
     </ul>
   );
-};
 
 export default Tags;
