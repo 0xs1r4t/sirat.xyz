@@ -44,7 +44,7 @@ const Page = async ({ searchParams }: Props) => {
     <Fragment>
       <Heading title={title} styles={styles} />
       <Search placeholder="Search this garden" />
-      <Summary summary={posts} />
+      <Summary summary={posts} garden={false} />
     </Fragment>
   );
 };
