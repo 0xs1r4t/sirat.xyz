@@ -39,12 +39,12 @@ const Summary = ({ summary, garden, ref }: SummaryProps) => (
             <h2 className="text-4xl font-authentic-sans-condensed font-bold">
               {title}
             </h2>
-            <span aria-hidden="true">{""}</span>
-            {createdAt && <Date date={createdAt} />}
-            <Tags tags={tags} />
-            <span aria-hidden="true">{""}</span>
-            <p>{description}</p>
           </Link>
+          <span aria-hidden="true">{""}</span>
+          {createdAt && <Date date={createdAt} />}
+          <Tags tags={tags} />
+          <span aria-hidden="true">{""}</span>
+          <p>{description}</p>
         </section>
       ))}
     </section>
