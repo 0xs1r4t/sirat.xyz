@@ -11,6 +11,7 @@ import rehypeSlug from "rehype-slug";
 import rehypePrism from "rehype-prism-plus";
 import rehypeStringify from "rehype-stringify";
 import rehypeKatex from "rehype-katex";
+import type { Root } from "mdast";
 
 import remarkPostLink from "@/lib/plugins/post-link";
 import rehypeLinkPreview from "@/lib/plugins/link-preview";
@@ -84,7 +85,7 @@ export const getPostBySlug = async (slug: string): Promise<Post | null> => {
 
     // Pre-parse tree to extract video IDs, fetch titles in parallel
     const tree = remark().use(remarkGfm).parse(content);
-    const youtubeTitles = await prefetchYouTubeTitles(tree as any);
+    const youtubeTitles = await prefetchYouTubeTitles(tree as unknown as Root);
 
     const processedContent = await remark()
       .use(remarkGfm) // GitHub-flavored markdown

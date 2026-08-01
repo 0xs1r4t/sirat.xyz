@@ -10,7 +10,9 @@ import React, {
   useState,
 } from "react";
 import { Canvas, extend, useFrame, useThree } from "@react-three/fiber";
+import type { ConstructorRepresentation } from "@react-three/fiber";
 import { OrbitControls } from "@react-three/drei";
+import type { OrbitControls as OrbitControlsImpl } from "three-stdlib";
 // The webgpu entry point is a superset of "three" (same core classes —
 // Vector3, Color, Raycaster, etc. — plus WebGPURenderer and the Node
 // material system). Only this file needs it, since it's the only place
@@ -21,7 +23,7 @@ import * as THREE from "three/webgpu";
 // Registers the webgpu-flavoured THREE namespace (WebGPURenderer, Node
 // materials, ...) as JSX intrinsics for the reconciler — required once we
 // stop using the plain "three" catalog r3f ships by default.
-extend(THREE as any);
+extend(THREE as unknown as Record<string, ConstructorRepresentation>);
 
 import { sampleHeight, generateTerrain } from "@/lib/garden/terrain";
 import { GARDEN, layoutFlowers, type GardenPost } from "@/lib/garden/meadow";
@@ -85,7 +87,7 @@ const GardenRig = ({
   const [focusedIndex, setFocusedIndex] = useState<number | null>(null);
   const focusedRef = useRef<number | null>(null);
 
-  const controlsRef = useRef<any>(null);
+  const controlsRef = useRef<OrbitControlsImpl | null>(null);
 
   const {
     gridWidth,
@@ -382,7 +384,7 @@ export default function Scene(props: GardenSceneProps) {
     <Canvas
       gl={async (defaultProps) => {
         const renderer = new THREE.WebGPURenderer({
-          ...(defaultProps as any),
+          ...(defaultProps as unknown as THREE.WebGPURendererParameters),
           antialias: true,
           alpha: true,
           powerPreference: "high-performance",

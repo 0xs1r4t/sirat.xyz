@@ -1,5 +1,5 @@
 import { visit } from "unist-util-visit";
-import type { Root, Text, Parent } from "mdast";
+import type { Root, Text, Link, Parent } from "mdast";
 
 /**
  * Remark plugin to convert [[post-slug]] into internal links
@@ -16,7 +16,7 @@ const remarkPostLink = () => (tree: Root) => {
         const text = node.value;
         const regex = /\[\[([^\]]+)\]\]/g;
         let match;
-        const newNodes: any[] = [];
+        const newNodes: (Text | Link)[] = [];
         let lastIndex = 0;
 
         while ((match = regex.exec(text)) !== null) {

@@ -79,6 +79,18 @@ const eslintConfig = [...compat.extends("next/core-web-vitals", "next/typescript
     "@typescript-eslint/no-require-imports": "off",
   },
 }, {
+  // TSL node-graph math: `any` here is deliberate, not unfinished typing —
+  // see the note in src/graphics/Garden/tsl/wind.ts. TSL's functions are
+  // overloaded by vector width (vec2/vec3/float, ...), so giving these
+  // intermediates a real generic Node<T> type makes TypeScript silently
+  // pick the wrong overload instead of propagating the type — producing
+  // incorrectly-typed results that are worse than honest `any`. Real
+  // mismatches still fail loudly at three's node-builder stage.
+  files: ["src/graphics/Garden/tsl/**/*.ts", "src/graphics/Garden/Foliage.tsx"],
+  rules: {
+    "@typescript-eslint/no-explicit-any": "off",
+  },
+}, {
   ignores: ["node_modules/**", ".next/**", "out/**", "build/**", "next-env.d.ts"]
 }];
 

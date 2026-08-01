@@ -1,5 +1,5 @@
 import { visit } from "unist-util-visit";
-import type { Root, Element, Text } from "hast";
+import type { Root, Element, Text, Parents } from "hast";
 import * as fs from "fs";
 import * as path from "path";
 
@@ -9,9 +9,9 @@ const stripSvgDimensions = (svg: string): string =>
   svg.replace(/\s+width="[^"]*"/, "").replace(/\s+height="[^"]*"/, "");
 
 const rehypeExcalidraw = () => async (tree: Root) => {
-    const nodes: { node: Element; index: number; parent: any }[] = [];
+    const nodes: { node: Element; index: number; parent: Parents }[] = [];
 
-    visit(tree, "element", (node: Element, index, parent: any) => {
+    visit(tree, "element", (node: Element, index, parent: Parents | undefined) => {
       if (!parent || index === undefined) return;
       if (node.tagName !== "pre") return;
 

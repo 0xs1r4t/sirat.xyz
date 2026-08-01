@@ -1,4 +1,5 @@
 import { cloneElement, Fragment, useState } from "react";
+import type { Ref } from "react";
 import { createPortal } from "react-dom";
 import {
   Placement,
@@ -44,7 +45,10 @@ export const Tooltip = ({ children, label, placement }: Props) => {
     dismiss,
   ]);
 
-  const ref = useMergeRefs([refs.setReference, (children as any).ref]);
+  const ref = useMergeRefs([
+    refs.setReference,
+    (children as { ref?: Ref<unknown> }).ref,
+  ]);
 
   return (
     <Fragment>

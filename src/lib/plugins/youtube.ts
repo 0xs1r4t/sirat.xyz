@@ -1,5 +1,5 @@
 import { visit } from "unist-util-visit";
-import type { Root, Paragraph, Link, Text } from "mdast";
+import type { Root, Paragraph, Link, Text, Parent } from "mdast";
 
 // Fetch title from YouTube oEmbed — free, no API key needed
 const fetchYouTubeTitle = async (videoId: string): Promise<string> => {
@@ -79,7 +79,7 @@ const remarkYoutube = (titles: Map<string, string> = new Map()) => (tree: Root) 
     visit(
       tree,
       "paragraph",
-      (node: Paragraph, index: number | undefined, parent: any) => {
+      (node: Paragraph, index: number | undefined, parent: Parent | undefined) => {
         if (!parent || index === undefined) return;
         if (node.children.length !== 1) return;
 
