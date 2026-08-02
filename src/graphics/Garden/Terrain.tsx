@@ -16,6 +16,7 @@ import {
 import { celShade4Band } from "@graphics/Garden/tsl/colors";
 import { applyGardenFog } from "@graphics/Garden/tsl/fog";
 import { getTerrainColor } from "@graphics/Garden/tsl/terrain";
+import { gardenDebugState } from "@graphics/Garden/gardenDebug";
 
 interface TerrainProps {
   terrainData: TerrainData;
@@ -103,7 +104,8 @@ export default function Terrain({
   // rebuild, so switching themes never re-triggers shader compilation.
   useFrame(({ clock }) => {
     if (palette.isDark.current) {
-      const angle = clock.elapsedTime * NIGHT_MOON_SPEED;
+      const elapsed = gardenDebugState.fixedTime ?? clock.elapsedTime;
+      const angle = elapsed * NIGHT_MOON_SPEED;
       scratchMoonDir
         .set(
           Math.cos(angle) * 0.5,

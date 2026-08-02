@@ -34,6 +34,10 @@ const Garden = ({ posts }: GardenProps) => {
   return (
     <div
       aria-hidden="true"
+      // Stable hook for the screenshot harness (scripts/garden-capture.mjs)
+      // to select the garden's <canvas> specifically — the page also has
+      // unrelated canvases (mouse trail, dither media).
+      id="garden-canvas-root"
       className="fixed inset-0 z-0 pointer-events-none h-svh w-svw"
     >
       <Scene

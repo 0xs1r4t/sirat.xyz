@@ -131,6 +131,11 @@ const MouseTrail = ({ className }: { className?: string }) => {
   return (
     <div
       aria-hidden="true"
+      // Stable hook for the screenshot harness (scripts/garden-capture.mjs)
+      // to hide this layer — with no real cursor movement in headless
+      // capture, the trail's default (0,0) pointer renders a colored blob
+      // in the corner that has nothing to do with the garden underneath.
+      id="mouse-trail-root"
       className={className}
       style={{
         position: "fixed",

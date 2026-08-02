@@ -8,7 +8,9 @@
     "start": "next start -H 0.0.0.0 -p 4321",
     "lint": "eslint .",
     "generate:pixel-icons": "node scripts/generate-pixel-icon-sizes.mjs",
-    "spotify:auth": "node --env-file=.env.local scripts/spotify-auth.mjs"
+    "spotify:auth": "node --env-file=.env.local scripts/spotify-auth.mjs",
+    "garden:capture": "node scripts/garden-capture.mjs",
+    "garden:diff": "node scripts/garden-diff.mjs"
   },
   "dependencies": {
     "@designbycode/tailwindcss-text-stroke": "^1.3.0",
@@ -68,6 +70,7 @@
     "@types/katex": "^0.16.8",
     "@types/lodash.range": "^3.2.9",
     "@types/node": "^22",
+    "@types/pngjs": "^6.0.5",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "@webgpu/types": "^0.1.67",
@@ -76,6 +79,9 @@
     "eslint": "^9",
     "eslint-config-next": "15.3.2",
     "eslint-plugin-jsdoc": "^63.3.2",
+    "pixelmatch": "^7.2.0",
+    "playwright": "^1.62.1",
+    "pngjs": "^7.0.0",
     "postcss": "^8.5.3",
     "raw-loader": "^4.0.2",
     "sharp": "^0.34.5",

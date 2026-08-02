@@ -45,6 +45,7 @@ import {
   detectDeviceTier,
   type DeviceTier,
 } from "@graphics/Garden/deviceTier";
+import { gardenDebugState } from "@graphics/Garden/gardenDebug";
 
 // Dev-only: Leva's panel + bundle only loads for visitors who are actually
 // in debug mode (see the `debug` state in Scene below), not every hero load.
@@ -85,16 +86,20 @@ const GardenRig = ({
   controls,
   farDistance,
   windOctaves,
+  debug,
 }: GardenSceneProps & {
   controls: GardenControlValues;
   /** LOD cull distance (plan 5.2), device-tier-driven (plan 5.4). */
   farDistance: number;
   /** Wind octave count (plan 5.4) — low tier passes 2 instead of 3. */
   windOctaves: 2 | 3;
+  /** Gates the window.__gardenDebug bridge (screenshot harness) — same flag Leva uses. */
+  debug: boolean;
 }) => {
   const palette = useGardenTheme();
   const camera = useThree((s) => s.camera);
   const gl = useThree((s) => s.gl);
+  const scene = useThree((s) => s.scene);
   // Same reasoning as Foliage.tsx's Flowers: under frameloop="demand" (plan
   // 5.5) the camera focus-lerp and tooltip DOM positioning below mutate
   // things the reconciler never sees, so they have to request their own
@@ -171,6 +176,40 @@ const GardenRig = ({
       controlsRef.current.update();
     }
   }, [camera, eye, target]);
+
+  // ── Screenshot harness bridge (docs/garden-screenshot-harness.md) ─────────
+  // Debug-only, same gate as Leva. Runs after the camera-pose effect above,
+  // so `ready` only ever flips true once the resting pose is actually set.
+  useEffect(() => {
+    if (!debug || typeof window === "undefined") return;
+    window.__gardenDebug = {
+      ready: true,
+      setFixedTime: (seconds) => {
+        gardenDebugState.fixedTime = seconds;
+        invalidate();
+      },
+      getRenderInfo: () => ({
+        drawCalls: gl.info.render.calls,
+        triangles: gl.info.render.triangles,
+      }),
+      // renderer.info above is known-unreliable for readiness checks (see
+      // docs/garden-perf-benchmark.md's draws=0/tris=0 gotcha — r3f drives
+      // its own render loop instead of calling setAnimationLoop, so three's
+      // per-frame info.reset() never fires). Counting actual mounted Mesh
+      // objects reflects what the React reconciler has committed instead,
+      // regardless of whether/when a GPU render call has run yet.
+      getMeshCount: () => {
+        let count = 0;
+        scene.traverse((obj) => {
+          if ((obj as THREE.Mesh).isMesh) count++;
+        });
+        return count;
+      },
+    };
+    return () => {
+      delete window.__gardenDebug;
+    };
+  }, [debug, gl, scene, invalidate, eye, target]);
 
   // ── Focus poses: computed once per heads/terrain change ────────────────────
   const focusPoses = useMemo(
@@ -406,14 +445,30 @@ const isGardenDebugMode = () => {
   return new URLSearchParams(window.location.search).has("debug");
 };
 
+// Debug-only `?tier=high|mid|low` override (plan §6 "Perf budget" +
+// garden-screenshot-harness.md): pins farDistance/windOctaves instead of
+// hoping detectDeviceTier()'s heuristic lands on the right one, which
+// otherwise varies by machine (headless capture environments in particular)
+// and would make screenshot/perf runs non-reproducible.
+const getTierOverride = (): DeviceTier | null => {
+  if (typeof window === "undefined") return null;
+  const params = new URLSearchParams(window.location.search);
+  if (!params.has("debug")) return null; // debug-only, see isGardenDebugMode
+  const raw = params.get("tier");
+  return raw === "high" || raw === "mid" || raw === "low" ? raw : null;
+};
+
 /** WebGPU canvas root: sets up the renderer, then mounts the garden rig. */
 export default function Scene(props: GardenSceneProps) {
   const [debug] = useState(isGardenDebugMode);
 
   // Device tiers (plan 5.4): heuristic guess on mount, demoted at runtime by
   // PerformanceMonitor below if FPS actually sags — the heuristic doesn't
-  // need to be perfect, it just needs a reasonable starting point.
-  const [tier, setTier] = useState<DeviceTier>(detectDeviceTier);
+  // need to be perfect, it just needs a reasonable starting point. Debug-only
+  // `?tier=` pins it instead, for reproducible perf/screenshot runs.
+  const [tier, setTier] = useState<DeviceTier>(
+    () => getTierOverride() ?? detectDeviceTier(),
+  );
   const tierParams = DEVICE_TIER_PARAMS[tier];
 
   // Production visitors get the tier-picked grass count; debug mode keeps
@@ -481,6 +536,7 @@ export default function Scene(props: GardenSceneProps) {
                 controls={controls}
                 farDistance={tierParams.farDistance}
                 windOctaves={tierParams.windOctaves}
+                debug={debug}
               />
             )}
           />
@@ -492,6 +548,7 @@ export default function Scene(props: GardenSceneProps) {
           controls={nonDebugControls}
           farDistance={tierParams.farDistance}
           windOctaves={tierParams.windOctaves}
+          debug={debug}
         />
       )}
     </Canvas>
