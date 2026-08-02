@@ -8,8 +8,7 @@ import styles from "@/graphics/Flag/Flag.module.css";
  * from https://www.joshwcomeau.com/animation/pride-flags/
  * ***/
 
-const Flag = ({ numOfColumns = 6, staggeredDelay = 150 }) => {
-  return (
+const Flag = ({ numOfColumns = 6, staggeredDelay = 150 }) => (
     <div className={styles.flag}>
       {range(numOfColumns).map((columnIndex: number) => (
         <div
@@ -22,6 +21,5 @@ const Flag = ({ numOfColumns = 6, staggeredDelay = 150 }) => {
       ))}
     </div>
   );
-};
 
 export default Flag;

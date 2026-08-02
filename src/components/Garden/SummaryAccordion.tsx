@@ -2,8 +2,7 @@ import React from "react";
 import Tags from "@/components/Garden/Tags";
 import Date from "@/components/Garden/Date";
 
-const SummaryAccordion = ({ summary }: { summary: Post }) => {
-  return (
+const SummaryAccordion = ({ summary }: { summary: Post }) => (
     <details className="not-prose rounded-lg px-4 py-2">
       <summary className="font-bold">tl;dr</summary>
       <section
@@ -23,6 +22,5 @@ const SummaryAccordion = ({ summary }: { summary: Post }) => {
       </section>
     </details>
   );
-};
 
 export default SummaryAccordion;

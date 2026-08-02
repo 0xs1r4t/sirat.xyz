@@ -4,9 +4,9 @@ import { useEffect } from "react";
 
 const DARK_THEMES = ["blueberry-lemon"];
 
-export default function ExcalidrawTheme() {
+const ExcalidrawTheme = () => {
   useEffect(() => {
-    function syncTheme() {
+    const syncTheme = () => {
       const isDark = DARK_THEMES.some((t) =>
         document.documentElement.classList.contains(t),
       );
@@ -16,7 +16,7 @@ export default function ExcalidrawTheme() {
       document.querySelectorAll(".excalidraw-dark").forEach((el) => {
         (el as HTMLElement).style.display = isDark ? "" : "none";
       });
-    }
+    };
 
     syncTheme();
 
@@ -30,4 +30,6 @@ export default function ExcalidrawTheme() {
   }, []);
 
   return null;
-}
+};
+
+export default ExcalidrawTheme;

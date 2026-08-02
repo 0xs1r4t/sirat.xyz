@@ -1,4 +1,19 @@
 @import "tailwindcss";
+
+/* Code block styles */
+@import url("../styles/code.css");
+@import url("../styles/dracula-prism.css");
+
+/* Link preview styles */
+@import url("../styles/link-preview.css");
+
+/* KaTeX styles */
+/* @import url("https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css"); */
+@import url("katex/dist/katex.min.css");
+
+/* Table of Contents styles */
+@import url("../styles/toc.css");
+
 @plugin "@tailwindcss/typography";
 
 @source inline("excalidraw-light excalidraw-dark blueberry-lemon strawberry-matcha neopolitan-ice-cream");
@@ -27,21 +42,6 @@
     &::before, &::after { content: none; } }
   }
 
-
-/* Code block styles */
-@import url("../styles/code.css");
-@import url("../styles/dracula-prism.css");
-@import url("../styles/prism-line-numbers.css");
-
-/* Link preview styles */
-@import url("../styles/link-preview.css");
-
-/* KaTeX styles */
-/* @import url("https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css"); */
-@import url("katex/dist/katex.min.css");
-
-/* Table of Contents styles */
-@import url("../styles/toc.css");
 
 /* light/default theme 🍥🍫 */
 @theme {
@@ -275,6 +275,15 @@
 @layer utilities {
   .text-balance {
     text-wrap: balance;
+  }
+
+  /* Pixel-art icons (public/icons/pixel/*-{size}px.PNG): force nearest-
+     neighbor scaling so the browser never smooths/blurs the source pixels.
+     Without this, browsers fall back to their own upscale filter when a
+     served size doesn't exactly match the rendered size. */
+  .pixel-icon {
+    image-rendering: pixelated;
+    image-rendering: crisp-edges; /* Firefox fallback; pixelated wins where both are supported */
   }
 
   .animate-paused {

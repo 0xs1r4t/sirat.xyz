@@ -2,8 +2,8 @@ import React from "react";
 
 import "@/styles/filters.css";
 
-export const Filters = () => {
-  return (
+/** Hidden SVG filter defs (referenced by CSS `filter: url(#...)`) for site-wide color effects. */
+export const Filters = () => (
     <svg xmlns="http://www.w3.org/2000/svg" width="0" height="0">
       <filter id="pinky-pie" colorInterpolationFilters="sRGB">
         <feComponentTransfer>
@@ -38,4 +38,3 @@ export const Filters = () => {
       </filter>
     </svg>
   );
-};

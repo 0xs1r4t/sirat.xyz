@@ -3,7 +3,6 @@ import path from "path";
 import matter from "gray-matter";
 
 import { remark } from "remark";
-import remarkHtml from "remark-html";
 import remarkGfm from "remark-gfm";
 import remarkRehype from "remark-rehype";
 import remarkToc from "remark-toc";
@@ -12,6 +11,7 @@ import rehypeSlug from "rehype-slug";
 import rehypePrism from "rehype-prism-plus";
 import rehypeStringify from "rehype-stringify";
 import rehypeKatex from "rehype-katex";
+import type { Root } from "mdast";
 
 import remarkPostLink from "@/lib/plugins/post-link";
 import rehypeLinkPreview from "@/lib/plugins/link-preview";
@@ -21,6 +21,7 @@ import rehypePreTabindex from "@/lib/plugins/pre-tabindex";
 
 const contentDirectory = path.join(process.cwd(), "content/garden");
 
+/** Frontmatter fields for a garden post, without its body content. */
 export interface PostMetadata {
   slug: string;
   title: string;
@@ -33,14 +34,15 @@ export interface PostMetadata {
   updatedAt: string;
 }
 
+/** A fully-rendered post: frontmatter plus processed HTML and table of contents. */
 export interface Post extends PostMetadata {
   content: string;
   html: string;
   toc: string;
 }
 
-// Get all markdown files
-export async function getAllPosts(): Promise<PostMetadata[]> {
+/** Reads every post's frontmatter, newest first. */
+export const getAllPosts = async (): Promise<PostMetadata[]> => {
   const fileNames = fs.readdirSync(contentDirectory);
 
   // Use Promise.all to handle async operations
@@ -67,19 +69,17 @@ export async function getAllPosts(): Promise<PostMetadata[]> {
   );
 
   // Sort by createdAt in descending order (newest first)
-  return posts.sort((a, b) => {
-    return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
-  });
-}
+  return posts.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+};
 
-// Get only published posts
-export async function getPublishedPosts(): Promise<PostMetadata[]> {
+/** {@link getAllPosts}, filtered to `status === "published"`. */
+export const getPublishedPosts = async (): Promise<PostMetadata[]> => {
   const allPosts = await getAllPosts();
   return allPosts.filter((post) => post.status === "published");
-}
+};
 
-// Get post by slug
-export async function getPostBySlug(slug: string): Promise<Post | null> {
+/** Loads and fully renders one post's markdown to HTML, or null if it doesn't exist. */
+export const getPostBySlug = async (slug: string): Promise<Post | null> => {
   try {
     const fullPath = path.join(contentDirectory, `${slug}.md`);
     const fileContents = fs.readFileSync(fullPath, "utf8");
@@ -87,7 +87,7 @@ export async function getPostBySlug(slug: string): Promise<Post | null> {
 
     // Pre-parse tree to extract video IDs, fetch titles in parallel
     const tree = remark().use(remarkGfm).parse(content);
-    const youtubeTitles = await prefetchYouTubeTitles(tree as any);
+    const youtubeTitles = await prefetchYouTubeTitles(tree as unknown as Root);
 
     const processedContent = await remark()
       .use(remarkGfm) // GitHub-flavored markdown
@@ -141,10 +141,10 @@ export async function getPostBySlug(slug: string): Promise<Post | null> {
     console.error(`Error loading post ${slug}:`, error);
     return null;
   }
-}
+};
 
-// Search posts by query
-export async function searchPosts(query: string): Promise<PostMetadata[]> {
+/** Case-insensitive search over published posts' title, description, and tags. */
+export const searchPosts = async (query: string): Promise<PostMetadata[]> => {
   const posts = await getPublishedPosts();
   const lowercaseQuery = query.toLowerCase();
 
@@ -154,12 +154,12 @@ export async function searchPosts(query: string): Promise<PostMetadata[]> {
       post.description.toLowerCase().includes(lowercaseQuery) ||
       post.tags.some((tag) => tag.toLowerCase().includes(lowercaseQuery)),
   );
-}
+};
 
-// Filter by tag
-export async function getPostsByTag(tag: string): Promise<PostMetadata[]> {
+/** Published posts carrying the given tag (case-insensitive). */
+export const getPostsByTag = async (tag: string): Promise<PostMetadata[]> => {
   const posts = await getPublishedPosts();
   return posts.filter((post) =>
     post.tags.some((t) => t.toLowerCase() === tag.toLowerCase()),
   );
-}
+};

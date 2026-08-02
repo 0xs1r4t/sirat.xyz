@@ -73,7 +73,7 @@ const LinkPreview = () => {
         `;
         iconContainer.innerHTML = `
             <img 
-            src="/icons/pixel/LINK.svg" 
+            src="/icons/pixel/LINK/LINK.svg"
             alt="" 
             width="16" 
             height="16"
@@ -166,7 +166,7 @@ const LinkPreview = () => {
                 `;
               }
             }
-          } catch (e) {
+          } catch {
             if (tooltip) {
               tooltip.innerHTML = `
                 <div class="text-sm text-foreground">${url}</div>
