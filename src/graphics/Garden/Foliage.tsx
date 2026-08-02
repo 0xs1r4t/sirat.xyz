@@ -24,6 +24,7 @@ import {
 } from "three/tsl";
 
 import {
+  computeInstanceCount,
   sampleHeight,
   sampleNormal,
   type TerrainData,
@@ -205,11 +206,13 @@ interface GrassProps {
   palette: GardenPalette;
   windSpeed?: number;
   windStrength?: number;
-  count?: number;
+  /** instances/m² — actual instance count is derived from this × terrain area (docs/features.md #2). */
+  density?: number;
   tuftWidth?: number;
   tuftHeight?: number;
   slopeThreshold?: number;
-  fogDensity?: number;
+  fogNear?: number;
+  fogFar?: number;
   /** LOD cull distance (plan 5.2) — device tiers (5.4) pass a lower value. */
   farDistance?: number;
   /** Wind octave count (plan 5.4) — low tier passes 2 instead of 3. */
@@ -222,11 +225,12 @@ export const Grass = ({
   palette,
   windSpeed = GARDEN.wind.speed,
   windStrength = GARDEN.wind.strength,
-  count = GARDEN.grass.count,
+  density = GARDEN.grass.density,
   tuftWidth = GARDEN.grass.tuftWidth,
   tuftHeight = GARDEN.grass.tuftHeight,
   slopeThreshold = GARDEN.grass.slopeThreshold,
-  fogDensity = GARDEN.fog.density,
+  fogNear = GARDEN.fog.near,
+  fogFar = GARDEN.fog.far,
   farDistance = 60,
   windOctaves = 3,
 }: GrassProps) => {
@@ -237,10 +241,12 @@ export const Grass = ({
     mat,
     windSpeedUniform,
     windStrengthUniform,
-    fogDensityUniform,
+    fogNearUniform,
+    fogFarUniform,
     farDistUniform,
   } = useMemo(() => {
     const g = GARDEN.grass;
+    const count = computeInstanceCount(terrainData, density);
     const chunks = generateGrassChunks(count, terrainData, g.seed, slopeThreshold);
 
     // One InstancedBufferGeometry per chunk, sharing the single material
@@ -271,7 +277,8 @@ export const Grass = ({
     const lightDirUniform = uniform(FOLIAGE_LIGHT_DIR.clone());
     const farDistUniform = uniform(farDistance);
     const fogColorUniform = uniform(palette.background);
-    const fogDensityUniform = uniform(fogDensity);
+    const fogNearUniform = uniform(fogNear);
+    const fogFarUniform = uniform(fogFar);
 
     const mat = new THREE.MeshBasicNodeMaterial();
     mat.transparent = true;
@@ -357,7 +364,7 @@ export const Grass = ({
     const highlight: any = vec3(0.1, 0.12, 0.08).mul(heightFactor.sub(0.8)).mul(2);
     color = color.add(highlightCond.select(highlight, vec3(0, 0, 0)));
 
-    color = applyGardenFog(color, fragPos, fogColorUniform, fogDensityUniform);
+    color = applyGardenFog(color, fragPos, fogColorUniform, fogNearUniform, fogFarUniform);
 
     mat.colorNode = color;
     mat.opacityNode = alpha;
@@ -367,11 +374,12 @@ export const Grass = ({
       mat,
       windSpeedUniform,
       windStrengthUniform,
-      fogDensityUniform,
+      fogNearUniform,
+      fogFarUniform,
       farDistUniform,
     };
-    // fogDensity intentionally omitted: it's a live-mutated uniform (see
-    // the useFrame below), not a material-rebuild dependency.
+    // fogNear/fogFar intentionally omitted: they're live-mutated uniforms
+    // (see the useFrame below), not material-rebuild dependencies.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     terrainData,
@@ -379,7 +387,7 @@ export const Grass = ({
     grassTex,
     windSpeed,
     windStrength,
-    count,
+    density,
     tuftWidth,
     tuftHeight,
     slopeThreshold,
@@ -395,7 +403,8 @@ export const Grass = ({
   useFrame(() => {
     windSpeedUniform.value = windSpeed;
     windStrengthUniform.value = windStrength;
-    fogDensityUniform.value = fogDensity;
+    fogNearUniform.value = fogNear;
+    fogFarUniform.value = fogFar;
     farDistUniform.value = farDistance;
   });
 
@@ -419,7 +428,8 @@ interface FlowersProps {
   hoveredIndex: number | null;
   windSpeed?: number;
   windStrength?: number;
-  fogDensity?: number;
+  fogNear?: number;
+  fogFar?: number;
   /** Wind octave count (plan 5.4) — low tier passes 2 instead of 3. */
   windOctaves?: 2 | 3;
 }
@@ -432,7 +442,8 @@ export const Flowers = ({
   hoveredIndex,
   windSpeed = GARDEN.wind.flowerSpeed,
   windStrength = GARDEN.wind.flowerStrength,
-  fogDensity = GARDEN.fog.density,
+  fogNear = GARDEN.fog.near,
+  fogFar = GARDEN.fog.far,
   windOctaves = 3,
 }: FlowersProps) => {
   const hoverAttrRef = useRef<THREE.InstancedBufferAttribute | null>(null);
@@ -455,7 +466,8 @@ export const Flowers = ({
     slugs,
     windSpeedUniform,
     windStrengthUniform,
-    fogDensityUniform,
+    fogNearUniform,
+    fogFarUniform,
   } = useMemo(() => {
     const placements = layoutFlowers(posts, terrainData);
     const count = placements.length;
@@ -498,7 +510,8 @@ export const Flowers = ({
     const windSpeedUniform = uniform(windSpeed);
     const windStrengthUniform = uniform(windStrength);
     const fogColorUniform = uniform(palette.background);
-    const fogDensityUniform = uniform(fogDensity);
+    const fogNearUniform = uniform(fogNear);
+    const fogFarUniform = uniform(fogFar);
 
     const mat = new THREE.MeshBasicNodeMaterial();
     mat.transparent = true;
@@ -557,7 +570,7 @@ export const Flowers = ({
       float(1).add(windShimmer).add(instanceHover.mul(0.15)),
     );
 
-    mat.colorNode = applyGardenFog(finalColor, fragPos, fogColorUniform, fogDensityUniform);
+    mat.colorNode = applyGardenFog(finalColor, fragPos, fogColorUniform, fogNearUniform, fogFarUniform);
     mat.opacityNode = texColor.a;
 
     return {
@@ -566,10 +579,11 @@ export const Flowers = ({
       slugs: placements.map((p) => p.slug),
       windSpeedUniform,
       windStrengthUniform,
-      fogDensityUniform,
+      fogNearUniform,
+      fogFarUniform,
     };
-    // fogDensity intentionally omitted: it's a live-mutated uniform (see
-    // the useFrame below), not a material-rebuild dependency.
+    // fogNear/fogFar intentionally omitted: they're live-mutated uniforms
+    // (see the useFrame below), not material-rebuild dependencies.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     posts,
@@ -589,7 +603,8 @@ export const Flowers = ({
   useFrame((_, delta) => {
     windSpeedUniform.value = windSpeed;
     windStrengthUniform.value = windStrength;
-    fogDensityUniform.value = fogDensity;
+    fogNearUniform.value = fogNear;
+    fogFarUniform.value = fogFar;
 
     // Ease each flower's hover value toward its target — the smooth
     // hover-scale animation from the plan (§5, instanceHover).

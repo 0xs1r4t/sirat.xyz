@@ -20,6 +20,13 @@ export interface TerrainData {
   heightScale: number;
 }
 
+/** Instance count for a target density (instances/m²) over a terrain's world-space footprint. */
+export const computeInstanceCount = (
+  td: Pick<TerrainData, "width" | "height" | "scale">,
+  densityPerSqm: number,
+): number =>
+  Math.round(densityPerSqm * td.width * td.scale * td.height * td.scale);
+
 const mix = (a: number, b: number, t: number) => a + t * (b - a);
 
 const heightColour = (yPos: number, hs: number): [number, number, number] => {

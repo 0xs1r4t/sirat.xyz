@@ -14,7 +14,7 @@ export interface GardenControlValues {
   heightScale: number;
   octaves: number;
   frequency: number;
-  grassCount: number;
+  grassDensity: number;
   tuftWidth: number;
   tuftHeight: number;
   slopeThreshold: number;
@@ -22,7 +22,8 @@ export interface GardenControlValues {
   windStrength: number;
   flowerWindSpeed: number;
   flowerWindStrength: number;
-  fogDensity: number;
+  fogNear: number;
+  fogFar: number;
 }
 
 // Production visitors never load Leva (see Scene.tsx's lazy import) — this
@@ -34,7 +35,7 @@ export const GARDEN_CONTROL_DEFAULTS: GardenControlValues = {
   heightScale: GARDEN.terrain.heightScale,
   octaves: GARDEN.terrain.octaves,
   frequency: GARDEN.terrain.frequency,
-  grassCount: GARDEN.grass.count,
+  grassDensity: GARDEN.grass.density,
   tuftWidth: GARDEN.grass.tuftWidth,
   tuftHeight: GARDEN.grass.tuftHeight,
   slopeThreshold: GARDEN.grass.slopeThreshold,
@@ -42,5 +43,6 @@ export const GARDEN_CONTROL_DEFAULTS: GardenControlValues = {
   windStrength: GARDEN.wind.strength,
   flowerWindSpeed: GARDEN.wind.flowerSpeed,
   flowerWindStrength: GARDEN.wind.flowerStrength,
-  fogDensity: GARDEN.fog.density,
+  fogNear: GARDEN.fog.near,
+  fogFar: GARDEN.fog.far,
 };

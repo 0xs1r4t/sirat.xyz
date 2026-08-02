@@ -21,7 +21,8 @@ import { gardenDebugState } from "@graphics/Garden/gardenDebug";
 interface TerrainProps {
   terrainData: TerrainData;
   palette: GardenPalette;
-  fogDensity?: number;
+  fogNear?: number;
+  fogFar?: number;
 }
 
 const scratchMoonDir = new THREE.Vector3();
@@ -33,9 +34,10 @@ const scratchMoonDir = new THREE.Vector3();
 export default function Terrain({
   terrainData,
   palette,
-  fogDensity = GARDEN.fog.density,
+  fogNear = GARDEN.fog.near,
+  fogFar = GARDEN.fog.far,
 }: TerrainProps) {
-  const { geo, mat, lightPosUniform, fogDensityUniform } = useMemo(() => {
+  const { geo, mat, lightPosUniform, fogNearUniform, fogFarUniform } = useMemo(() => {
     const geo = new THREE.BufferGeometry();
     geo.setAttribute(
       "position",
@@ -54,7 +56,8 @@ export default function Terrain({
     const lightPosUniform = uniform(DAY_LIGHT_POS.clone());
     const heightScaleUniform = uniform(terrainData.heightScale);
     const fogColorUniform = uniform(palette.background);
-    const fogDensityUniform = uniform(fogDensity);
+    const fogNearUniform = uniform(fogNear);
+    const fogFarUniform = uniform(fogFar);
 
     const mat = new THREE.MeshBasicNodeMaterial();
     mat.side = THREE.FrontSide;
@@ -84,12 +87,13 @@ export default function Terrain({
       slopeDarkened,
       positionWorld,
       fogColorUniform,
-      fogDensityUniform,
+      fogNearUniform,
+      fogFarUniform,
     );
 
-    return { geo, mat, lightPosUniform, fogDensityUniform };
-    // fogDensity intentionally omitted: it's a live-mutated uniform (see
-    // the useFrame below), not a material-rebuild dependency.
+    return { geo, mat, lightPosUniform, fogNearUniform, fogFarUniform };
+    // fogNear/fogFar intentionally omitted: they're live-mutated uniforms
+    // (see the useFrame below), not material-rebuild dependencies.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [terrainData, palette]);
 
@@ -120,7 +124,8 @@ export default function Terrain({
       lightPosUniform.value.copy(DAY_LIGHT_POS);
     }
 
-    fogDensityUniform.value = fogDensity;
+    fogNearUniform.value = fogNear;
+    fogFarUniform.value = fogFar;
   });
 
   return <mesh geometry={geo} material={mat} />;

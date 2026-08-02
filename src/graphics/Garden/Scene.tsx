@@ -121,7 +121,7 @@ const GardenRig = ({
     heightScale,
     octaves,
     frequency,
-    grassCount,
+    grassDensity,
     tuftWidth,
     tuftHeight,
     slopeThreshold,
@@ -129,7 +129,8 @@ const GardenRig = ({
     windStrength,
     flowerWindSpeed,
     flowerWindStrength,
-    fogDensity,
+    fogNear,
+    fogFar,
   } = controls;
 
   // ── Deterministic world data ───────────────────────────────────────────────
@@ -396,7 +397,8 @@ const GardenRig = ({
       <Terrain
         terrainData={terrainData}
         palette={palette}
-        fogDensity={fogDensity}
+        fogNear={fogNear}
+        fogFar={fogFar}
       />
       <Suspense fallback={null}>
         <Grass
@@ -404,11 +406,12 @@ const GardenRig = ({
           palette={palette}
           windSpeed={reducedMotion ? 0 : windSpeed}
           windStrength={reducedMotion ? 0 : windStrength}
-          count={grassCount}
+          density={grassDensity}
           tuftWidth={tuftWidth}
           tuftHeight={tuftHeight}
           slopeThreshold={slopeThreshold}
-          fogDensity={fogDensity}
+          fogNear={fogNear}
+          fogFar={fogFar}
           farDistance={farDistance}
           windOctaves={windOctaves}
         />
@@ -419,7 +422,8 @@ const GardenRig = ({
           hoveredIndex={focusedIndex ?? hoveredIndex}
           windSpeed={reducedMotion ? 0 : flowerWindSpeed}
           windStrength={reducedMotion ? 0 : flowerWindStrength}
-          fogDensity={fogDensity}
+          fogNear={fogNear}
+          fogFar={fogFar}
           windOctaves={windOctaves}
         />
       </Suspense>
@@ -471,13 +475,13 @@ export default function Scene(props: GardenSceneProps) {
   );
   const tierParams = DEVICE_TIER_PARAMS[tier];
 
-  // Production visitors get the tier-picked grass count; debug mode keeps
-  // full manual control via Leva regardless of tier (its grassCount slider
+  // Production visitors get the tier-picked grass density; debug mode keeps
+  // full manual control via Leva regardless of tier (its grassDensity slider
   // overrides this). farDistance/windOctaves/DPR are tier-driven either way
   // — they're new knobs 5.4 adds, not previously exposed via Leva.
   const nonDebugControls = useMemo(
-    () => ({ ...GARDEN_CONTROL_DEFAULTS, grassCount: tierParams.grassCount }),
-    [tierParams.grassCount],
+    () => ({ ...GARDEN_CONTROL_DEFAULTS, grassDensity: tierParams.grassDensity }),
+    [tierParams.grassDensity],
   );
 
   // Plan 5.5 — don't render what nobody sees. Tab hidden → stop the

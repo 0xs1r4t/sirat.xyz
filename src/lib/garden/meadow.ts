@@ -26,9 +26,12 @@ export const GARDEN = {
     frequency: 0.075,
   },
   grass: {
-    // ~30 instances/m² over the 50×50 slab, matching the original's
-    // 300000 * areaRatio(50x50/100x100=0.25) = 75000.
-    count: 75000,
+    // instances/m² — matches the original's 300000 over its 100x100 demo
+    // footprint (300000/10000=30/m²). Actual instance count is derived from
+    // this times the current terrain's world-space area (width*scale ×
+    // height*scale), so it stays correct as terrain size/scale change
+    // instead of a literal tuned for one specific footprint (docs/features.md #2).
+    density: 30,
     tuftWidth: 0.4, // fairy-forest-glade main.cpp: Foliage(..., height=0.8, width=0.4)
     tuftHeight: 0.8,
     slopeThreshold: 0.55,
@@ -54,12 +57,15 @@ export const GARDEN = {
     flowerStrength: 0.15,
   },
   fog: {
-    // Exp²-fog density shared by every garden material. Light enough that
-    // the terrain slab reads as an object when orbiting in immersive mode,
-    // dense enough that the strip view melts into --color-background
-    // before the far edge. Not in the C++ original (no fog there) — this
-    // is a web-only concession for sitting the garden on the page.
-    density: 0.045,
+    // Linear near/far fog shared by every garden material: nothing closer
+    // than `near` is fogged at all (the old exp²-density curve hazed even
+    // foreground grass/flowers — see docs/features.md #1), then it ramps to
+    // fully --color-background by `far`, melting the strip view into the
+    // page before the terrain's edge. Not in the C++ original (no fog
+    // there) — this is a web-only concession for sitting the garden on the
+    // page.
+    near: 18,
+    far: 48,
   },
 } as const;
 

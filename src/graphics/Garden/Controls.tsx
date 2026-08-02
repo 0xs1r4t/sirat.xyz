@@ -39,11 +39,14 @@ export const useGardenControls = (): GardenControlValues =>
       },
     }),
     Grass: folder({
-      grassCount: {
-        value: GARDEN.grass.count,
+      // instances/m² — actual instance count follows terrain area (width×scale
+      // × height×scale), so this stays meaningful as the Terrain sliders above
+      // change the terrain's size (docs/features.md #2).
+      grassDensity: {
+        value: GARDEN.grass.density,
         min: 0,
-        max: 100000,
-        step: 1000,
+        max: 60,
+        step: 1,
       },
       tuftWidth: {
         value: GARDEN.grass.tuftWidth,
@@ -95,11 +98,17 @@ export const useGardenControls = (): GardenControlValues =>
       },
     }),
     Fog: folder({
-      fogDensity: {
-        value: GARDEN.fog.density,
+      fogNear: {
+        value: GARDEN.fog.near,
         min: 0,
-        max: 0.2,
-        step: 0.005,
+        max: 80,
+        step: 1,
+      },
+      fogFar: {
+        value: GARDEN.fog.far,
+        min: 1,
+        max: 100,
+        step: 1,
       },
     }),
   });
