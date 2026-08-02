@@ -14,8 +14,7 @@ interface NavbarContainerProps {
   isOpen: boolean;
 }
 
-const NavbarContainer = ({ isOpen }: NavbarContainerProps) => {
-  return (
+const NavbarContainer = ({ isOpen }: NavbarContainerProps) => (
     <AnimatePresence initial={false}>
       {isOpen && (
         <LazyMotion features={loadFeatures}>
@@ -53,6 +52,5 @@ const NavbarContainer = ({ isOpen }: NavbarContainerProps) => {
       )}
     </AnimatePresence>
   );
-};
 
 export default NavbarContainer;

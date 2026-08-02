@@ -6,7 +6,6 @@ const useAnimatedCursor = (frames: string[], interval = 150) => {
 
     let i = 0;
     let raf: number | null = null;
-    let lastTime = Date.now();
 
     const updateCursor = () => {
       document.body.style.cursor = `url(${frames[i]}), auto`;

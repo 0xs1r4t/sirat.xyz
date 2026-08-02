@@ -1,7 +1,6 @@
 "use client";
 
 import {
-  useCallback,
   useRef,
   useMemo,
   useEffect,
@@ -38,7 +37,7 @@ const INTERACTIVE_SELECTOR = "button, a, input, textarea";
 
 // Helpers: color conversion, device detection, theme detection
 
-function hsbToRgb(h: number, s: number, b: number): [number, number, number] {
+const hsbToRgb = (h: number, s: number, b: number): [number, number, number] => {
   h /= 360;
   const c = b * s;
   const x = c * (1 - Math.abs(((h * 6) % 2) - 1));
@@ -56,28 +55,25 @@ function hsbToRgb(h: number, s: number, b: number): [number, number, number] {
               ? [x, 0, c]
               : [c, 0, x];
   return [r + m, g + m, blue + m];
-}
+};
 
-function isMobileDevice(): boolean {
-  return (
-    /android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini/.test(
-      navigator.userAgent.toLowerCase(),
-    ) ||
-    "ontouchstart" in window ||
-    window.innerWidth <= 768
-  );
-}
+const isMobileDevice = (): boolean =>
+  /android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini/.test(
+    navigator.userAgent.toLowerCase(),
+  ) ||
+  "ontouchstart" in window ||
+  window.innerWidth <= 768;
 
-function getActiveTheme(): Theme {
+const getActiveTheme = (): Theme => {
   const found = Array.from(document.documentElement.classList).find(
     (cls): cls is Theme => (VALID_THEMES as readonly string[]).includes(cls),
   );
   return found ?? DEFAULT_THEME;
-}
+};
 
 // Hooks: theme detection and pointer tracking
 
-function useTheme(): Theme {
+const useTheme = (): Theme => {
   const [theme, setTheme] = useState<Theme>(DEFAULT_THEME);
 
   useEffect(() => {
@@ -92,9 +88,9 @@ function useTheme(): Theme {
   }, []);
 
   return theme;
-}
+};
 
-function usePointer(): React.MutableRefObject<{ x: number; y: number }> {
+const usePointer = (): React.MutableRefObject<{ x: number; y: number }> => {
   const pointer = useRef({ x: 0, y: 0 });
 
   useEffect(() => {
@@ -118,7 +114,7 @@ function usePointer(): React.MutableRefObject<{ x: number; y: number }> {
   }, []);
 
   return pointer;
-}
+};
 
 // MouseTrail component: sets up canvas and global event handling
 
@@ -135,6 +131,11 @@ const MouseTrail = ({ className }: { className?: string }) => {
   return (
     <div
       aria-hidden="true"
+      // Stable hook for the screenshot harness (scripts/garden-capture.mjs)
+      // to hide this layer — with no real cursor movement in headless
+      // capture, the trail's default (0,0) pointer renders a colored blob
+      // in the corner that has nothing to do with the garden underneath.
+      id="mouse-trail-root"
       className={className}
       style={{
         position: "fixed",

@@ -42,20 +42,20 @@ const THEME_TINTS: Record<Theme, { tint: THREE.Vector3; contrast: number }> = {
 
 const VIDEO_EXTENSIONS = /\.(mp4|webm|ogg|mov|gif)$/i;
 
-export function isVideoSrc(src: string): boolean {
-  return VIDEO_EXTENSIONS.test(src);
-}
+/** Detects whether a media `src` is a video, by file extension. */
+export const isVideoSrc = (src: string): boolean =>
+  VIDEO_EXTENSIONS.test(src);
 
 // Helpers
 
-function getActiveTheme(): Theme {
+const getActiveTheme = (): Theme => {
   const found = Array.from(document.documentElement.classList).find(
     (cls): cls is Theme => (VALID_THEMES as readonly string[]).includes(cls),
   );
   return found ?? DEFAULT_THEME;
-}
+};
 
-function useTheme(): Theme {
+const useTheme = (): Theme => {
   const [theme, setTheme] = useState<Theme>(DEFAULT_THEME);
   useEffect(() => {
     setTheme(getActiveTheme());
@@ -67,9 +67,9 @@ function useTheme(): Theme {
     return () => obs.disconnect();
   }, []);
   return theme;
-}
+};
 
-function useContainerSize(ref: React.RefObject<HTMLDivElement | null>) {
+const useContainerSize = (ref: React.RefObject<HTMLDivElement | null>) => {
   const [size, setSize] = useState({ width: 0, height: 0 });
   useEffect(() => {
     if (!ref.current) return;
@@ -81,10 +81,11 @@ function useContainerSize(ref: React.RefObject<HTMLDivElement | null>) {
     return () => obs.disconnect();
   }, [ref]);
   return size;
-}
+};
 
 // Props
 
+/** Props for {@link DitherMedia}. */
 export interface DitherMediaProps {
   src: string;
   alt: string;
@@ -102,6 +103,7 @@ export interface DitherMediaProps {
 
 // DitherMedia
 
+/** Renders an image or video through a WebGL dither effect, themed to the active palette. */
 export default function DitherMedia({
   src,
   alt,
@@ -134,7 +136,7 @@ export default function DitherMedia({
   useEffect(() => {
     if (ready && wrapperRef.current) {
       wrapperRef.current.style.display = "none";
-      wrapperRef.current.offsetHeight; // trigger reflow
+      void wrapperRef.current.offsetHeight; // trigger reflow
       wrapperRef.current.style.display = "";
     }
   }, [ready]);
@@ -200,6 +202,7 @@ export default function DitherMedia({
           style={{ display: "none" }}
         />
       ) : (
+        // eslint-disable-next-line @next/next/no-img-element -- hidden texture source for WebGL, not a displayed image
         <img
           ref={imgRef}
           src={src}
@@ -267,7 +270,7 @@ interface DitherMeshProps {
   isDecorative?: boolean;
 }
 
-function DitherMesh({
+const DitherMesh = ({
   mediaEl,
   pattern,
   intensity,
@@ -278,7 +281,7 @@ function DitherMesh({
   mediaWidth,
   mediaHeight,
   isVideo,
-}: DitherMeshProps) {
+}: DitherMeshProps) => {
   const { invalidate } = useThree();
 
   // Compute object-cover UV scale so the video fills the canvas without stretching
@@ -369,4 +372,4 @@ function DitherMesh({
       <primitive object={material} attach="material" />
     </mesh>
   );
-}
+};

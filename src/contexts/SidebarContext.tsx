@@ -2,8 +2,6 @@
 
 import React, { createContext, useContext, useState, ReactNode } from "react";
 
-type SidebarType = "left" | "right" | null;
-
 interface SidebarContextType {
   leftOpen: boolean;
   rightOpen: boolean;
@@ -13,7 +11,8 @@ interface SidebarContextType {
 
 const SidebarContext = createContext<SidebarContextType | undefined>(undefined);
 
-export function SidebarProvider({ children }: { children: ReactNode }) {
+/** Tracks left/right sidebar open state; closes the other on small screens. */
+export const SidebarProvider = ({ children }: { children: ReactNode }) => {
   const [leftOpen, setLeftOpen] = useState(false);
   const [rightOpen, setRightOpen] = useState(false);
 
@@ -44,12 +43,13 @@ export function SidebarProvider({ children }: { children: ReactNode }) {
       {children}
     </SidebarContext.Provider>
   );
-}
+};
 
-export function useSidebar() {
+/** Reads the shared sidebar state; must be called under `SidebarProvider`. */
+export const useSidebar = () => {
   const context = useContext(SidebarContext);
   if (context === undefined) {
     throw new Error("useSidebar must be used within a SidebarProvider");
   }
   return context;
-}
+};

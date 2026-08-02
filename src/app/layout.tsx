@@ -31,8 +31,7 @@ const MouseTrail = React.lazy(() => import("@/graphics/Trail/Mouse"));
 export const metadata: Metadata = myMetadata;
 export const viewport: Viewport = myViewport;
 
-const RootLayout = ({ children }: Readonly<{ children: React.ReactNode }>) => {
-  return (
+const RootLayout = ({ children }: Readonly<{ children: React.ReactNode }>) => (
     <html lang="en" suppressHydrationWarning>
       <body
         className={cn(
@@ -81,6 +80,5 @@ const RootLayout = ({ children }: Readonly<{ children: React.ReactNode }>) => {
       </body>
     </html>
   );
-};
 
 export default RootLayout;

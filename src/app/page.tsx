@@ -1,13 +1,27 @@
 import React from "react";
-import Link from "next/link";
-import Name from "@/components/Landing/Name";
-import { Icons } from "@/components/Icons";
+import { getPublishedPosts } from "@/lib/markdown";
+import type { GardenPost } from "@/lib/garden/meadow";
+import Garden from "@graphics/Garden/Garden";
 
-const Home = () => {
+const Home = async () => {
+  const posts = await getPublishedPosts();
+
+  // Only the serializable fields the garden needs cross to the client.
+  const gardenPosts: GardenPost[] = posts.map(
+    ({ slug, title, description, tags, createdAt, status }) => ({
+      slug,
+      title,
+      description,
+      tags,
+      createdAt,
+      status,
+    }),
+  );
+
   return (
     <div className="flex flex-col items-center justify-center h-[75vh]">
-      <Name />
-      <p>
+      <Garden posts={gardenPosts} />
+      {/* <p>
         <Link
           aria-label="garden"
           href="/garden"
@@ -18,8 +32,8 @@ const Home = () => {
           </span>
           &nbsp;digital garden
         </Link>{" "}
-      </p>
-      <p>
+      </p> */}
+      {/* <p>
         <Link
           aria-label="graphics"
           href="/graphics"
@@ -30,7 +44,8 @@ const Home = () => {
           </span>
           &nbsp;visual experiments
         </Link>{" "}
-      </p>
+      </p> */}
+      {/* <IntroCard /> */}
     </div>
   );
 };
