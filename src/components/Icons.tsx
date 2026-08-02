@@ -2,71 +2,125 @@ import Image from "next/image";
 
 type IconProps = React.HTMLAttributes<SVGElement>;
 
+// public/icons/pixel/*-{size}px.PNG — generated from the 64x64 source PNGs
+// via nearest-neighbor resampling (`npm run generate:pixel-icons`; re-run
+// after adding an icon or changing the size ladder). Plain <img>, not
+// next/image: we want these bytes served identically to every browser,
+// untouched by Next's on-the-fly optimizer, with the browser doing DPR
+// selection via srcSet rather than any server-side resizing.
+const PIXEL_ICON_SIZES = [20, 32, 40, 48, 64, 96, 128] as const;
+
+function pixelIconSrcSet(name: string, baseSize: number) {
+  const sizeFor = (multiplier: number) =>
+    PIXEL_ICON_SIZES.find((size) => size >= baseSize * multiplier) ??
+    PIXEL_ICON_SIZES[PIXEL_ICON_SIZES.length - 1];
+  const srcFor = (size: number) => `/icons/pixel/${name}/${name}-${size}px.PNG`;
+
+  return {
+    src: srcFor(sizeFor(1)),
+    srcSet: [1, 2, 3].map((m) => `${srcFor(sizeFor(m))} ${m}x`).join(", "),
+  };
+}
+
 export const Icons = {
-  home: (props: { size: number }) => (
-    <Image
-      aria-hidden="true"
-      width={props.size}
-      height={props.size}
-      src="/icons/pixel/HOUSE.svg"
-      alt="home icon"
-    />
-  ),
-  digiGarden: (props: { size: number }) => (
-    <Image
-      aria-hidden="true"
-      width={props.size}
-      height={props.size}
-      src="/icons/pixel/DIGIGARDEN.svg"
-      alt="digital garden icon"
-    />
-  ),
-  palette: (props: { size: number }) => (
-    <Image
-      aria-hidden="true"
-      width={props.size}
-      height={props.size}
-      src="/icons/pixel/PALETTE.svg"
-      alt="palette icon"
-    />
-  ),
-  matcha: () => (
-    <Image
-      aria-hidden="true"
-      width={22}
-      height={22}
-      src="/icons/pixel/MATCHA.svg"
-      alt="strawberry matcha theme icon"
-    />
-  ),
-  iceCream: () => (
-    <Image
-      aria-hidden="true"
-      width={22}
-      height={22}
-      src="/icons/pixel/ICECREAM.svg"
-      alt="neopolitan ice-cream theme icon"
-    />
-  ),
-  cheesecake: () => (
-    <Image
-      aria-hidden="true"
-      width={22}
-      height={22}
-      src="/icons/pixel/CHEESECAKE.svg"
-      alt="blueberry cheesecake theme icon"
-    />
-  ),
-  link: (props: { size: number }) => (
-    <Image
-      aria-hidden="true"
-      width={props.size}
-      height={props.size}
-      src="/icons/pixel/LINK.svg"
-      alt="link icon"
-      className="blend-link"
-    />
-  ),
+  home: (props: { size: number }) => {
+    const { src, srcSet } = pixelIconSrcSet("HOUSE", props.size);
+    return (
+      <img
+        aria-hidden="true"
+        width={props.size}
+        height={props.size}
+        src={src}
+        srcSet={srcSet}
+        alt="home icon"
+        className="pixel-icon"
+      />
+    );
+  },
+  digiGarden: (props: { size: number }) => {
+    const { src, srcSet } = pixelIconSrcSet("DIGIGARDEN", props.size);
+    return (
+      <img
+        aria-hidden="true"
+        width={props.size}
+        height={props.size}
+        src={src}
+        srcSet={srcSet}
+        alt="digital garden icon"
+        className="pixel-icon"
+      />
+    );
+  },
+  palette: (props: { size: number }) => {
+    const { src, srcSet } = pixelIconSrcSet("PALETTE", props.size);
+    return (
+      <img
+        aria-hidden="true"
+        width={props.size}
+        height={props.size}
+        src={src}
+        srcSet={srcSet}
+        alt="palette icon"
+        className="pixel-icon"
+      />
+    );
+  },
+  matcha: () => {
+    const { src, srcSet } = pixelIconSrcSet("MATCHA", 22);
+    return (
+      <img
+        aria-hidden="true"
+        width={22}
+        height={22}
+        src={src}
+        srcSet={srcSet}
+        alt="strawberry matcha theme icon"
+        className="pixel-icon"
+      />
+    );
+  },
+  iceCream: () => {
+    const { src, srcSet } = pixelIconSrcSet("ICECREAM", 22);
+    return (
+      <img
+        aria-hidden="true"
+        width={22}
+        height={22}
+        src={src}
+        srcSet={srcSet}
+        alt="neopolitan ice-cream theme icon"
+        className="pixel-icon"
+      />
+    );
+  },
+  cheesecake: () => {
+    const { src, srcSet } = pixelIconSrcSet("CHEESECAKE", 22);
+    return (
+      <img
+        aria-hidden="true"
+        width={22}
+        height={22}
+        src={src}
+        srcSet={srcSet}
+        alt="blueberry cheesecake theme icon"
+        className="pixel-icon"
+      />
+    );
+  },
+  link: (props: { size: number }) => {
+    const { src, srcSet } = pixelIconSrcSet("LINK", props.size);
+    return (
+      <img
+        aria-hidden="true"
+        width={props.size}
+        height={props.size}
+        src={src}
+        srcSet={srcSet}
+        alt="link icon"
+        className="pixel-icon blend-link"
+      />
+    );
+  },
   singleChevron: (props: IconProps) => (
     <svg
       aria-hidden="true"

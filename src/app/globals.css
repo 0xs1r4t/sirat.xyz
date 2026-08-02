@@ -276,6 +276,15 @@
     text-wrap: balance;
   }
 
+  /* Pixel-art icons (public/icons/pixel/*-{size}px.PNG): force nearest-
+     neighbor scaling so the browser never smooths/blurs the source pixels.
+     Without this, browsers fall back to their own upscale filter when a
+     served size doesn't exactly match the rendered size. */
+  .pixel-icon {
+    image-rendering: pixelated;
+    image-rendering: crisp-edges; /* Firefox fallback; pixelated wins where both are supported */
+  }
+
   .animate-paused {
     animation-play-state: paused;
   }
