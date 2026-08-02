@@ -11,7 +11,7 @@ import React, {
 } from "react";
 import { Canvas, extend, useFrame, useThree } from "@react-three/fiber";
 import type { ConstructorRepresentation } from "@react-three/fiber";
-import { OrbitControls } from "@react-three/drei";
+import { OrbitControls, PerformanceMonitor } from "@react-three/drei";
 import type { OrbitControls as OrbitControlsImpl } from "three-stdlib";
 // The webgpu entry point is a superset of "three" (same core classes —
 // Vector3, Color, Raycaster, etc. — plus WebGPURenderer and the Node
@@ -39,6 +39,12 @@ import {
   GARDEN_CONTROL_DEFAULTS,
   type GardenControlValues,
 } from "@graphics/Garden/gardenControlValues";
+import {
+  DEVICE_TIER_PARAMS,
+  demoteTier,
+  detectDeviceTier,
+  type DeviceTier,
+} from "@graphics/Garden/deviceTier";
 
 // Dev-only: Leva's panel + bundle only loads for visitors who are actually
 // in debug mode (see the `debug` state in Scene below), not every hero load.
@@ -77,10 +83,23 @@ const GardenRig = ({
   onHoverPost,
   onFocusPost,
   controls,
-}: GardenSceneProps & { controls: GardenControlValues }) => {
+  farDistance,
+  windOctaves,
+}: GardenSceneProps & {
+  controls: GardenControlValues;
+  /** LOD cull distance (plan 5.2), device-tier-driven (plan 5.4). */
+  farDistance: number;
+  /** Wind octave count (plan 5.4) — low tier passes 2 instead of 3. */
+  windOctaves: 2 | 3;
+}) => {
   const palette = useGardenTheme();
   const camera = useThree((s) => s.camera);
   const gl = useThree((s) => s.gl);
+  // Same reasoning as Foliage.tsx's Flowers: under frameloop="demand" (plan
+  // 5.5) the camera focus-lerp and tooltip DOM positioning below mutate
+  // things the reconciler never sees, so they have to request their own
+  // frames while there's still per-frame work to do.
+  const invalidate = useThree((s) => s.invalidate);
 
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
   const hoveredRef = useRef<number | null>(null);
@@ -154,22 +173,26 @@ const GardenRig = ({
   }, [camera, eye, target]);
 
   // ── Focus poses: computed once per heads/terrain change ────────────────────
-  const focusPoses = useMemo(() => heads.map((head) => {
-      const dirFromCenter = new THREE.Vector3(head.x, 0, head.z);
-      const len = dirFromCenter.length();
-      const backDir =
-        len > 0.001
-          ? dirFromCenter.clone().normalize()
-          : new THREE.Vector3(0, 0, 1);
+  const focusPoses = useMemo(
+    () =>
+      heads.map((head) => {
+        const dirFromCenter = new THREE.Vector3(head.x, 0, head.z);
+        const len = dirFromCenter.length();
+        const backDir =
+          len > 0.001
+            ? dirFromCenter.clone().normalize()
+            : new THREE.Vector3(0, 0, 1);
 
-      const eyePos = new THREE.Vector3(
-        head.x + backDir.x * FOCUS_DISTANCE,
-        head.y + FOCUS_HEIGHT,
-        head.z + backDir.z * FOCUS_DISTANCE,
-      );
-      const lookAt = new THREE.Vector3(head.x, head.y, head.z);
-      return { eyePos, lookAt };
-    }), [heads]);
+        const eyePos = new THREE.Vector3(
+          head.x + backDir.x * FOCUS_DISTANCE,
+          head.y + FOCUS_HEIGHT,
+          head.z + backDir.z * FOCUS_DISTANCE,
+        );
+        const lookAt = new THREE.Vector3(head.x, head.y, head.z);
+        return { eyePos, lookAt };
+      }),
+    [heads],
+  );
 
   const clearFocus = useCallback(() => {
     focusedRef.current = null;
@@ -298,6 +321,7 @@ const GardenRig = ({
         tip.style.transform = "";
         tip.style.visibility = "visible";
       }
+      invalidate(); // keep easing toward the focus pose under frameloop="demand"
       return;
     }
 
@@ -325,6 +349,7 @@ const GardenRig = ({
 
     tip.style.transform = `translate(${px - w / 2}px, ${py}px)`;
     tip.style.visibility = behind ? "hidden" : "visible";
+    invalidate(); // keep the tooltip tracking the flower under frameloop="demand"
   });
 
   return (
@@ -345,6 +370,8 @@ const GardenRig = ({
           tuftHeight={tuftHeight}
           slopeThreshold={slopeThreshold}
           fogDensity={fogDensity}
+          farDistance={farDistance}
+          windOctaves={windOctaves}
         />
         <Flowers
           posts={posts}
@@ -354,6 +381,7 @@ const GardenRig = ({
           windSpeed={reducedMotion ? 0 : flowerWindSpeed}
           windStrength={reducedMotion ? 0 : flowerWindStrength}
           fogDensity={fogDensity}
+          windOctaves={windOctaves}
         />
       </Suspense>
       <OrbitControls
@@ -382,6 +410,40 @@ const isGardenDebugMode = () => {
 export default function Scene(props: GardenSceneProps) {
   const [debug] = useState(isGardenDebugMode);
 
+  // Device tiers (plan 5.4): heuristic guess on mount, demoted at runtime by
+  // PerformanceMonitor below if FPS actually sags — the heuristic doesn't
+  // need to be perfect, it just needs a reasonable starting point.
+  const [tier, setTier] = useState<DeviceTier>(detectDeviceTier);
+  const tierParams = DEVICE_TIER_PARAMS[tier];
+
+  // Production visitors get the tier-picked grass count; debug mode keeps
+  // full manual control via Leva regardless of tier (its grassCount slider
+  // overrides this). farDistance/windOctaves/DPR are tier-driven either way
+  // — they're new knobs 5.4 adds, not previously exposed via Leva.
+  const nonDebugControls = useMemo(
+    () => ({ ...GARDEN_CONTROL_DEFAULTS, grassCount: tierParams.grassCount }),
+    [tierParams.grassCount],
+  );
+
+  // Plan 5.5 — don't render what nobody sees. Tab hidden → stop the
+  // frameloop entirely ("never"); reduced-motion (wind already zeroed
+  // elsewhere) → only re-render on camera/hover changes ("demand") instead
+  // of a continuous 60fps loop for an otherwise-static scene. Tab-hidden
+  // wins over reduced-motion since there's nothing to render either way.
+  const [tabHidden, setTabHidden] = useState(false);
+  useEffect(() => {
+    const onVisibility = () => setTabHidden(document.hidden);
+    onVisibility();
+    document.addEventListener("visibilitychange", onVisibility);
+    return () => document.removeEventListener("visibilitychange", onVisibility);
+  }, []);
+
+  const frameloop: "always" | "demand" | "never" = tabHidden
+    ? "never"
+    : props.reducedMotion
+      ? "demand"
+      : "always";
+
   return (
     <Canvas
       gl={async (defaultProps) => {
@@ -393,6 +455,7 @@ export default function Scene(props: GardenSceneProps) {
           // GPU timestamp queries (docs/garden-perf-benchmark.md) have a
           // small overhead — only pay it in debug mode, never for visitors.
           trackTimestamp: debug,
+          // forceWebGL: true, // fallback to WebGL if WebGPU isn't available
         });
         await renderer.init();
         renderer.toneMapping = THREE.NoToneMapping;
@@ -400,19 +463,36 @@ export default function Scene(props: GardenSceneProps) {
         renderer.setClearColor(0x000000, 0);
         return renderer;
       }}
-      dpr={[1, 2]}
+      dpr={tierParams.dpr}
+      frameloop={frameloop}
       camera={{ fov: GARDEN.camera.fov, near: 0.1, far: 150 }}
       style={{ width: "100%", height: "100%", background: "transparent" }}
     >
+      {/* Runtime safety net (plan 5.4): demote a tier if FPS sags. Skipped
+          in debug mode so manual Leva tuning stays deterministic instead of
+          fighting an automatic demotion mid-session. */}
+      {!debug && <PerformanceMonitor onDecline={() => setTier(demoteTier)} />}
       {debug ? (
         <Suspense fallback={null}>
           <LevaGardenControls
-            render={(controls) => <GardenRig {...props} controls={controls} />}
+            render={(controls) => (
+              <GardenRig
+                {...props}
+                controls={controls}
+                farDistance={tierParams.farDistance}
+                windOctaves={tierParams.windOctaves}
+              />
+            )}
           />
           <GpuTimer />
         </Suspense>
       ) : (
-        <GardenRig {...props} controls={GARDEN_CONTROL_DEFAULTS} />
+        <GardenRig
+          {...props}
+          controls={nonDebugControls}
+          farDistance={tierParams.farDistance}
+          windOctaves={tierParams.windOctaves}
+        />
       )}
     </Canvas>
   );

@@ -52,8 +52,8 @@ const simplexNoise = Fn(([p]: [any]) => {
 });
 
 /**
- * 3-octave counter-scrolling wind, ported verbatim from
- * grass.vert/flower.vert's shared wind block.
+ * Counter-scrolling wind, ported verbatim from grass.vert/flower.vert's
+ * shared wind block (3-octave in the original).
  *
  * Returns a vec4 packing the world-space XZ offset plus the
  * (wind1+wind2)/2 "WindInfluence" used for shimmer in the fragment
@@ -62,42 +62,59 @@ const simplexNoise = Fn(([p]: [any]) => {
  * `heightInfluence` is the caller's y²-style bend factor (quadratic — tips
  * sway, roots stay planted) and `variationSeed` breaks per-instance
  * uniformity (grass: windPhase; flowers: instanceRand * 2π).
+ *
+ * `octaveCount` is a plain JS number, not a TSL node: it's read once, at
+ * material-build time, to decide which `simplexNoise()` calls even get
+ * added to the shader graph — the low device tier's "2 octaves instead of
+ * 3" (plan 5.4) needs wind3 to not exist in the compiled shader at all, not
+ * just be branched around at runtime. Because of that this has to be a
+ * factory (`makeWind(2 | 3)`) rather than a single `Fn` taking octaveCount
+ * as one more argument — `Fn`'s parameters are shader-graph inputs, which
+ * would turn octaveCount into a runtime value and defeat the point.
  */
-export const computeWind = Fn(
-  ([instanceOffset, windSpeed, windStrength, heightInfluence, variationSeed]: [
-    any,
-    any,
-    any,
-    any,
-    any,
-  ]) => {
-    const windUV: any = instanceOffset.xz
-      .mul(0.5)
-      .add(time.mul(windSpeed).mul(vec2(0.6, 0.4)));
+const makeWind = (octaveCount: 2 | 3) =>
+  Fn(
+    ([instanceOffset, windSpeed, windStrength, heightInfluence, variationSeed]: [
+      any,
+      any,
+      any,
+      any,
+      any,
+    ]) => {
+      const windUV: any = instanceOffset.xz
+        .mul(0.5)
+        .add(time.mul(windSpeed).mul(vec2(0.6, 0.4)));
 
-    const wind1: any = simplexNoise(windUV).mul(0.5).add(0.5);
-    const wind2: any = simplexNoise(windUV.mul(2.5).add(time.mul(0.8)))
-      .mul(0.5)
-      .add(0.5);
-    const wind3: any = simplexNoise(windUV.mul(0.8).sub(time.mul(0.3)))
-      .mul(0.5)
-      .add(0.5);
-    const windNoise: any = wind1
-      .mul(0.5)
-      .add(wind2.mul(0.3))
-      .add(wind3.mul(0.2))
-      .sub(0.5);
+      const wind1: any = simplexNoise(windUV).mul(0.5).add(0.5);
+      const wind2: any = simplexNoise(windUV.mul(2.5).add(time.mul(0.8)))
+        .mul(0.5)
+        .add(0.5);
 
-    let windDirection: any = vec2(
-      windNoise.mul(windStrength).mul(heightInfluence),
-      windNoise.mul(windStrength).mul(0.6).mul(heightInfluence),
-    );
+      let windNoise: any;
+      if (octaveCount >= 3) {
+        const wind3: any = simplexNoise(windUV.mul(0.8).sub(time.mul(0.3)))
+          .mul(0.5)
+          .add(0.5);
+        windNoise = wind1.mul(0.5).add(wind2.mul(0.3)).add(wind3.mul(0.2)).sub(0.5);
+      } else {
+        // 2-octave: redistribute wind3's 0.2 weight across the remaining
+        // two so the total amplitude stays roughly the same.
+        windNoise = wind1.mul(0.6).add(wind2.mul(0.4)).sub(0.5);
+      }
 
-    const variation: any = sin(variationSeed).mul(43758.5453).fract();
-    windDirection = windDirection.mul(variation.mul(0.4).add(0.8));
+      let windDirection: any = vec2(
+        windNoise.mul(windStrength).mul(heightInfluence),
+        windNoise.mul(windStrength).mul(0.6).mul(heightInfluence),
+      );
 
-    const windInfluence: any = wind1.add(wind2).mul(0.5);
+      const variation: any = sin(variationSeed).mul(43758.5453).fract();
+      windDirection = windDirection.mul(variation.mul(0.4).add(0.8));
 
-    return vec4(windDirection.x, windDirection.y, windInfluence, 0);
-  },
-);
+      const windInfluence: any = wind1.add(wind2).mul(0.5);
+
+      return vec4(windDirection.x, windDirection.y, windInfluence, 0);
+    },
+  );
+
+export const computeWind = makeWind(3);
+export const computeWindLowTier = makeWind(2);

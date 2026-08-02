@@ -23,6 +23,8 @@ export const FOLIAGE_LIGHT_DIR = new THREE.Vector3(0.3, -0.7, 0.5);
 /** Texture locations, following the existing public/images/textures layout. */
 export const TEXTURES = {
   grass: "/images/textures/Grass.png",
-  flower0: "/images/textures/flower_1.png",
-  flower1: "/images/textures/flower_2.png",
+  // Single 1024x512 atlas (flower_1.png | flower_2.png side-by-side, see
+  // scripts/generate-flower-atlas.mjs) — plan 5.3: one sample, no select
+  // between two bound textures.
+  flowersAtlas: "/images/textures/flowers_atlas.png",
 } as const;

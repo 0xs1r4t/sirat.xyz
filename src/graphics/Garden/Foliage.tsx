@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef } from "react";
-import { useFrame } from "@react-three/fiber";
+import { useFrame, useThree } from "@react-three/fiber";
 import { useTexture } from "@react-three/drei";
 import * as THREE from "three/webgpu";
 import {
@@ -14,12 +14,12 @@ import {
   float,
   greaterThanEqual,
   length,
-  lessThanEqual,
   mix,
   positionGeometry,
   texture,
   uniform,
   uv,
+  vec2,
   vec3,
 } from "three/tsl";
 
@@ -34,23 +34,36 @@ import type { GardenPalette } from "@graphics/Garden/useGardenTheme";
 import { FOLIAGE_LIGHT_DIR, TEXTURES } from "@graphics/Garden/constants";
 import { GRASS_DARK, GRASS_MID, GRASS_TIP, celShadeSmoothBands } from "@graphics/Garden/tsl/colors";
 import { applyGardenFog } from "@graphics/Garden/tsl/fog";
-import { computeWind } from "@graphics/Garden/tsl/wind";
+import { computeWind, computeWindLowTier } from "@graphics/Garden/tsl/wind";
 
 // ── Grass scatter — port of web-terrain's generatePositions ─────────────────
-// Slope-checked random scatter across the terrain slab.
-const generateGrassPositions = (
+// Slope-checked random scatter across the terrain slab, bucketed into
+// CHUNK_SIZE world-unit cells so each chunk becomes its own draw call with
+// its own bounding sphere (plan item 5.1 — chunked frustum culling).
+const CHUNK_SIZE = 8;
+
+interface GrassChunk {
+  positions: Float32Array;
+  windPhases: Float32Array;
+  count: number;
+}
+
+const generateGrassChunks = (
   count: number,
   td: TerrainData,
   seed: number,
   slopeThreshold: number,
-) => {
+): GrassChunk[] => {
   const rng = mulberry32(seed);
   const hw = (td.width * td.scale) / 2;
   const hh = (td.height * td.scale) / 2;
-  const pos: number[] = [];
-  const phases: number[] = [];
+  const buckets = new Map<
+    string,
+    { positions: number[]; phases: number[] }
+  >();
 
-  for (let i = 0; i < count * 2 && pos.length / 3 < count; i++) {
+  let placed = 0;
+  for (let i = 0; i < count * 2 && placed < count; i++) {
     const wx = rng() * td.width * td.scale - hw;
     const wz = rng() * td.height * td.scale - hh;
     const wy = sampleHeight(td, wx, wz);
@@ -59,15 +72,56 @@ const generateGrassPositions = (
     const [, ny] = sampleNormal(td, wx, wz);
     if (ny <= slopeThreshold) continue;
 
-    pos.push(wx, wy, wz);
-    phases.push(rng() * Math.PI * 2);
+    const key = `${Math.floor(wx / CHUNK_SIZE)},${Math.floor(wz / CHUNK_SIZE)}`;
+    let bucket = buckets.get(key);
+    if (!bucket) {
+      bucket = { positions: [], phases: [] };
+      buckets.set(key, bucket);
+    }
+    bucket.positions.push(wx, wy, wz);
+    bucket.phases.push(rng() * Math.PI * 2);
+    placed++;
   }
 
-  return {
-    positions: new Float32Array(pos),
-    windPhases: new Float32Array(phases),
-    count: pos.length / 3,
-  };
+  return Array.from(buckets.values()).map((b) => ({
+    positions: new Float32Array(b.positions),
+    windPhases: new Float32Array(b.phases),
+    count: b.positions.length / 3,
+  }));
+};
+
+/**
+ * A chunk's `InstancedBufferGeometry` only stores the shared quad's tiny
+ * local-space corners in its `position` attribute — three's automatic
+ * `computeBoundingSphere()` has no idea the real per-instance offsets (a
+ * separate `InstancedBufferAttribute`, not the standard `instanceMatrix`
+ * three's own culling logic knows about) spread instances across the whole
+ * chunk. Build the real one by hand from the actual scattered root
+ * positions, padded for blade height and wind sway, or frustum culling
+ * either does nothing or culls chunks that are still on screen.
+ */
+const computeChunkBoundingSphere = (
+  chunk: GrassChunk,
+  tuftWidth: number,
+  tuftHeight: number,
+): THREE.Sphere => {
+  const box = new THREE.Box3();
+  for (let i = 0; i < chunk.count; i++) {
+    box.expandByPoint(
+      new THREE.Vector3(
+        chunk.positions[i * 3],
+        chunk.positions[i * 3 + 1],
+        chunk.positions[i * 3 + 2],
+      ),
+    );
+  }
+  const windMargin = 1; // generous fixed pad for wind sway
+  box.min.x -= tuftWidth / 2 + windMargin;
+  box.max.x += tuftWidth / 2 + windMargin;
+  box.min.z -= tuftWidth / 2 + windMargin;
+  box.max.z += tuftWidth / 2 + windMargin;
+  box.max.y += tuftHeight + windMargin * 0.3; // blades grow upward from root
+  return box.getBoundingSphere(new THREE.Sphere());
 };
 
 /** Shared billboard quad, anchored at its base. */
@@ -102,17 +156,31 @@ const makeQuad = (
 // Grass — TSL port of grass.vert/grass.frag (docs/garden-webgpu-plan.md 3.5)
 // ═════════════════════════════════════════════════════════════════════════════
 
-/** Matches C++ LODConfig density carpet: 100% under 8 units, smooth falloff to farDist. */
-const computeDensityThreshold = (dist: any, nearDist: any, farDist: any) => {
+/**
+ * Full 4-tier LOD density carpet (plan item 5.2): 100% under 8 units
+ * (ultra-near), fading 1.0→0.7 out to 15 (near), 0.7→0.35 out to 35 (mid),
+ * then 0.35→0 out to `farDist` (60 by default; device tiers pass a lower
+ * value — e.g. 40 for the low tier — to thin the carpet further out).
+ * Ultra-near/near/mid breakpoints stay fixed; only farDist is tier-tunable,
+ * matching the plan's "expose farDistance per tier".
+ */
+const computeDensityThreshold = (dist: any, farDist: any) => {
   const ultraNear = float(8);
-  const tNear: any = dist.sub(ultraNear).div(float(nearDist).sub(ultraNear).max(0.001));
-  const nearVal: any = mix(1, 0.6, tNear);
-  const tFar: any = dist
-    .sub(nearDist)
-    .div(float(farDist).sub(nearDist).max(0.001))
-    .clamp(0, 1);
-  const farVal: any = mix(0.6, 0, tFar);
-  return dist.lessThan(ultraNear).select(1, dist.lessThan(nearDist).select(nearVal, farVal));
+  const near = float(15);
+  const mid = float(35);
+
+  const tNear: any = dist.sub(ultraNear).div(near.sub(ultraNear)).clamp(0, 1);
+  const nearVal: any = mix(1, 0.7, tNear);
+
+  const tMid: any = dist.sub(near).div(mid.sub(near)).clamp(0, 1);
+  const midVal: any = mix(0.7, 0.35, tMid);
+
+  const tFar: any = dist.sub(mid).div(float(farDist).sub(mid).max(0.001)).clamp(0, 1);
+  const farVal: any = mix(0.35, 0, tFar);
+
+  return dist
+    .lessThan(ultraNear)
+    .select(1, dist.lessThan(near).select(nearVal, dist.lessThan(mid).select(midVal, farVal)));
 };
 
 /**
@@ -142,6 +210,10 @@ interface GrassProps {
   tuftHeight?: number;
   slopeThreshold?: number;
   fogDensity?: number;
+  /** LOD cull distance (plan 5.2) — device tiers (5.4) pass a lower value. */
+  farDistance?: number;
+  /** Wind octave count (plan 5.4) — low tier passes 2 instead of 3. */
+  windOctaves?: 2 | 3;
 }
 
 /** Instanced grass carpet: scattered, wind-animated blades over the terrain slab. */
@@ -155,39 +227,49 @@ export const Grass = ({
   tuftHeight = GARDEN.grass.tuftHeight,
   slopeThreshold = GARDEN.grass.slopeThreshold,
   fogDensity = GARDEN.fog.density,
+  farDistance = 60,
+  windOctaves = 3,
 }: GrassProps) => {
   const grassTex = useTexture(TEXTURES.grass);
 
   const {
-    geo,
+    geometries,
     mat,
     windSpeedUniform,
     windStrengthUniform,
     fogDensityUniform,
+    farDistUniform,
   } = useMemo(() => {
     const g = GARDEN.grass;
-    const geo = makeQuad(tuftWidth, tuftHeight);
-    const data = generateGrassPositions(
-      count,
-      terrainData,
-      g.seed,
-      slopeThreshold,
-    );
-    geo.instanceCount = data.count;
-    geo.setAttribute(
-      "instanceOffset",
-      new THREE.InstancedBufferAttribute(data.positions, 3),
-    );
-    geo.setAttribute(
-      "windPhase",
-      new THREE.InstancedBufferAttribute(data.windPhases, 1),
-    );
+    const chunks = generateGrassChunks(count, terrainData, g.seed, slopeThreshold);
+
+    // One InstancedBufferGeometry per chunk, sharing the single material
+    // built below — O(chunks) draw calls (~dozens), each with a real
+    // boundingSphere so three culls whole chunks that are off-screen
+    // instead of running every instance's vertex shader every frame.
+    const geometries = chunks.map((chunk) => {
+      const geo = makeQuad(tuftWidth, tuftHeight);
+      geo.instanceCount = chunk.count;
+      geo.setAttribute(
+        "instanceOffset",
+        new THREE.InstancedBufferAttribute(chunk.positions, 3),
+      );
+      geo.setAttribute(
+        "windPhase",
+        new THREE.InstancedBufferAttribute(chunk.windPhases, 1),
+      );
+      geo.boundingSphere = computeChunkBoundingSphere(
+        chunk,
+        tuftWidth,
+        tuftHeight,
+      );
+      return geo;
+    });
 
     const windSpeedUniform = uniform(windSpeed);
     const windStrengthUniform = uniform(windStrength);
     const lightDirUniform = uniform(FOLIAGE_LIGHT_DIR.clone());
-    const nearDistUniform = uniform(14);
-    const farDistUniform = uniform(26);
+    const farDistUniform = uniform(farDistance);
     const fogColorUniform = uniform(palette.background);
     const fogDensityUniform = uniform(fogDensity);
 
@@ -209,14 +291,14 @@ export const Grass = ({
     const distFromCamera: any = length(cameraPosition.sub(instanceOffset));
     const densityThreshold = computeDensityThreshold(
       distFromCamera,
-      nearDistUniform,
       farDistUniform,
     );
     const culled = greaterThanEqual(densityHash(instanceOffset), densityThreshold);
 
     const heightFactor: any = positionGeometry.y;
     const heightInfluence: any = heightFactor.mul(heightFactor);
-    const windPacked: any = computeWind(
+    const windFn = windOctaves >= 3 ? computeWind : computeWindLowTier;
+    const windPacked: any = windFn(
       instanceOffset,
       windSpeedUniform,
       windStrengthUniform,
@@ -281,11 +363,12 @@ export const Grass = ({
     mat.opacityNode = alpha;
 
     return {
-      geo,
+      geometries,
       mat,
       windSpeedUniform,
       windStrengthUniform,
       fogDensityUniform,
+      farDistUniform,
     };
     // fogDensity intentionally omitted: it's a live-mutated uniform (see
     // the useFrame below), not a material-rebuild dependency.
@@ -300,20 +383,29 @@ export const Grass = ({
     tuftWidth,
     tuftHeight,
     slopeThreshold,
+    farDistance,
+    windOctaves,
   ]);
 
   useEffect(() => () => {
-      geo.dispose();
+      for (const geo of geometries) geo.dispose();
       mat.dispose();
-    }, [geo, mat]);
+    }, [geometries, mat]);
 
   useFrame(() => {
     windSpeedUniform.value = windSpeed;
     windStrengthUniform.value = windStrength;
     fogDensityUniform.value = fogDensity;
+    farDistUniform.value = farDistance;
   });
 
-  return <mesh geometry={geo} material={mat} frustumCulled={false} />;
+  return (
+    <>
+      {geometries.map((geo, i) => (
+        <mesh key={i} geometry={geo} material={mat} frustumCulled={true} />
+      ))}
+    </>
+  );
 };
 
 // ═════════════════════════════════════════════════════════════════════════════
@@ -328,6 +420,8 @@ interface FlowersProps {
   windSpeed?: number;
   windStrength?: number;
   fogDensity?: number;
+  /** Wind octave count (plan 5.4) — low tier passes 2 instead of 3. */
+  windOctaves?: 2 | 3;
 }
 
 /** One billboarded, wind-animated flower instance per published post. */
@@ -339,16 +433,21 @@ export const Flowers = ({
   windSpeed = GARDEN.wind.flowerSpeed,
   windStrength = GARDEN.wind.flowerStrength,
   fogDensity = GARDEN.fog.density,
+  windOctaves = 3,
 }: FlowersProps) => {
   const hoverAttrRef = useRef<THREE.InstancedBufferAttribute | null>(null);
+  // Under frameloop="demand" (plan 5.5, reduced-motion) r3f only
+  // auto-invalidates when a prop change flows through the reconciler onto
+  // an intrinsic object — the hover-scale lerp below mutates a buffer
+  // attribute directly, which the reconciler never sees, so it has to
+  // request its own frames while the transition is still moving.
+  const invalidate = useThree((s) => s.invalidate);
 
-  const flowerTex0 = useTexture(TEXTURES.flower0);
-  const flowerTex1 = useTexture(TEXTURES.flower1);
+  const flowersAtlas = useTexture(TEXTURES.flowersAtlas);
   // NodeMaterial output IS auto-encoded (linear -> display), so the
   // texture needs its normal sRGB decode back — the Phase 1 NoColorSpace
   // workaround (for the raw-output ShaderMaterial pipeline) is reverted.
-  flowerTex0.colorSpace = THREE.SRGBColorSpace;
-  flowerTex1.colorSpace = THREE.SRGBColorSpace;
+  flowersAtlas.colorSpace = THREE.SRGBColorSpace;
 
   const {
     geo,
@@ -415,7 +514,8 @@ export const Flowers = ({
     const heightFactor: any = positionGeometry.y;
     const heightInfluence: any = heightFactor.mul(heightFactor);
     const variationSeed: any = instanceRand.mul(6.2831853);
-    const windPacked: any = computeWind(
+    const windFn = windOctaves >= 3 ? computeWind : computeWindLowTier;
+    const windPacked: any = windFn(
       instanceOffset,
       windSpeedUniform,
       windStrengthUniform,
@@ -443,9 +543,14 @@ export const Flowers = ({
     mat.positionNode = fragPos;
 
     // ── Fragment ──────────────────────────────────────────────────────────
-    const tex0 = texture(flowerTex0, uv());
-    const tex1 = texture(flowerTex1, uv());
-    const texColor: any = lessThanEqual(textureIndexAttr, 0.5).select(tex0, tex1);
+    // Single atlas sample (plan 5.3) instead of sampling two bound textures
+    // and select()-ing between them: flower_1 occupies the left half of the
+    // atlas (u in [0, 0.5]), flower_2 the right half ([0.5, 1]).
+    const atlasUV: any = vec2(
+      uv().x.mul(0.5).add(textureIndexAttr.mul(0.5)),
+      uv().y,
+    );
+    const texColor: any = texture(flowersAtlas, atlasUV);
 
     const windShimmer: any = windInfluence.mul(heightFactor).mul(0.1);
     const finalColor: any = texColor.rgb.mul(
@@ -470,10 +575,10 @@ export const Flowers = ({
     posts,
     terrainData,
     palette,
-    flowerTex0,
-    flowerTex1,
+    flowersAtlas,
     windSpeed,
     windStrength,
+    windOctaves,
   ]);
 
   useEffect(() => () => {
@@ -501,7 +606,10 @@ export const Flowers = ({
         dirty = true;
       }
     }
-    if (dirty) attr.needsUpdate = true;
+    if (dirty) {
+      attr.needsUpdate = true;
+      invalidate();
+    }
   });
 
   return (
