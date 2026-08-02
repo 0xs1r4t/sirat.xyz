@@ -60,7 +60,13 @@ export default function Terrain({
     const fogFarUniform = uniform(fogFar);
 
     const mat = new THREE.MeshBasicNodeMaterial();
-    mat.side = THREE.FrontSide;
+    // DoubleSide: at higher terrain frequencies the surface folds back on
+    // itself enough that a side-on camera sees the "underside" of a face —
+    // FrontSide left that as a hole (background showing through). TSL's
+    // normalWorld already negates itself on backfaces here (three's
+    // negateOnBackSide/faceDirection, keyed off this same material.side),
+    // so the NdotL lighting below stays correct instead of inverting.
+    mat.side = THREE.DoubleSide;
 
     // No positionNode override — terrain has no vertex displacement, so the
     // material's default local→world→clip pipeline (position/normal

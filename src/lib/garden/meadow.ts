@@ -11,10 +11,10 @@ import {
  */
 export const GARDEN = {
   terrain: {
-    // 50×50 grid at 1.0 world units/cell → the original demo's footprint
-    // (fairy-forest-glade main.cpp: Terrain(50, 50, 1.0f, 5.0f)).
-    gridWidth: 50,
-    gridHeight: 50,
+    // 20×20 grid at 1.0 world units/cell → the original demo's footprint
+    // (fairy-forest-glade main.cpp: Terrain(20, 20, 1.0f, 5.0f)).
+    gridWidth: 20,
+    gridHeight: 20,
     scale: 1.0,
     heightScale: 5.0,
     octaves: 6,
@@ -23,7 +23,7 @@ export const GARDEN = {
     // adjacent vertices sample near-uncorrelated noise (jittery bumps
     // instead of rolling hills) — this is the #1 cause of the shape drift
     // from the original. See docs/garden-webgpu-plan.md item 1.1.
-    frequency: 0.075,
+    frequency: 0.2,
   },
   grass: {
     // instances/m² — matches the original's 300000 over its 100x100 demo
@@ -31,10 +31,10 @@ export const GARDEN = {
     // this times the current terrain's world-space area (width*scale ×
     // height*scale), so it stays correct as terrain size/scale change
     // instead of a literal tuned for one specific footprint (docs/features.md #2).
-    density: 30,
+    density: 50,
     tuftWidth: 0.4, // fairy-forest-glade main.cpp: Foliage(..., height=0.8, width=0.4)
     tuftHeight: 0.8,
-    slopeThreshold: 0.55,
+    slopeThreshold: 0.0, // slope threshold for grass placement (0.0 = everywhere)
     seed: 1,
   },
   flower: {
@@ -64,8 +64,8 @@ export const GARDEN = {
     // page before the terrain's edge. Not in the C++ original (no fog
     // there) — this is a web-only concession for sitting the garden on the
     // page.
-    near: 18,
-    far: 48,
+    near: 5,
+    far: 95,
   },
 } as const;
 
