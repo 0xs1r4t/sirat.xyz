@@ -10,7 +10,7 @@ type IconProps = React.HTMLAttributes<SVGElement>;
 // selection via srcSet rather than any server-side resizing.
 const PIXEL_ICON_SIZES = [20, 32, 40, 48, 64, 96, 128] as const;
 
-function pixelIconSrcSet(name: string, baseSize: number) {
+const pixelIconSrcSet = (name: string, baseSize: number) => {
   const sizeFor = (multiplier: number) =>
     PIXEL_ICON_SIZES.find((size) => size >= baseSize * multiplier) ??
     PIXEL_ICON_SIZES[PIXEL_ICON_SIZES.length - 1];
@@ -20,7 +20,7 @@ function pixelIconSrcSet(name: string, baseSize: number) {
     src: srcFor(sizeFor(1)),
     srcSet: [1, 2, 3].map((m) => `${srcFor(sizeFor(m))} ${m}x`).join(", "),
   };
-}
+};
 
 export const Icons = {
   home: (props: { size: number }) => {
