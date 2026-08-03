@@ -67,6 +67,37 @@ export const GARDEN = {
     near: 5,
     far: 95,
   },
+  trees: {
+    // Not density-scaled from the C++ ratio (that gives ~2 trees on this
+    // terrain's 20×20 footprint, too sparse to read as trees) — a small
+    // fixed count picked to frame a small hero garden instead.
+    count: 7,
+    // fairy-forest-glade tree_manager.cpp's distScale(2,4) was calibrated
+    // for its 100×100 placement terrain (distX/distZ(-50,50)) — scaled down
+    // by this terrain's 20×20 footprint (0.2x linear) so a ~4.7-unit-tall
+    // unscaled branch model (confirmed by inspecting the converted .glb's
+    // vertex bounds) reads as a tree framing a small garden, not a giant
+    // dwarfing it. 0.4-0.8 -> ~1.9-3.8 units tall, comparable to the
+    // terrain's own heightScale=5 relief.
+    scaleRange: [0.4, 0.8] as [number, number],
+    minSpacing: 4.0, // fairy-forest-glade tree_manager.cpp: minSpacing=4.0f
+    slopeThreshold: 0.7, // fairy-forest-glade tree_manager.cpp: normal.y > 0.7f
+    // Camera-corridor exclusion (plan item 4.4): the strip camera looks
+    // straight down -z from x≈0, so a full-depth center-strip exclusion —
+    // not a C++-style bounded wedge — is what actually keeps the hero view
+    // clear at any depth.
+    corridorHalfWidth: 4,
+    // Catches trees that clear the corridor's x-check but still land right
+    // next to the camera (verified visually — see placeTrees's comment).
+    cameraExclusionRadius: 6,
+    flowerExclusionRadius: 2,
+    // GenerateLeafClusters(clustersPerBranch, leavesPerCluster) — same
+    // per-type params as fairy-forest-glade main.cpp.
+    normal: { clustersPerBranch: 12, leavesPerCluster: 20 },
+    thick: { clustersPerBranch: 16, leavesPerCluster: 24 },
+    leafSeed: 42, // fairy-forest-glade tree_foliage.cpp: mt19937 rng(42)
+    placementSeed: 7,
+  },
 } as const;
 
 let cachedTerrain: TerrainData | null = null;

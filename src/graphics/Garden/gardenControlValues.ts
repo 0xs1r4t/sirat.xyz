@@ -24,6 +24,7 @@ export interface GardenControlValues {
   flowerWindStrength: number;
   fogNear: number;
   fogFar: number;
+  treeCount: number;
 }
 
 // Production visitors never load Leva (see Scene.tsx's lazy import) — this
@@ -45,4 +46,5 @@ export const GARDEN_CONTROL_DEFAULTS: GardenControlValues = {
   flowerWindStrength: GARDEN.wind.flowerStrength,
   fogNear: GARDEN.fog.near,
   fogFar: GARDEN.fog.far,
+  treeCount: GARDEN.trees.count,
 };

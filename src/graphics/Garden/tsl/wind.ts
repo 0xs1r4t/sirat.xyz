@@ -26,7 +26,8 @@ const hash2 = Fn(([p]: [any]) => {
   return sin(pp).mul(43758.5453123).fract().mul(2).sub(1) as any;
 });
 
-const simplexNoise = Fn(([p]: [any]) => {
+/** Exported for tsl/branch.ts + tsl/leaf.ts — the C++ tree shaders use this same primitive directly rather than the layered `computeWind` formula. */
+export const simplexNoise = Fn(([p]: [any]) => {
   const K1 = float(0.366025404);
   const K2 = float(0.211324865);
 

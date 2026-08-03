@@ -97,6 +97,14 @@ export const useGardenControls = (): GardenControlValues =>
         step: 0.05,
       },
     }),
+    Trees: folder({
+      treeCount: {
+        value: GARDEN.trees.count,
+        min: 0,
+        max: 16,
+        step: 1,
+      },
+    }),
     Fog: folder({
       fogNear: {
         value: GARDEN.fog.near,
