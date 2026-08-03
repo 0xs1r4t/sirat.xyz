@@ -150,30 +150,37 @@ export const placeTrees = (
   const halfHeight = (terrain.height * terrain.scale) / 2;
   const { heightScale } = terrain;
   const t = GARDEN.trees;
-  // The corridor is a flat constant (4 units) — on a terrain narrower than
-  // that, it would cover every candidate x and silently reject every
-  // attempt, contradicting computeTreeCount's "at least 1 tree" floor.
-  // Capped to half the terrain's own width so there's always room outside
-  // it; unchanged at the default 20×20 size (corridorHalfWidth=4 < 10*0.5=5).
+  // These exclusion radii are flat constants — on a terrain small enough
+  // for one of them to cover most/all of it, they'd reject every candidate
+  // and silently place nothing, contradicting computeTreeCount's "at least
+  // 1 tree" floor. Capped relative to the terrain's own extent so there's
+  // always room outside them; unchanged at the default 20×20 size (every
+  // cap below is already looser than its flat constant there).
   const corridorHalfWidth = Math.min(t.corridorHalfWidth, halfWidth * 0.5);
+  const flowerExclusionRadius = Math.min(t.flowerExclusionRadius, halfWidth * 0.3);
+  const minSpacing = Math.min(t.minSpacing, Math.max(halfWidth, halfHeight) * 0.5);
 
   const flowerHeads = layoutFlowers(posts, terrain);
   const placements: TreePlacement[] = [];
 
   // Small terrain + several rejection criteria means attempts need more
-  // headroom than the C++ original's `count * 3` to reliably hit `count`.
-  const maxAttempts = count * 20;
+  // headroom than the C++ original's `count * 3` to reliably hit `count` —
+  // and at low counts (the minimum-terrain "1 tree" case) `count * 20` is
+  // too few tries against a valid region that can be a sliver of the
+  // terrain once corridor + flower exclusion both apply, so it's floored.
+  const maxAttempts = Math.max(count * 20, 200);
 
   for (let i = 0; i < maxAttempts && placements.length < count; i++) {
     const x = (rng() * 2 - 1) * halfWidth;
     const z = (rng() * 2 - 1) * halfHeight;
+    const scale = t.scaleRange[0] + rng() * (t.scaleRange[1] - t.scaleRange[0]);
 
-    const y = sampleHeight(terrain, x, z);
-    if (y <= -999) continue; // off the heightmap
+    const centerY = sampleHeight(terrain, x, z);
+    if (centerY <= -999) continue; // off the heightmap
 
     const [, ny] = sampleNormal(terrain, x, z);
     if (ny <= t.slopeThreshold) continue;
-    if (y <= -heightScale * 0.2 || y >= heightScale * 0.8) continue;
+    if (centerY <= -heightScale * 0.2 || centerY >= heightScale * 0.8) continue;
 
     if (Math.abs(x) < corridorHalfWidth) continue;
 
@@ -188,7 +195,7 @@ export const placeTrees = (
 
     let tooCloseToFlower = false;
     for (const head of flowerHeads) {
-      if (Math.hypot(x - head.x, z - head.z) < t.flowerExclusionRadius) {
+      if (Math.hypot(x - head.x, z - head.z) < flowerExclusionRadius) {
         tooCloseToFlower = true;
         break;
       }
@@ -199,7 +206,7 @@ export const placeTrees = (
     for (const existing of placements) {
       if (
         Math.hypot(x - existing.position[0], z - existing.position[2]) <
-        t.minSpacing
+        minSpacing
       ) {
         tooCloseToTree = true;
         break;
@@ -207,9 +214,29 @@ export const placeTrees = (
     }
     if (tooCloseToTree) continue;
 
+    // Tether to the *lowest* point under the trunk's footprint, not just
+    // the center — on a sloped patch, only sampling the center still lets
+    // the uphill side of the ground rise above the trunk's base (visibly
+    // poking through) while the downhill side floats. Sampling a small
+    // ring around the center and keeping the minimum means the whole
+    // footprint sits on or below ground, at the cost of a small
+    // (invisible, grass-covered) gap on the downhill side instead of a
+    // visible clip on the uphill side.
+    const footprintRadius = scale * 0.5;
+    let y = centerY;
+    for (const [dx, dz] of [
+      [footprintRadius, 0],
+      [-footprintRadius, 0],
+      [0, footprintRadius],
+      [0, -footprintRadius],
+    ] as const) {
+      const h = sampleHeight(terrain, x + dx, z + dz);
+      if (h > -999) y = Math.min(y, h);
+    }
+
     placements.push({
       position: [x, y, z],
-      scale: t.scaleRange[0] + rng() * (t.scaleRange[1] - t.scaleRange[0]),
+      scale,
       rotationY: rng() * Math.PI * 2,
       treeType: rng() < 0.5 ? "normal" : "thick",
     });
