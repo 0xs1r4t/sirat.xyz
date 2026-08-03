@@ -130,6 +130,8 @@ const GardenRig = ({
     windStrength,
     flowerWindSpeed,
     flowerWindStrength,
+    flowerWidth,
+    flowerHeight,
     fogNear,
     fogFar,
     treeCount,
@@ -424,6 +426,8 @@ const GardenRig = ({
           hoveredIndex={focusedIndex ?? hoveredIndex}
           windSpeed={reducedMotion ? 0 : flowerWindSpeed}
           windStrength={reducedMotion ? 0 : flowerWindStrength}
+          width={flowerWidth}
+          height={flowerHeight}
           fogNear={fogNear}
           fogFar={fogFar}
           windOctaves={windOctaves}

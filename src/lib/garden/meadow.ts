@@ -68,10 +68,15 @@ export const GARDEN = {
     far: 95,
   },
   trees: {
-    // Not density-scaled from the C++ ratio (that gives ~2 trees on this
-    // terrain's 20×20 footprint, too sparse to read as trees) — a small
-    // fixed count picked to frame a small hero garden instead.
-    count: 7,
+    // Count is no longer a flat constant here — it's derived from terrain
+    // area and this density dial (trees.ts's computeTreeCount:
+    // floor((area/50)*(density/10))) so it scales automatically instead of
+    // needing to be re-picked by hand whenever the footprint changes, as it
+    // did once already when the terrain shrank from the plan's original
+    // 50×50 to the current 20×20. density=10 (the dial's max) reproduces
+    // the previous flat default of 8 trees at the current 20×20 terrain:
+    // floor((400/50)*(10/10)) = 8.
+    density: 10,
     // fairy-forest-glade tree_manager.cpp's distScale(2,4) was calibrated
     // for its 100×100 placement terrain (distX/distZ(-50,50)) — scaled down
     // by this terrain's 20×20 footprint (0.2x linear) so a ~4.7-unit-tall

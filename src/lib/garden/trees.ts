@@ -94,6 +94,24 @@ export const generateLeafClusters = (
   return leaves;
 };
 
+// The user-facing "tree density" Leva dial always runs 0-10 — this is its
+// fixed ceiling, not a config knob.
+const MAX_TREE_DENSITY = 10;
+
+/**
+ * Tree count derived from terrain area and a 0-10 density dial, replacing a
+ * flat constant so it scales with `gridWidth`/`gridHeight` instead of
+ * needing to be re-picked by hand every time the terrain footprint changes.
+ * `floor((area / 50) * (density / 10))` — e.g. a 36×50 terrain at density 4
+ * gives floor((1800/50) * 0.4) = 14 trees.
+ */
+export const computeTreeCount = (
+  gridWidth: number,
+  gridHeight: number,
+  density: number,
+): number =>
+  Math.floor(((gridWidth * gridHeight) / 50) * (density / MAX_TREE_DENSITY));
+
 /**
  * Port of `TreeManager::generateTreePositions` (tree_manager.cpp):
  * rejection-sample positions across the terrain, checking slope/height

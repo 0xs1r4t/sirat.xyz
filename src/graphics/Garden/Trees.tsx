@@ -7,7 +7,12 @@ import * as THREE from "three/webgpu";
 import { attribute, floor, mod, texture, uniform, uv, vec2, vec3 } from "three/tsl";
 import { mergeBufferGeometries } from "three-stdlib";
 
-import { placeTrees, generateLeafClusters, type TreeType } from "@/lib/garden/trees";
+import {
+  placeTrees,
+  generateLeafClusters,
+  computeTreeCount,
+  type TreeType,
+} from "@/lib/garden/trees";
 import { GARDEN, type GardenPost } from "@/lib/garden/meadow";
 import type { TerrainData } from "@/lib/garden/terrain";
 import type { GardenPalette } from "@graphics/Garden/useGardenTheme";
@@ -139,7 +144,11 @@ export default function Trees({
   terrainData,
   palette,
   posts,
-  count = GARDEN.trees.count,
+  count = computeTreeCount(
+    terrainData.width,
+    terrainData.height,
+    GARDEN.trees.density,
+  ),
   fogNear = GARDEN.fog.near,
   fogFar = GARDEN.fog.far,
   reducedMotion = false,

@@ -1,4 +1,5 @@
 import { GARDEN } from "@/lib/garden/meadow";
+import { computeTreeCount } from "@/lib/garden/trees";
 
 /**
  * Live-tunable garden parameters exposed via Leva's debug panel. Split out
@@ -22,6 +23,8 @@ export interface GardenControlValues {
   windStrength: number;
   flowerWindSpeed: number;
   flowerWindStrength: number;
+  flowerWidth: number;
+  flowerHeight: number;
   fogNear: number;
   fogFar: number;
   treeCount: number;
@@ -44,7 +47,16 @@ export const GARDEN_CONTROL_DEFAULTS: GardenControlValues = {
   windStrength: GARDEN.wind.strength,
   flowerWindSpeed: GARDEN.wind.flowerSpeed,
   flowerWindStrength: GARDEN.wind.flowerStrength,
+  flowerWidth: GARDEN.flower.width,
+  flowerHeight: GARDEN.flower.height,
   fogNear: GARDEN.fog.near,
   fogFar: GARDEN.fog.far,
-  treeCount: GARDEN.trees.count,
+  // Density-derived, not a flat constant (see trees.ts's computeTreeCount) —
+  // production visitors never resize the terrain, so this is just that
+  // formula computed once against the fixed GARDEN.terrain/trees config.
+  treeCount: computeTreeCount(
+    GARDEN.terrain.gridWidth,
+    GARDEN.terrain.gridHeight,
+    GARDEN.trees.density,
+  ),
 };

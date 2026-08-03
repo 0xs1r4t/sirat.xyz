@@ -444,6 +444,8 @@ interface FlowersProps {
   fogFar?: number;
   /** Wind octave count (plan 5.4) — low tier passes 2 instead of 3. */
   windOctaves?: 2 | 3;
+  width?: number;
+  height?: number;
 }
 
 /** One billboarded, wind-animated flower instance per published post. */
@@ -457,6 +459,8 @@ export const Flowers = ({
   fogNear = GARDEN.fog.near,
   fogFar = GARDEN.fog.far,
   windOctaves = 3,
+  width = GARDEN.flower.width,
+  height = GARDEN.flower.height,
 }: FlowersProps) => {
   const hoverAttrRef = useRef<THREE.InstancedBufferAttribute | null>(null);
   // Under frameloop="demand" (plan 5.5, reduced-motion) r3f only
@@ -485,7 +489,7 @@ export const Flowers = ({
     const placements = layoutFlowers(posts, terrainData);
     const count = placements.length;
 
-    const geo = makeQuad(GARDEN.flower.width, GARDEN.flower.height);
+    const geo = makeQuad(width, height);
     geo.instanceCount = count;
 
     const offsets = new Float32Array(count * 3);
@@ -608,6 +612,8 @@ export const Flowers = ({
     windSpeed,
     windStrength,
     windOctaves,
+    width,
+    height,
   ]);
 
   useEffect(() => () => {
