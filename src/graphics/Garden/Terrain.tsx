@@ -9,7 +9,9 @@ import type { TerrainData } from "@/lib/garden/terrain";
 import { GARDEN } from "@/lib/garden/meadow";
 import type { GardenPalette } from "@graphics/Garden/useGardenTheme";
 import {
+  DAY_BAND_MULTIPLIERS,
   DAY_LIGHT_POS,
+  NIGHT_BAND_MULTIPLIERS,
   NIGHT_MOON_DISTANCE,
   NIGHT_MOON_SPEED,
 } from "@graphics/Garden/constants";
@@ -37,7 +39,7 @@ export default function Terrain({
   fogNear = GARDEN.fog.near,
   fogFar = GARDEN.fog.far,
 }: TerrainProps) {
-  const { geo, mat, lightPosUniform, fogNearUniform, fogFarUniform } = useMemo(() => {
+  const { geo, mat, lightPosUniform, bandMulUniform, fogNearUniform, fogFarUniform } = useMemo(() => {
     const geo = new THREE.BufferGeometry();
     geo.setAttribute(
       "position",
@@ -54,6 +56,7 @@ export default function Terrain({
     // unlike the Phase 1 port, the "color" attribute isn't uploaded here.
 
     const lightPosUniform = uniform(DAY_LIGHT_POS.clone());
+    const bandMulUniform = uniform(NIGHT_BAND_MULTIPLIERS.clone());
     const heightScaleUniform = uniform(terrainData.heightScale);
     const fogColorUniform = uniform(palette.background);
     const fogNearUniform = uniform(fogNear);
@@ -80,10 +83,10 @@ export default function Terrain({
 
     const shaded = celShade4Band(
       NdotL,
-      baseColor.mul(0.4),
-      baseColor.mul(0.65),
-      baseColor.mul(0.85),
-      baseColor.mul(1.0),
+      baseColor.mul(bandMulUniform.x),
+      baseColor.mul(bandMulUniform.y),
+      baseColor.mul(bandMulUniform.z),
+      baseColor.mul(bandMulUniform.w),
     );
 
     const slope = norm.y; // 1.0 = flat, 0.0 = cliff
@@ -97,7 +100,7 @@ export default function Terrain({
       fogFarUniform,
     );
 
-    return { geo, mat, lightPosUniform, fogNearUniform, fogFarUniform };
+    return { geo, mat, lightPosUniform, bandMulUniform, fogNearUniform, fogFarUniform };
     // fogNear/fogFar intentionally omitted: they're live-mutated uniforms
     // (see the useFrame below), not material-rebuild dependencies.
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -126,8 +129,10 @@ export default function Terrain({
       lightPosUniform.value
         .copy(scratchMoonDir)
         .multiplyScalar(-NIGHT_MOON_DISTANCE);
+      bandMulUniform.value.copy(NIGHT_BAND_MULTIPLIERS);
     } else {
       lightPosUniform.value.copy(DAY_LIGHT_POS);
+      bandMulUniform.value.copy(DAY_BAND_MULTIPLIERS);
     }
 
     fogNearUniform.value = fogNear;

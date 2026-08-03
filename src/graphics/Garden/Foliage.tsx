@@ -32,7 +32,13 @@ import {
 import { mulberry32 } from "@/lib/garden/noise";
 import { layoutFlowers, GARDEN, type GardenPost } from "@/lib/garden/meadow";
 import type { GardenPalette } from "@graphics/Garden/useGardenTheme";
-import { FOLIAGE_LIGHT_DIR, TEXTURES } from "@graphics/Garden/constants";
+import {
+  DAY_FLOWER_BRIGHTNESS,
+  DAY_GRASS_BAND,
+  FOLIAGE_LIGHT_DIR,
+  NIGHT_GRASS_BAND,
+  TEXTURES,
+} from "@graphics/Garden/constants";
 import { GRASS_DARK, GRASS_MID, GRASS_TIP, celShadeSmoothBands } from "@graphics/Garden/tsl/colors";
 import { applyGardenFog } from "@graphics/Garden/tsl/fog";
 import { computeWind, computeWindLowTier } from "@graphics/Garden/tsl/wind";
@@ -241,6 +247,7 @@ export const Grass = ({
     mat,
     windSpeedUniform,
     windStrengthUniform,
+    bandMulUniform,
     fogNearUniform,
     fogFarUniform,
     farDistUniform,
@@ -275,6 +282,7 @@ export const Grass = ({
     const windSpeedUniform = uniform(windSpeed);
     const windStrengthUniform = uniform(windStrength);
     const lightDirUniform = uniform(FOLIAGE_LIGHT_DIR.clone());
+    const bandMulUniform = uniform(NIGHT_GRASS_BAND.clone());
     const farDistUniform = uniform(farDistance);
     const fogColorUniform = uniform(palette.background);
     const fogNearUniform = uniform(fogNear);
@@ -355,8 +363,8 @@ export const Grass = ({
 
     let color: any = celShadeSmoothBands(
       lightIntensity,
-      baseColor.mul(0.7),
-      baseColor.mul(1.2),
+      baseColor.mul(bandMulUniform.x),
+      baseColor.mul(bandMulUniform.y),
       4,
     );
 
@@ -374,6 +382,7 @@ export const Grass = ({
       mat,
       windSpeedUniform,
       windStrengthUniform,
+      bandMulUniform,
       fogNearUniform,
       fogFarUniform,
       farDistUniform,
@@ -403,6 +412,9 @@ export const Grass = ({
   useFrame(() => {
     windSpeedUniform.value = windSpeed;
     windStrengthUniform.value = windStrength;
+    bandMulUniform.value.copy(
+      palette.isDark.current ? NIGHT_GRASS_BAND : DAY_GRASS_BAND,
+    );
     fogNearUniform.value = fogNear;
     fogFarUniform.value = fogFar;
     farDistUniform.value = farDistance;
@@ -466,6 +478,7 @@ export const Flowers = ({
     slugs,
     windSpeedUniform,
     windStrengthUniform,
+    brightnessUniform,
     fogNearUniform,
     fogFarUniform,
   } = useMemo(() => {
@@ -509,6 +522,7 @@ export const Flowers = ({
 
     const windSpeedUniform = uniform(windSpeed);
     const windStrengthUniform = uniform(windStrength);
+    const brightnessUniform = uniform(1.0);
     const fogColorUniform = uniform(palette.background);
     const fogNearUniform = uniform(fogNear);
     const fogFarUniform = uniform(fogFar);
@@ -566,9 +580,9 @@ export const Flowers = ({
     const texColor: any = texture(flowersAtlas, atlasUV);
 
     const windShimmer: any = windInfluence.mul(heightFactor).mul(0.1);
-    const finalColor: any = texColor.rgb.mul(
-      float(1).add(windShimmer).add(instanceHover.mul(0.15)),
-    );
+    const finalColor: any = texColor.rgb
+      .mul(float(1).add(windShimmer).add(instanceHover.mul(0.15)))
+      .mul(brightnessUniform);
 
     mat.colorNode = applyGardenFog(finalColor, fragPos, fogColorUniform, fogNearUniform, fogFarUniform);
     mat.opacityNode = texColor.a;
@@ -579,6 +593,7 @@ export const Flowers = ({
       slugs: placements.map((p) => p.slug),
       windSpeedUniform,
       windStrengthUniform,
+      brightnessUniform,
       fogNearUniform,
       fogFarUniform,
     };
@@ -603,6 +618,7 @@ export const Flowers = ({
   useFrame((_, delta) => {
     windSpeedUniform.value = windSpeed;
     windStrengthUniform.value = windStrength;
+    brightnessUniform.value = palette.isDark.current ? 1.0 : DAY_FLOWER_BRIGHTNESS;
     fogNearUniform.value = fogNear;
     fogFarUniform.value = fogFar;
 

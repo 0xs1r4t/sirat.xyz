@@ -2,15 +2,52 @@ import * as THREE from "three";
 
 /**
  * Terrain directional light — two presets picked per theme by Terrain.tsx:
- *  - day: static high overhead light for the light themes (strawberry-matcha,
- *    neopolitan-ice-cream) — cel bands sit in the bright/highlight range.
+ *  - day: static, low-elevation (~26°) light for the light themes
+ *    (strawberry-matcha, neopolitan-ice-cream) — deliberately *not* overhead.
+ *    A near-vertical light barely changes angle across gentle rolling
+ *    slopes (cos(θ) is flat near its peak), which is exactly why the old
+ *    (20, 30, 10) value read as flat/uniformly bright instead of banded —
+ *    see garden-webgpu-plan.md's diagnosis table, row B. An oblique angle
+ *    sits nearer the sensitive part of the cosine curve, so slope
+ *    variation actually crosses celShade4Band's thresholds.
  *  - night: animated moon below the horizon for the dark theme
  *    (blueberry-lemon), ported verbatim from fairy-forest-glade's main.cpp —
  *    the source of the original's moody, shadow-banded terrain.
+ * Open Decision #1 (garden-webgpu-plan.md §7): day is intentionally static,
+ * not a mirrored/animated sun — day and night only need to *read* as a
+ * coherent pair, not share a literal light rig.
  */
-export const DAY_LIGHT_POS = new THREE.Vector3(20, 30, 10);
+export const DAY_LIGHT_POS = new THREE.Vector3(14, 9, 11);
 export const NIGHT_MOON_DISTANCE = 20;
 export const NIGHT_MOON_SPEED = 0.05;
+
+/**
+ * celShade4Band's (shadow, dark, mid, light) multipliers on the terrain's
+ * height-band base color — night keeps the original C++ ratios; day is a
+ * separately hand-tuned, brighter set (not a flat post-multiply) so the
+ * lift is concentrated in the shadow/dark bands rather than pushing the
+ * already-bright light band toward clipping. Packed as vec4 so Terrain.tsx
+ * can swap the whole set with one uniform mutation per theme, matching
+ * DAY_LIGHT_POS/moon's no-material-rebuild pattern.
+ */
+export const NIGHT_BAND_MULTIPLIERS = new THREE.Vector4(0.4, 0.65, 0.85, 1.0);
+export const DAY_BAND_MULTIPLIERS = new THREE.Vector4(0.6, 0.8, 0.95, 1.0);
+
+/**
+ * Grass's celShadeSmoothBands (dark, light) multipliers — same day/night
+ * split as the terrain bands above, for the same reason (Open Decision #1
+ * covers foliage too, not just terrain).
+ */
+export const NIGHT_GRASS_BAND = new THREE.Vector2(0.7, 1.2);
+export const DAY_GRASS_BAND = new THREE.Vector2(0.9, 1.4);
+
+/**
+ * Flowers have no directional-lighting model at all (item J: textures are
+ * sampled and written raw, matching the C++ original exactly) — so their
+ * day lift is a flat brightness multiplier on the sampled atlas color
+ * rather than a band retune. Night is implicitly 1.0 (untouched).
+ */
+export const DAY_FLOWER_BRIGHTNESS = 1.15;
 
 /**
  * Foliage (grass/flower) directional light — ported verbatim from
