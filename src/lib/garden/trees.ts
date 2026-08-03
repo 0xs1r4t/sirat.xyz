@@ -104,13 +104,24 @@ const MAX_TREE_DENSITY = 10;
  * needing to be re-picked by hand every time the terrain footprint changes.
  * `floor((area / 50) * (density / 10))` — e.g. a 36×50 terrain at density 4
  * gives floor((1800/50) * 0.4) = 14 trees.
+ *
+ * Floored at 1 (not 0) whenever density is actually turned on — the raw
+ * formula rounds all the way down to 0 for small terrain/density
+ * combinations (e.g. the smallest terrain, 5×5, gives floor(0.5)=0 even at
+ * density=10), which reads as "the density dial does nothing" rather than
+ * "there's just not much room". density=0 still means 0 trees.
  */
 export const computeTreeCount = (
   gridWidth: number,
   gridHeight: number,
   density: number,
-): number =>
-  Math.floor(((gridWidth * gridHeight) / 50) * (density / MAX_TREE_DENSITY));
+): number => {
+  if (density <= 0) return 0;
+  return Math.max(
+    1,
+    Math.floor(((gridWidth * gridHeight) / 50) * (density / MAX_TREE_DENSITY)),
+  );
+};
 
 /**
  * Port of `TreeManager::generateTreePositions` (tree_manager.cpp):
@@ -139,6 +150,12 @@ export const placeTrees = (
   const halfHeight = (terrain.height * terrain.scale) / 2;
   const { heightScale } = terrain;
   const t = GARDEN.trees;
+  // The corridor is a flat constant (4 units) — on a terrain narrower than
+  // that, it would cover every candidate x and silently reject every
+  // attempt, contradicting computeTreeCount's "at least 1 tree" floor.
+  // Capped to half the terrain's own width so there's always room outside
+  // it; unchanged at the default 20×20 size (corridorHalfWidth=4 < 10*0.5=5).
+  const corridorHalfWidth = Math.min(t.corridorHalfWidth, halfWidth * 0.5);
 
   const flowerHeads = layoutFlowers(posts, terrain);
   const placements: TreePlacement[] = [];
@@ -158,7 +175,7 @@ export const placeTrees = (
     if (ny <= t.slopeThreshold) continue;
     if (y <= -heightScale * 0.2 || y >= heightScale * 0.8) continue;
 
-    if (Math.abs(x) < t.corridorHalfWidth) continue;
+    if (Math.abs(x) < corridorHalfWidth) continue;
 
     // The corridor check above only excludes a center strip — a tree just
     // outside it can still sit right next to the camera and loom

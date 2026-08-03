@@ -40,8 +40,18 @@ export const GARDEN = {
   flower: {
     width: 1.0, // fairy-forest-glade main.cpp: Foliage(..., height=1.0, width=1.0)
     height: 1.0,
-    band: { zMin: 1.0, zMax: 5.0 }, // world z, in front of the strip camera
-    maxHalfSpread: 13,
+    // Fractions of terrain half-height/half-width (see layoutFlowers)
+    // instead of flat world-unit constants, so flowers stay on the mesh
+    // regardless of gridWidth/gridHeight — mirrors trees.ts's
+    // computeTreeCount deriving from terrain size instead of a flat
+    // constant. Anchored to reproduce the original fixed band/spread
+    // exactly at the current 20×20 default terrain (half-width =
+    // half-height = 10): 1/10=0.1, 5/10=0.5. Spread capped to 0.9 rather
+    // than 13/10=1.3 — 13 already slightly exceeded the terrain's own
+    // half-width for high post counts, a latent version of this bug.
+    zMinFraction: 0.1,
+    zMaxFraction: 0.5,
+    maxSpreadFraction: 0.9,
   },
   camera: {
     stripZ: 9.5, // strip camera stands here on the terrain
@@ -169,12 +179,33 @@ export const layoutFlowers = (
   const n = posts.length;
   if (n === 0) return [];
 
+  // sampleHeight's bilinear interpolation needs a whole extra grid cell past
+  // whatever point it's sampling (it reads the *next* vertex over), so the
+  // positive edge of the terrain has a dead zone `terrain.scale` wide where
+  // it always returns -999 — harmless on a big terrain (10% of a 20×20's
+  // half-width) but it used to eat well over half of a 5×5's, so a flower
+  // could land "inside" the old fraction-based bounds and still sample off
+  // the heightmap, falling back to y=0 and reading as floating off the mesh.
+  // Shrinking the usable half-extent by that margin first keeps every
+  // fraction below strictly inside the sampleable region instead of just
+  // inside the nominal one.
+  const halfWidth = Math.max(
+    0,
+    (terrain.width * terrain.scale) / 2 - terrain.scale,
+  );
+  const halfHeight = Math.max(
+    0,
+    (terrain.height * terrain.scale) / 2 - terrain.scale,
+  );
+  const { zMinFraction, zMaxFraction, maxSpreadFraction } = GARDEN.flower;
+
   const halfSpread = Math.min(
-    GARDEN.flower.maxHalfSpread,
+    halfWidth * maxSpreadFraction,
     Math.max(3.5, n * 1.15),
   );
   const slotWidth = (halfSpread * 2) / n;
-  const { zMin, zMax } = GARDEN.flower.band;
+  const zMin = halfHeight * zMinFraction;
+  const zMax = halfHeight * zMaxFraction;
 
   return posts.map((post, i) => {
     const hx = hashSlug(post.slug + ":x");
