@@ -3,10 +3,18 @@ import { srgbRGB } from "@graphics/Garden/tsl/colorSpace";
 
 // Ported from shaders/colors.glsl. Only the palette entries the terrain and
 // grass materials actually reference — the rest of the original palette
-// (bark/sky/flower/neutral swatches) belongs to the tree port in Phase 3.
+// (sky/flower/neutral swatches) belongs to a future port, if ever needed.
 export const GRASS_DARK = srgbRGB(0.15, 0.3, 0.1);
 export const GRASS_MID = srgbRGB(0.3, 0.6, 0.2);
 export const GRASS_TIP = srgbRGB(0.7, 0.85, 0.4);
+
+// Tree palette (Phase 3) — colours.glsl:19-22 (bark) and :4,8 (leaf).
+export const BARK_DARK = srgbRGB(0.25, 0.15, 0.1);
+export const BARK_MID = srgbRGB(0.4, 0.25, 0.15);
+export const BARK_LIGHT = srgbRGB(0.55, 0.35, 0.2);
+export const BARK_HIGHLIGHT = srgbRGB(0.7, 0.5, 0.3);
+export const LEAF_DARK = srgbRGB(0.15, 0.35, 0.15); // colours.glsl's DARK_FOREST_GREEN
+export const LEAF_MID = srgbRGB(0.35, 0.65, 0.25);
 
 // ===== CEL-SHADING FUNCTIONS =====
 // Intermediate values are pinned to `: any` — see the note in tsl/wind.ts
