@@ -16,16 +16,14 @@ export interface TerrainData {
   heightMap: Float32Array; // [z*width+x] = y, used by foliage
   width: number;
   height: number;
-  scale: number;
   heightScale: number;
 }
 
-/** Instance count for a target density (instances/m²) over a terrain's world-space footprint. */
+/** Instance count for a target density (instances/m²) over a terrain's world-space footprint (grid cells are always 1 world unit). */
 export const computeInstanceCount = (
-  td: Pick<TerrainData, "width" | "height" | "scale">,
+  td: Pick<TerrainData, "width" | "height">,
   densityPerSqm: number,
-): number =>
-  Math.round(densityPerSqm * td.width * td.scale * td.height * td.scale);
+): number => Math.round(densityPerSqm * td.width * td.height);
 
 const mix = (a: number, b: number, t: number) => a + t * (b - a);
 
@@ -38,11 +36,10 @@ const heightColour = (yPos: number, hs: number): [number, number, number] => {
   return [0.42, 0.43, 0.4];
 };
 
-/** Builds the terrain's geometry buffers via warped fBm + ridged-noise blend. */
+/** Builds the terrain's geometry buffers via warped fBm + ridged-noise blend. Grid cells are always 1 world unit. */
 export const generateTerrain = (
   width = 50,
   height = 50,
-  scale = 1.0,
   heightScale = 5.0,
   octaves = 6,
   frequency = 1.5,
@@ -65,9 +62,9 @@ export const generateTerrain = (
       heightMap[z * width + x] = yPos;
 
       const vi = (z * width + x) * 3;
-      positions[vi] = x * scale - (width * scale) / 2;
+      positions[vi] = x - width / 2;
       positions[vi + 1] = yPos;
-      positions[vi + 2] = z * scale - (height * scale) / 2;
+      positions[vi + 2] = z - height / 2;
 
       const [r, g, b] = heightColour(yPos, heightScale);
       colors[vi] = r;
@@ -136,7 +133,6 @@ export const generateTerrain = (
     heightMap,
     width,
     height,
-    scale,
     heightScale,
   };
 };
@@ -147,9 +143,9 @@ export const sampleHeight = (
   wx: number,
   wz: number,
 ): number => {
-  const { width, height, scale, heightMap } = td;
-  const gx = (wx + (width * scale) / 2) / scale;
-  const gz = (wz + (height * scale) / 2) / scale;
+  const { width, height, heightMap } = td;
+  const gx = wx + width / 2;
+  const gz = wz + height / 2;
   const x0 = Math.floor(gx),
     z0 = Math.floor(gz),
     x1 = x0 + 1,
@@ -174,7 +170,7 @@ export const sampleNormal = (
   wx: number,
   wz: number,
 ): [number, number, number] => {
-  const e = td.scale;
+  const e = 1; // grid cells are always 1 world unit
   const hL = sampleHeight(td, wx - e, wz),
     hR = sampleHeight(td, wx + e, wz);
   const hD = sampleHeight(td, wx, wz - e),

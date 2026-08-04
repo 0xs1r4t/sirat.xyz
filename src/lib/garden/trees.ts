@@ -244,8 +244,8 @@ export const placeTrees = (
   if (count <= 0) return [];
 
   const rng = mulberry32(seed);
-  const halfWidth = (terrain.width * terrain.scale) / 2;
-  const halfHeight = (terrain.height * terrain.scale) / 2;
+  const halfWidth = terrain.width / 2;
+  const halfHeight = terrain.height / 2;
   const { heightScale } = terrain;
   const t = GARDEN.trees;
   // These exclusion radii are flat constants — on a terrain small enough

@@ -118,7 +118,6 @@ const GardenRig = ({
   const {
     gridWidth,
     gridHeight,
-    scale,
     heightScale,
     octaves,
     frequency,
@@ -141,15 +140,8 @@ const GardenRig = ({
   // ── Deterministic world data ───────────────────────────────────────────────
   const terrainData = useMemo(
     () =>
-      generateTerrain(
-        gridWidth,
-        gridHeight,
-        scale,
-        heightScale,
-        octaves,
-        frequency,
-      ),
-    [gridWidth, gridHeight, scale, heightScale, octaves, frequency],
+      generateTerrain(gridWidth, gridHeight, heightScale, octaves, frequency),
+    [gridWidth, gridHeight, heightScale, octaves, frequency],
   );
 
   const { heads, eye, target } = useMemo(() => {
@@ -497,7 +489,10 @@ export default function Scene(props: GardenSceneProps) {
   // overrides this). farDistance/windOctaves/DPR are tier-driven either way
   // — they're new knobs 5.4 adds, not previously exposed via Leva.
   const nonDebugControls = useMemo(
-    () => ({ ...GARDEN_CONTROL_DEFAULTS, grassDensity: tierParams.grassDensity }),
+    () => ({
+      ...GARDEN_CONTROL_DEFAULTS,
+      grassDensity: tierParams.grassDensity,
+    }),
     [tierParams.grassDensity],
   );
 
