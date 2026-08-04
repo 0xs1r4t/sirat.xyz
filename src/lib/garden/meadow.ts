@@ -13,9 +13,8 @@ export const GARDEN = {
   terrain: {
     // 20×20 grid at 1.0 world units/cell → the original demo's footprint
     // (fairy-forest-glade main.cpp: Terrain(20, 20, 1.0f, 5.0f)).
-    gridWidth: 20,
-    gridHeight: 20,
-    scale: 1.0,
+    gridWidth: 10,
+    gridHeight: 10,
     heightScale: 5.0,
     octaves: 6,
     // C++ terrain.h's frequency=0.05, sampled at frequency*1.5 in
@@ -31,7 +30,7 @@ export const GARDEN = {
     // this times the current terrain's world-space area (width*scale ×
     // height*scale), so it stays correct as terrain size/scale change
     // instead of a literal tuned for one specific footprint (docs/features.md #2).
-    density: 50,
+    density: 80,
     tuftWidth: 0.4, // fairy-forest-glade main.cpp: Foliage(..., height=0.8, width=0.4)
     tuftHeight: 0.8,
     slopeThreshold: 0.0, // slope threshold for grass placement (0.0 = everywhere)
@@ -123,7 +122,6 @@ export const getGardenTerrain = (): TerrainData => {
     cachedTerrain = generateTerrain(
       t.gridWidth,
       t.gridHeight,
-      t.scale,
       t.heightScale,
       t.octaves,
       t.frequency,
