@@ -35,6 +35,7 @@ import {
 import { useGardenTheme } from "@graphics/Garden/useGardenTheme";
 import Terrain from "@graphics/Garden/Terrain";
 import { Grass, Flowers } from "@graphics/Garden/Foliage";
+import Trees from "@graphics/Garden/Trees";
 import {
   GARDEN_CONTROL_DEFAULTS,
   type GardenControlValues,
@@ -129,8 +130,12 @@ const GardenRig = ({
     windStrength,
     flowerWindSpeed,
     flowerWindStrength,
+    flowerWidth,
+    flowerHeight,
     fogNear,
     fogFar,
+    treeCount,
+    treeSize,
   } = controls;
 
   // ── Deterministic world data ───────────────────────────────────────────────
@@ -422,9 +427,21 @@ const GardenRig = ({
           hoveredIndex={focusedIndex ?? hoveredIndex}
           windSpeed={reducedMotion ? 0 : flowerWindSpeed}
           windStrength={reducedMotion ? 0 : flowerWindStrength}
+          width={flowerWidth}
+          height={flowerHeight}
           fogNear={fogNear}
           fogFar={fogFar}
           windOctaves={windOctaves}
+        />
+        <Trees
+          terrainData={terrainData}
+          palette={palette}
+          posts={posts}
+          count={treeCount}
+          treeSize={treeSize}
+          fogNear={fogNear}
+          fogFar={fogFar}
+          reducedMotion={reducedMotion}
         />
       </Suspense>
       <OrbitControls

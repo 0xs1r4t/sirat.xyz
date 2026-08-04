@@ -11,10 +11,10 @@ import {
  */
 export const GARDEN = {
   terrain: {
-    // 50×50 grid at 1.0 world units/cell → the original demo's footprint
-    // (fairy-forest-glade main.cpp: Terrain(50, 50, 1.0f, 5.0f)).
-    gridWidth: 50,
-    gridHeight: 50,
+    // 20×20 grid at 1.0 world units/cell → the original demo's footprint
+    // (fairy-forest-glade main.cpp: Terrain(20, 20, 1.0f, 5.0f)).
+    gridWidth: 20,
+    gridHeight: 20,
     scale: 1.0,
     heightScale: 5.0,
     octaves: 6,
@@ -23,7 +23,7 @@ export const GARDEN = {
     // adjacent vertices sample near-uncorrelated noise (jittery bumps
     // instead of rolling hills) — this is the #1 cause of the shape drift
     // from the original. See docs/garden-webgpu-plan.md item 1.1.
-    frequency: 0.075,
+    frequency: 0.2,
   },
   grass: {
     // instances/m² — matches the original's 300000 over its 100x100 demo
@@ -31,17 +31,27 @@ export const GARDEN = {
     // this times the current terrain's world-space area (width*scale ×
     // height*scale), so it stays correct as terrain size/scale change
     // instead of a literal tuned for one specific footprint (docs/features.md #2).
-    density: 30,
+    density: 50,
     tuftWidth: 0.4, // fairy-forest-glade main.cpp: Foliage(..., height=0.8, width=0.4)
     tuftHeight: 0.8,
-    slopeThreshold: 0.55,
+    slopeThreshold: 0.0, // slope threshold for grass placement (0.0 = everywhere)
     seed: 1,
   },
   flower: {
     width: 1.0, // fairy-forest-glade main.cpp: Foliage(..., height=1.0, width=1.0)
     height: 1.0,
-    band: { zMin: 1.0, zMax: 5.0 }, // world z, in front of the strip camera
-    maxHalfSpread: 13,
+    // Fractions of terrain half-height/half-width (see layoutFlowers)
+    // instead of flat world-unit constants, so flowers stay on the mesh
+    // regardless of gridWidth/gridHeight — mirrors trees.ts's
+    // computeTreeCount deriving from terrain size instead of a flat
+    // constant. Anchored to reproduce the original fixed band/spread
+    // exactly at the current 20×20 default terrain (half-width =
+    // half-height = 10): 1/10=0.1, 5/10=0.5. Spread capped to 0.9 rather
+    // than 13/10=1.3 — 13 already slightly exceeded the terrain's own
+    // half-width for high post counts, a latent version of this bug.
+    zMinFraction: 0.1,
+    zMaxFraction: 0.5,
+    maxSpreadFraction: 0.9,
   },
   camera: {
     stripZ: 9.5, // strip camera stands here on the terrain
@@ -64,8 +74,43 @@ export const GARDEN = {
     // page before the terrain's edge. Not in the C++ original (no fog
     // there) — this is a web-only concession for sitting the garden on the
     // page.
-    near: 18,
-    far: 48,
+    near: 5,
+    far: 95,
+  },
+  trees: {
+    // Count is no longer a flat constant here — it's derived from terrain
+    // area and this density dial (trees.ts's computeTreeCount:
+    // floor((area/50)*(density/10))) so it scales automatically instead of
+    // needing to be re-picked by hand whenever the footprint changes, as it
+    // did once already when the terrain shrank from the plan's original
+    // 50×50 to the current 20×20. density=10 (the dial's max) reproduces
+    // the previous flat default of 8 trees at the current 20×20 terrain:
+    // floor((400/50)*(10/10)) = 8.
+    density: 10,
+    // Originally derived from fairy-forest-glade tree_manager.cpp's
+    // distScale(2,4) scaled down 0.2x for this terrain's smaller 20×20
+    // footprint (giving 0.4-0.8, ~1.9-3.8 units tall). Since bumped to ~2x
+    // that on request — trees read as too small relative to the garden —
+    // no longer tied to the original's proportions, just a deliberate "much
+    // taller" call: 0.8-1.6 -> ~3.8-7.6 units tall.
+    scaleRange: [0.8, 1.6] as [number, number],
+    minSpacing: 4.0, // fairy-forest-glade tree_manager.cpp: minSpacing=4.0f
+    slopeThreshold: 0.7, // fairy-forest-glade tree_manager.cpp: normal.y > 0.7f
+    // Camera-corridor exclusion (plan item 4.4): the strip camera looks
+    // straight down -z from x≈0, so a full-depth center-strip exclusion —
+    // not a C++-style bounded wedge — is what actually keeps the hero view
+    // clear at any depth.
+    corridorHalfWidth: 4,
+    // Catches trees that clear the corridor's x-check but still land right
+    // next to the camera (verified visually — see placeTrees's comment).
+    cameraExclusionRadius: 6,
+    flowerExclusionRadius: 2,
+    // GenerateLeafClusters(clustersPerBranch, leavesPerCluster) — same
+    // per-type params as fairy-forest-glade main.cpp.
+    normal: { clustersPerBranch: 12, leavesPerCluster: 20 },
+    thick: { clustersPerBranch: 16, leavesPerCluster: 24 },
+    leafSeed: 42, // fairy-forest-glade tree_foliage.cpp: mt19937 rng(42)
+    placementSeed: 7,
   },
 } as const;
 
@@ -133,12 +178,33 @@ export const layoutFlowers = (
   const n = posts.length;
   if (n === 0) return [];
 
+  // sampleHeight's bilinear interpolation needs a whole extra grid cell past
+  // whatever point it's sampling (it reads the *next* vertex over), so the
+  // positive edge of the terrain has a dead zone `terrain.scale` wide where
+  // it always returns -999 — harmless on a big terrain (10% of a 20×20's
+  // half-width) but it used to eat well over half of a 5×5's, so a flower
+  // could land "inside" the old fraction-based bounds and still sample off
+  // the heightmap, falling back to y=0 and reading as floating off the mesh.
+  // Shrinking the usable half-extent by that margin first keeps every
+  // fraction below strictly inside the sampleable region instead of just
+  // inside the nominal one.
+  const halfWidth = Math.max(
+    0,
+    (terrain.width * terrain.scale) / 2 - terrain.scale,
+  );
+  const halfHeight = Math.max(
+    0,
+    (terrain.height * terrain.scale) / 2 - terrain.scale,
+  );
+  const { zMinFraction, zMaxFraction, maxSpreadFraction } = GARDEN.flower;
+
   const halfSpread = Math.min(
-    GARDEN.flower.maxHalfSpread,
+    halfWidth * maxSpreadFraction,
     Math.max(3.5, n * 1.15),
   );
   const slotWidth = (halfSpread * 2) / n;
-  const { zMin, zMax } = GARDEN.flower.band;
+  const zMin = halfHeight * zMinFraction;
+  const zMax = halfHeight * zMaxFraction;
 
   return posts.map((post, i) => {
     const hx = hashSlug(post.slug + ":x");
