@@ -2,7 +2,11 @@
 
 import { useControls, folder } from "leva";
 import { GARDEN } from "@/lib/garden/meadow";
-import { computeTreeCount, DEFAULT_TREE_SIZE, MAX_TREE_SIZE } from "@/lib/garden/trees";
+import {
+  computeTreeCount,
+  DEFAULT_TREE_SIZE,
+  MAX_TREE_SIZE,
+} from "@/lib/garden/trees";
 import type { GardenControlValues } from "@graphics/Garden/gardenControlValues";
 
 // The grass density slider used to run 0-60 (raw instances/m², fed straight
@@ -162,8 +166,6 @@ export const useGardenControls = (): GardenControlValues => {
 
   return {
     ...terrain,
-    // No longer Leva-adjustable (see the Terrain folder above) — always 1.0.
-    scale: GARDEN.terrain.scale,
     treeCount,
     treeSize,
     ...rest,

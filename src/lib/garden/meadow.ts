@@ -13,9 +13,8 @@ export const GARDEN = {
   terrain: {
     // 20×20 grid at 1.0 world units/cell → the original demo's footprint
     // (fairy-forest-glade main.cpp: Terrain(20, 20, 1.0f, 5.0f)).
-    gridWidth: 20,
-    gridHeight: 20,
-    scale: 1.0,
+    gridWidth: 10,
+    gridHeight: 10,
     heightScale: 5.0,
     octaves: 6,
     // C++ terrain.h's frequency=0.05, sampled at frequency*1.5 in
@@ -31,7 +30,7 @@ export const GARDEN = {
     // this times the current terrain's world-space area (width*scale ×
     // height*scale), so it stays correct as terrain size/scale change
     // instead of a literal tuned for one specific footprint (docs/features.md #2).
-    density: 50,
+    density: 80,
     tuftWidth: 0.4, // fairy-forest-glade main.cpp: Foliage(..., height=0.8, width=0.4)
     tuftHeight: 0.8,
     slopeThreshold: 0.0, // slope threshold for grass placement (0.0 = everywhere)
@@ -123,7 +122,6 @@ export const getGardenTerrain = (): TerrainData => {
     cachedTerrain = generateTerrain(
       t.gridWidth,
       t.gridHeight,
-      t.scale,
       t.heightScale,
       t.octaves,
       t.frequency,
@@ -180,22 +178,16 @@ export const layoutFlowers = (
 
   // sampleHeight's bilinear interpolation needs a whole extra grid cell past
   // whatever point it's sampling (it reads the *next* vertex over), so the
-  // positive edge of the terrain has a dead zone `terrain.scale` wide where
-  // it always returns -999 — harmless on a big terrain (10% of a 20×20's
-  // half-width) but it used to eat well over half of a 5×5's, so a flower
-  // could land "inside" the old fraction-based bounds and still sample off
-  // the heightmap, falling back to y=0 and reading as floating off the mesh.
-  // Shrinking the usable half-extent by that margin first keeps every
-  // fraction below strictly inside the sampleable region instead of just
-  // inside the nominal one.
-  const halfWidth = Math.max(
-    0,
-    (terrain.width * terrain.scale) / 2 - terrain.scale,
-  );
-  const halfHeight = Math.max(
-    0,
-    (terrain.height * terrain.scale) / 2 - terrain.scale,
-  );
+  // positive edge of the terrain has a dead zone 1 world unit wide (grid
+  // cells are always 1 unit) where it always returns -999 — harmless on a
+  // big terrain (10% of a 20×20's half-width) but it used to eat well over
+  // half of a 5×5's, so a flower could land "inside" the old fraction-based
+  // bounds and still sample off the heightmap, falling back to y=0 and
+  // reading as floating off the mesh. Shrinking the usable half-extent by
+  // that margin first keeps every fraction below strictly inside the
+  // sampleable region instead of just inside the nominal one.
+  const halfWidth = Math.max(0, terrain.width / 2 - 1);
+  const halfHeight = Math.max(0, terrain.height / 2 - 1);
   const { zMinFraction, zMaxFraction, maxSpreadFraction } = GARDEN.flower;
 
   const halfSpread = Math.min(
