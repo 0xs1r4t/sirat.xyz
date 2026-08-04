@@ -178,22 +178,16 @@ export const layoutFlowers = (
 
   // sampleHeight's bilinear interpolation needs a whole extra grid cell past
   // whatever point it's sampling (it reads the *next* vertex over), so the
-  // positive edge of the terrain has a dead zone `terrain.scale` wide where
-  // it always returns -999 — harmless on a big terrain (10% of a 20×20's
-  // half-width) but it used to eat well over half of a 5×5's, so a flower
-  // could land "inside" the old fraction-based bounds and still sample off
-  // the heightmap, falling back to y=0 and reading as floating off the mesh.
-  // Shrinking the usable half-extent by that margin first keeps every
-  // fraction below strictly inside the sampleable region instead of just
-  // inside the nominal one.
-  const halfWidth = Math.max(
-    0,
-    (terrain.width * terrain.scale) / 2 - terrain.scale,
-  );
-  const halfHeight = Math.max(
-    0,
-    (terrain.height * terrain.scale) / 2 - terrain.scale,
-  );
+  // positive edge of the terrain has a dead zone 1 world unit wide (grid
+  // cells are always 1 unit) where it always returns -999 — harmless on a
+  // big terrain (10% of a 20×20's half-width) but it used to eat well over
+  // half of a 5×5's, so a flower could land "inside" the old fraction-based
+  // bounds and still sample off the heightmap, falling back to y=0 and
+  // reading as floating off the mesh. Shrinking the usable half-extent by
+  // that margin first keeps every fraction below strictly inside the
+  // sampleable region instead of just inside the nominal one.
+  const halfWidth = Math.max(0, terrain.width / 2 - 1);
+  const halfHeight = Math.max(0, terrain.height / 2 - 1);
   const { zMinFraction, zMaxFraction, maxSpreadFraction } = GARDEN.flower;
 
   const halfSpread = Math.min(

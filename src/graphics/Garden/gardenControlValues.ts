@@ -11,7 +11,6 @@ import { computeTreeCount, DEFAULT_TREE_SIZE } from "@/lib/garden/trees";
 export interface GardenControlValues {
   gridWidth: number;
   gridHeight: number;
-  scale: number;
   heightScale: number;
   octaves: number;
   frequency: number;
@@ -36,7 +35,6 @@ export interface GardenControlValues {
 export const GARDEN_CONTROL_DEFAULTS: GardenControlValues = {
   gridWidth: GARDEN.terrain.gridWidth,
   gridHeight: GARDEN.terrain.gridHeight,
-  scale: GARDEN.terrain.scale,
   heightScale: GARDEN.terrain.heightScale,
   octaves: GARDEN.terrain.octaves,
   frequency: GARDEN.terrain.frequency,

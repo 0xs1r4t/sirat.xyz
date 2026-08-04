@@ -62,8 +62,8 @@ const generateGrassChunks = (
   slopeThreshold: number,
 ): GrassChunk[] => {
   const rng = mulberry32(seed);
-  const hw = (td.width * td.scale) / 2;
-  const hh = (td.height * td.scale) / 2;
+  const hw = td.width / 2;
+  const hh = td.height / 2;
   const buckets = new Map<
     string,
     { positions: number[]; phases: number[] }
@@ -71,8 +71,8 @@ const generateGrassChunks = (
 
   let placed = 0;
   for (let i = 0; i < count * 2 && placed < count; i++) {
-    const wx = rng() * td.width * td.scale - hw;
-    const wz = rng() * td.height * td.scale - hh;
+    const wx = rng() * td.width - hw;
+    const wz = rng() * td.height - hh;
     const wy = sampleHeight(td, wx, wz);
     if (wy <= -999) continue;
 
