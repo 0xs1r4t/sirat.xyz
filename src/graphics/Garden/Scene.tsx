@@ -135,6 +135,7 @@ const GardenRig = ({
     fogNear,
     fogFar,
     treeCount,
+    treeSize,
   } = controls;
 
   // ── Deterministic world data ───────────────────────────────────────────────
@@ -437,6 +438,7 @@ const GardenRig = ({
           palette={palette}
           posts={posts}
           count={treeCount}
+          treeSize={treeSize}
           fogNear={fogNear}
           fogFar={fogFar}
           reducedMotion={reducedMotion}

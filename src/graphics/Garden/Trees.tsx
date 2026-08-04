@@ -4,13 +4,16 @@ import { useEffect, useMemo } from "react";
 import { useFrame } from "@react-three/fiber";
 import { useGLTF, useTexture } from "@react-three/drei";
 import * as THREE from "three/webgpu";
-import { attribute, floor, mod, texture, uniform, uv, vec2, vec3 } from "three/tsl";
+import { attribute, floor, mod, texture, uniform, uv, vec2 } from "three/tsl";
 import { mergeBufferGeometries } from "three-stdlib";
 
 import {
   placeTrees,
   generateLeafClusters,
   computeTreeCount,
+  computeTreeSizeMultiplier,
+  computeTreeRadialMultiplier,
+  DEFAULT_TREE_SIZE,
   type TreeType,
 } from "@/lib/garden/trees";
 import { GARDEN, type GardenPost } from "@/lib/garden/meadow";
@@ -30,7 +33,11 @@ import {
   computeBranchPosition,
   getBranchColor,
 } from "@graphics/Garden/tsl/branch";
-import { computeLeafWind, computeLeafPosition, getLeafColor } from "@graphics/Garden/tsl/leaf";
+import {
+  computeLeafWind,
+  computeLeafPosition,
+  getLeafColor,
+} from "@graphics/Garden/tsl/leaf";
 import { applyGardenFog } from "@graphics/Garden/tsl/fog";
 
 const TREE_TYPES: TreeType[] = ["normal", "thick"];
@@ -60,24 +67,33 @@ const TREE_TYPES: TreeType[] = ["normal", "thick"];
  * transform and merging is the closest equivalent — and stays correct even
  * if a future re-export introduces real per-node transforms.
  */
-const extractMergedGeometry = (gltf: { scene: THREE.Object3D }): THREE.BufferGeometry => {
+const extractMergedGeometry = (gltf: {
+  scene: THREE.Object3D;
+}): THREE.BufferGeometry => {
   gltf.scene.updateMatrixWorld(true);
   const parts: THREE.BufferGeometry[] = [];
   gltf.scene.traverse((obj) => {
     if ((obj as THREE.Mesh).isMesh) {
       const mesh = obj as THREE.Mesh;
-      const baked = mesh.geometry.clone().applyMatrix4(mesh.matrixWorld).toNonIndexed();
+      const baked = mesh.geometry
+        .clone()
+        .applyMatrix4(mesh.matrixWorld)
+        .toNonIndexed();
       // Only position/normal survive the merge — branches have no texture
       // (bark color is 100% procedural, confirmed via the source .mtl
       // having no texture map), so UV isn't needed downstream.
       parts.push(
-        new THREE.BufferGeometry().setAttribute("position", baked.getAttribute("position")).setAttribute("normal", baked.getAttribute("normal")),
+        new THREE.BufferGeometry()
+          .setAttribute("position", baked.getAttribute("position"))
+          .setAttribute("normal", baked.getAttribute("normal")),
       );
     }
   });
-  if (parts.length === 0) throw new Error("Trees.tsx: no mesh found in loaded tree model");
+  if (parts.length === 0)
+    throw new Error("Trees.tsx: no mesh found in loaded tree model");
   const merged = mergeBufferGeometries(parts, false);
-  if (!merged) throw new Error("Trees.tsx: failed to merge tree branch sub-meshes");
+  if (!merged)
+    throw new Error("Trees.tsx: failed to merge tree branch sub-meshes");
   return merged;
 };
 
@@ -125,6 +141,8 @@ interface TreesProps {
   palette: GardenPalette;
   posts: GardenPost[];
   count?: number;
+  /** 0-10, scales trunk size and canopy fullness together — see trees.ts's computeTreeSizeMultiplier. */
+  treeSize?: number;
   fogNear?: number;
   fogFar?: number;
   /** Zeroes branch/leaf wind, matching Foliage.tsx's grass/flowers — also required for screenshot-harness determinism, see computeLeafWind's note. */
@@ -149,6 +167,7 @@ export default function Trees({
     terrainData.height,
     GARDEN.trees.density,
   ),
+  treeSize = DEFAULT_TREE_SIZE,
   fogNear = GARDEN.fog.near,
   fogFar = GARDEN.fog.far,
   reducedMotion = false,
@@ -157,6 +176,16 @@ export default function Trees({
   const thickGltf = useGLTF(MODELS.thickTreeBranch);
   const leavesAtlas = useTexture(TEXTURES.leavesAtlas);
   leavesAtlas.colorSpace = THREE.SRGBColorSpace;
+
+  // 0.5x (treeSize=0) to 1.5x (treeSize=10), centered on 1.0 at the
+  // midpoint default — scales trunk size (via placements' scaleRange
+  // below) and canopy fullness (clustersPerBranch/leavesPerCluster)
+  // together, per the same dial.
+  const sizeMultiplier = computeTreeSizeMultiplier(treeSize);
+  // Trunk/branch radial (X/Z) thickness — grows faster than height so
+  // bigger trees actually read as thicker, not just uniformly bigger
+  // copies. See trees.ts's computeTreeRadialMultiplier.
+  const radialMultiplier = computeTreeRadialMultiplier(treeSize);
 
   // Baked branch geometry per type — depends only on the loaded models, not
   // on placement/posts, so it's its own memo (avoids re-extracting on every
@@ -178,23 +207,44 @@ export default function Trees({
     return {
       normal: generateLeafClusters(
         positionAttr("normal"),
-        GARDEN.trees.normal.clustersPerBranch,
-        GARDEN.trees.normal.leavesPerCluster,
+        Math.max(
+          1,
+          Math.round(GARDEN.trees.normal.clustersPerBranch * sizeMultiplier),
+        ),
+        Math.max(
+          1,
+          Math.round(GARDEN.trees.normal.leavesPerCluster * sizeMultiplier),
+        ),
         GARDEN.trees.leafSeed,
       ),
       thick: generateLeafClusters(
         positionAttr("thick"),
-        GARDEN.trees.thick.clustersPerBranch,
-        GARDEN.trees.thick.leavesPerCluster,
+        Math.max(
+          1,
+          Math.round(GARDEN.trees.thick.clustersPerBranch * sizeMultiplier),
+        ),
+        Math.max(
+          1,
+          Math.round(GARDEN.trees.thick.leavesPerCluster * sizeMultiplier),
+        ),
         GARDEN.trees.leafSeed,
       ),
     };
-  }, [branchGeometryByType]);
+  }, [branchGeometryByType, sizeMultiplier]);
 
-  const placements = useMemo(
-    () => placeTrees(terrainData, posts, count, GARDEN.trees.placementSeed),
-    [terrainData, posts, count],
-  );
+  const placements = useMemo(() => {
+    const scaleRange: [number, number] = [
+      GARDEN.trees.scaleRange[0] * sizeMultiplier,
+      GARDEN.trees.scaleRange[1] * sizeMultiplier,
+    ];
+    return placeTrees(
+      terrainData,
+      posts,
+      count,
+      GARDEN.trees.placementSeed,
+      scaleRange,
+    );
+  }, [terrainData, posts, count, sizeMultiplier]);
 
   const {
     branchGeometries,
@@ -221,6 +271,7 @@ export default function Trees({
     const branchFogFarUniform = uniform(fogFar);
     const branchWindSpeedUniform = uniform(BRANCH_WIND_SPEED);
     const branchWindStrengthUniform = uniform(BRANCH_WIND_STRENGTH);
+    const radialMultiplierUniform = uniform(radialMultiplier);
 
     const branchMat = new THREE.MeshBasicNodeMaterial();
     branchMat.side = THREE.FrontSide;
@@ -228,11 +279,17 @@ export default function Trees({
     const branchWorldPos: any = computeBranchPosition(
       branchWindSpeedUniform,
       branchWindStrengthUniform,
+      radialMultiplierUniform,
     );
-    const branchWorldNormal: any = computeBranchNormal();
+    const branchWorldNormal: any = computeBranchNormal(radialMultiplierUniform);
     branchMat.positionNode = branchWorldPos;
     branchMat.colorNode = applyGardenFog(
-      getBranchColor(branchWorldPos, branchWorldNormal, lightDirUniform, branchBandMulUniform),
+      getBranchColor(
+        branchWorldPos,
+        branchWorldNormal,
+        lightDirUniform,
+        branchBandMulUniform,
+      ),
       branchWorldPos,
       fogColorUniform,
       branchFogNearUniform,
@@ -251,6 +308,16 @@ export default function Trees({
     leafMat.depthWrite = true;
     leafMat.side = THREE.DoubleSide;
     leafMat.alphaTest = 0.3; // matches leaf.frag's `alpha < 0.3 discard`
+    // The C++ original has no dedicated anti-z-fighting technique (verified
+    // by reading fairy-forest-glade's source directly) — it relies on
+    // alpha-test discard + camera billboarding alone, both already ported
+    // above/in leaf.ts, and still flickers there too. Polygon offset is a
+    // real fix the original never had: nudges depth values for these
+    // fragments without moving anything in world space, so near-coplanar
+    // overlapping leaf quads stop competing for the same depth sample.
+    leafMat.polygonOffset = true;
+    leafMat.polygonOffsetFactor = -1;
+    leafMat.polygonOffsetUnits = -1;
 
     const instanceOffset: any = attribute("instanceOffset", "vec3");
     const customNormalAttr: any = attribute("customNormal", "vec3");
@@ -263,12 +330,17 @@ export default function Trees({
       leafWindStrengthUniform,
     );
     const windCenter: any = instanceOffset.add(windPacked.xyz);
-    const leafWorldPos: any = computeLeafPosition(windCenter, instanceScaleAttr);
+    const leafWorldPos: any = computeLeafPosition(
+      windCenter,
+      instanceScaleAttr,
+    );
     leafMat.positionNode = leafWorldPos;
 
     const col: any = mod(textureIndexAttr, 2);
     const row: any = floor(textureIndexAttr.div(2));
-    const atlasUV: any = uv().mul(0.5).add(vec2(col.mul(0.5), row.mul(0.5)));
+    const atlasUV: any = uv()
+      .mul(0.5)
+      .add(vec2(col.mul(0.5), row.mul(0.5)));
     const texColor: any = texture(leavesAtlas, atlasUV);
 
     const shaded: any = getLeafColor(
@@ -323,9 +395,18 @@ export default function Trees({
         rotations[i] = tree.rotationY;
         scales[i] = tree.scale;
       });
-      branchGeo.setAttribute("instanceOffset", new THREE.InstancedBufferAttribute(offsets, 3));
-      branchGeo.setAttribute("instanceRotationY", new THREE.InstancedBufferAttribute(rotations, 1));
-      branchGeo.setAttribute("instanceScale", new THREE.InstancedBufferAttribute(scales, 1));
+      branchGeo.setAttribute(
+        "instanceOffset",
+        new THREE.InstancedBufferAttribute(offsets, 3),
+      );
+      branchGeo.setAttribute(
+        "instanceRotationY",
+        new THREE.InstancedBufferAttribute(rotations, 1),
+      );
+      branchGeo.setAttribute(
+        "instanceScale",
+        new THREE.InstancedBufferAttribute(scales, 1),
+      );
       branchGeo.boundingSphere = computeInstancedBoundingSphere(offsets, 6);
 
       // Leaves: for every tree of this type, transform that type's shared
@@ -346,11 +427,17 @@ export default function Trees({
         const sinR = Math.sin(tree.rotationY);
         for (const leaf of template) {
           const [lx, ly, lz] = leaf.localPosition;
-          const rx = lx * cosR + lz * sinR;
-          const rz = lz * cosR - lx * sinR;
-          leafOffsets[w * 3] = rx * tree.scale + tree.position[0];
-          leafOffsets[w * 3 + 1] = ly * tree.scale + tree.position[1];
-          leafOffsets[w * 3 + 2] = rz * tree.scale + tree.position[2];
+          // Scale in local space *then* rotate, matching branch.ts's own
+          // order — scale and rotation only commute when scale is uniform,
+          // and radialMultiplier makes X/Z scale differently from Y.
+          const sx = lx * tree.scale * radialMultiplier;
+          const sy = ly * tree.scale;
+          const sz = lz * tree.scale * radialMultiplier;
+          const rx = sx * cosR + sz * sinR;
+          const rz = sz * cosR - sx * sinR;
+          leafOffsets[w * 3] = rx + tree.position[0];
+          leafOffsets[w * 3 + 1] = sy + tree.position[1];
+          leafOffsets[w * 3 + 2] = rz + tree.position[2];
 
           const [nx, ny, nz] = leaf.customNormal;
           leafNormals[w * 3] = nx * cosR + nz * sinR;
@@ -365,10 +452,22 @@ export default function Trees({
 
       const leafGeo = leafGeometries[type];
       leafGeo.instanceCount = leafCount;
-      leafGeo.setAttribute("instanceOffset", new THREE.InstancedBufferAttribute(leafOffsets, 3));
-      leafGeo.setAttribute("customNormal", new THREE.InstancedBufferAttribute(leafNormals, 3));
-      leafGeo.setAttribute("instanceScale", new THREE.InstancedBufferAttribute(leafScales, 1));
-      leafGeo.setAttribute("textureIndex", new THREE.InstancedBufferAttribute(leafTexIdx, 1));
+      leafGeo.setAttribute(
+        "instanceOffset",
+        new THREE.InstancedBufferAttribute(leafOffsets, 3),
+      );
+      leafGeo.setAttribute(
+        "customNormal",
+        new THREE.InstancedBufferAttribute(leafNormals, 3),
+      );
+      leafGeo.setAttribute(
+        "instanceScale",
+        new THREE.InstancedBufferAttribute(leafScales, 1),
+      );
+      leafGeo.setAttribute(
+        "textureIndex",
+        new THREE.InstancedBufferAttribute(leafTexIdx, 1),
+      );
       leafGeo.boundingSphere = computeInstancedBoundingSphere(leafOffsets, 3);
     }
 
@@ -391,7 +490,14 @@ export default function Trees({
     // fogNear/fogFar intentionally omitted: live-mutated uniforms, see the
     // useFrame below — matches Foliage.tsx's Grass/Flowers pattern.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [placements, branchGeometryByType, leafTemplateByType, palette, leavesAtlas]);
+  }, [
+    placements,
+    branchGeometryByType,
+    leafTemplateByType,
+    palette,
+    leavesAtlas,
+    radialMultiplier,
+  ]);
 
   useEffect(
     () => () => {

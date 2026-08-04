@@ -1,5 +1,5 @@
 import { GARDEN } from "@/lib/garden/meadow";
-import { computeTreeCount } from "@/lib/garden/trees";
+import { computeTreeCount, DEFAULT_TREE_SIZE } from "@/lib/garden/trees";
 
 /**
  * Live-tunable garden parameters exposed via Leva's debug panel. Split out
@@ -28,6 +28,7 @@ export interface GardenControlValues {
   fogNear: number;
   fogFar: number;
   treeCount: number;
+  treeSize: number;
 }
 
 // Production visitors never load Leva (see Scene.tsx's lazy import) — this
@@ -59,4 +60,5 @@ export const GARDEN_CONTROL_DEFAULTS: GardenControlValues = {
     GARDEN.terrain.gridHeight,
     GARDEN.trees.density,
   ),
+  treeSize: DEFAULT_TREE_SIZE,
 };

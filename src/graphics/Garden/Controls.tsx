@@ -2,7 +2,7 @@
 
 import { useControls, folder } from "leva";
 import { GARDEN } from "@/lib/garden/meadow";
-import { computeTreeCount } from "@/lib/garden/trees";
+import { computeTreeCount, DEFAULT_TREE_SIZE, MAX_TREE_SIZE } from "@/lib/garden/trees";
 import type { GardenControlValues } from "@graphics/Garden/gardenControlValues";
 
 // The grass density slider used to run 0-60 (raw instances/m², fed straight
@@ -57,12 +57,21 @@ export const useGardenControls = (): GardenControlValues => {
   // computeTreeCount) from two plain numbers that are already live every
   // render — gridWidth/gridHeight above and this density dial — so it just
   // recomputes inline. No reset-on-terrain-change plumbing needed here.
-  const { treeDensity } = useControls({
+  const { treeDensity, treeSize } = useControls({
     Trees: folder({
       treeDensity: {
         value: GARDEN.trees.density,
         min: 0,
         max: 10,
+        step: 1,
+      },
+      // Scales trunk size and canopy fullness (leaf cluster/leaf count)
+      // together — see trees.ts's computeTreeSizeMultiplier. Default sits
+      // at the midpoint so an untouched slider reproduces today's tuned look.
+      treeSize: {
+        value: DEFAULT_TREE_SIZE,
+        min: 0,
+        max: MAX_TREE_SIZE,
         step: 1,
       },
     }),
@@ -156,6 +165,7 @@ export const useGardenControls = (): GardenControlValues => {
     // No longer Leva-adjustable (see the Terrain folder above) — always 1.0.
     scale: GARDEN.terrain.scale,
     treeCount,
+    treeSize,
     ...rest,
     grassDensity:
       (rest.grassDensity * GRASS_DENSITY_LEGACY_MAX) /

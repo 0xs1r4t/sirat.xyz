@@ -48,14 +48,23 @@ const rotateY = Fn(([v, rotationY]: [any, any]) => {
  * leaving tree wind always-on made captures non-deterministic — confirmed
  * via a real capture-twice-diff showing mismatches concentrated exactly on
  * leaf-cluster silhouettes).
+ *
+ * `radialMultiplier` scales local X/Z only (trunk/branch thickness),
+ * independent of `instanceScale`'s Y (height) — see trees.ts's
+ * computeTreeRadialMultiplier. Scene-wide uniform, not per-instance: every
+ * tree shares the same treeSize dial, only the per-tree `instanceScale`
+ * (from scaleRange) varies tree-to-tree.
  */
 export const computeBranchPosition = Fn(
-  ([windSpeed, windStrength]: [any, any]) => {
+  ([windSpeed, windStrength, radialMultiplier]: [any, any, any]) => {
     const instanceOffset: any = attribute("instanceOffset", "vec3");
     const instanceRotationY: any = attribute("instanceRotationY", "float");
     const instanceScale: any = attribute("instanceScale", "float");
 
-    const scaled: any = positionGeometry.mul(instanceScale);
+    const scaledX: any = positionGeometry.x.mul(instanceScale).mul(radialMultiplier);
+    const scaledY: any = positionGeometry.y.mul(instanceScale);
+    const scaledZ: any = positionGeometry.z.mul(instanceScale).mul(radialMultiplier);
+    const scaled: any = vec3(scaledX, scaledY, scaledZ);
     const rotated: any = rotateY(scaled, instanceRotationY);
     const worldPos: any = rotated.add(instanceOffset);
 
@@ -75,10 +84,21 @@ export const computeBranchPosition = Fn(
   },
 );
 
-/** World-space normal for a branch instance — same rotation as position, no wind (matches C++: Normal ignores wind). */
-export const computeBranchNormal = Fn(() => {
+/**
+ * World-space normal for a branch instance — same rotation as position, no
+ * wind (matches C++: Normal ignores wind).
+ *
+ * Non-uniform scale (radialMultiplier != 1) distorts normals — dividing by
+ * the same per-axis scale before renormalizing is the standard fix
+ * (equivalent to the inverse-transpose for a diagonal scale matrix). A
+ * no-op at radialMultiplier=1 (the treeSize=5 default), so this doesn't
+ * change anything there.
+ */
+export const computeBranchNormal = Fn(([radialMultiplier]: [any]) => {
   const instanceRotationY: any = attribute("instanceRotationY", "float");
-  return rotateY(normalGeometry, instanceRotationY).normalize();
+  const invScale: any = vec3(radialMultiplier, 1, radialMultiplier);
+  const corrected: any = normalGeometry.div(invScale).normalize();
+  return rotateY(corrected, instanceRotationY).normalize();
 });
 
 /**

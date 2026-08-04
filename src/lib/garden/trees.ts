@@ -20,10 +20,19 @@ export interface LocalLeafInstance {
   textureIndex: 0 | 1 | 2 | 3;
 }
 
+// Bottom fraction of the branch model's own height that never gets a leaf
+// cluster, so the trunk reads as a visible trunk instead of disappearing
+// into the canopy — clusters used to be picked by striding through the
+// mesh's vertex *index* order, which has no relationship to height (it's
+// whatever order the .obj's sub-objects export in), so clusters could and
+// did land right down at the base.
+const LEAF_BASE_EXCLUSION_FRACTION = 0.5;
+
 /**
- * Port of `TreeFoliage::GenerateLeafClusters` (tree_foliage.cpp). Samples
- * attach points by striding through the branch geometry's vertices, then
- * scatters leaves in a spherical distribution around each attach point.
+ * Port of `TreeFoliage::GenerateLeafClusters` (tree_foliage.cpp). Picks
+ * `clustersPerBranch` attach points from the branch geometry's vertices —
+ * above the trunk's base, spaced apart from each other — then scatters
+ * leaves in a spherical distribution around each one.
  *
  * The KodiakWhale trick, verbatim from the original: `emitterNormal =
  * normalize(attachPoint)` treats the *whole branch model's local origin* as
@@ -44,15 +53,80 @@ export const generateLeafClusters = (
 ): LocalLeafInstance[] => {
   const rng = mulberry32(seed);
   const vertexCount = branchPositions.length / 3;
-  const step = Math.max(1, Math.floor(vertexCount / clustersPerBranch));
+
+  let minY = Infinity,
+    maxY = -Infinity;
+  for (let i = 0; i < vertexCount; i++) {
+    const y = branchPositions[i * 3 + 1];
+    if (y < minY) minY = y;
+    if (y > maxY) maxY = y;
+  }
+  const baseExclusionY = minY + (maxY - minY) * LEAF_BASE_EXCLUSION_FRACTION;
+
+  const candidates: number[] = [];
+  for (let i = 0; i < vertexCount; i++) {
+    if (branchPositions[i * 3 + 1] >= baseExclusionY) candidates.push(i);
+  }
+
+  // Farthest-point sampling: greedily pick whichever remaining candidate is
+  // farthest from every already-chosen point. Always yields exactly
+  // clustersPerBranch points (or all candidates, if fewer) with maximally
+  // even coverage — attach points used to be picked by index stride alone,
+  // so two could land close enough in *space* (regardless of index
+  // distance) for their leaf spheres to overlap almost entirely, z-fighting
+  // where the quads coincide. Mirrors an anime-tree Blender tutorial's
+  // reasoning for picking a subdivided cube over a UV-sphere as its
+  // particle emitter — even spacing, no clumping — applied here to our real
+  // branch-mesh candidates instead of switching to synthetic emitter
+  // geometry (which would risk decoupling leaf clusters from where the
+  // branches actually are). Complements the polygon-offset fix on the leaf
+  // material (Trees.tsx), which handles whatever near-overlap remains
+  // (including within a single cluster, never spacing-checked here or in
+  // either reference implementation).
+  const attachPoints: [number, number, number][] = [];
+  if (candidates.length <= clustersPerBranch) {
+    for (const idx of candidates) {
+      attachPoints.push([
+        branchPositions[idx * 3],
+        branchPositions[idx * 3 + 1],
+        branchPositions[idx * 3 + 2],
+      ]);
+    }
+  } else {
+    const pool = candidates.map(
+      (idx): [number, number, number] => [
+        branchPositions[idx * 3],
+        branchPositions[idx * 3 + 1],
+        branchPositions[idx * 3 + 2],
+      ],
+    );
+    const seedIdx = Math.floor(rng() * pool.length);
+    attachPoints.push(pool[seedIdx]);
+    pool.splice(seedIdx, 1);
+
+    while (attachPoints.length < clustersPerBranch && pool.length > 0) {
+      let bestIdx = 0;
+      let bestMinDist = -Infinity;
+      for (let i = 0; i < pool.length; i++) {
+        const [px, py, pz] = pool[i];
+        let minDist = Infinity;
+        for (const [cx, cy, cz] of attachPoints) {
+          const d = Math.hypot(px - cx, py - cy, pz - cz);
+          if (d < minDist) minDist = d;
+        }
+        if (minDist > bestMinDist) {
+          bestMinDist = minDist;
+          bestIdx = i;
+        }
+      }
+      attachPoints.push(pool[bestIdx]);
+      pool.splice(bestIdx, 1);
+    }
+  }
 
   const leaves: LocalLeafInstance[] = [];
 
-  for (let i = 0; i < vertexCount; i += step) {
-    const ax = branchPositions[i * 3];
-    const ay = branchPositions[i * 3 + 1];
-    const az = branchPositions[i * 3 + 2];
-
+  for (const [ax, ay, az] of attachPoints) {
     const radius = 0.8 + rng() * 0.4; // 0.8-1.2 units, matching C++
 
     const aLen = Math.hypot(ax, ay, az) || 1;
@@ -123,6 +197,29 @@ export const computeTreeCount = (
   );
 };
 
+// Same 0-10 dial style as tree density. Default sits at the midpoint (5) so
+// the unmoved slider reproduces today's tuned scaleRange/clustersPerBranch/
+// leavesPerCluster exactly (multiplier 1.0); dragging it scales trunk size
+// and canopy fullness together in the same direction, per-tree.
+export const MAX_TREE_SIZE = 10;
+export const DEFAULT_TREE_SIZE = 5;
+
+/** 0.5x (size=0) to 1.5x (size=10) — half the dial shrinks, half grows, centered on today's tuned default. */
+export const computeTreeSizeMultiplier = (size: number): number =>
+  0.5 + (size / MAX_TREE_SIZE) * 1.0;
+
+// Trunk radius (local X/Z) scales as sizeMultiplier^RADIAL_EXPONENT instead
+// of linearly with height (local Y, sizeMultiplier^1) — uniform scaling
+// preserves proportions, so without this a bigger tree was just a zoomed-in
+// copy of a smaller one (same trunk width : height ratio) and never read as
+// "thicker". Squaring gives 0.25x-2.25x, noticeably chunkier/spindlier than
+// the 0.5x-1.5x height range, while still reproducing exactly 1.0x (no
+// change) at the size=5 default.
+export const RADIAL_EXPONENT = 2;
+/** Trunk/branch radial (X/Z) scale — grows faster than height so bigger trees read as thicker, not just uniformly bigger. */
+export const computeTreeRadialMultiplier = (size: number): number =>
+  computeTreeSizeMultiplier(size) ** RADIAL_EXPONENT;
+
 /**
  * Port of `TreeManager::generateTreePositions` (tree_manager.cpp):
  * rejection-sample positions across the terrain, checking slope/height
@@ -142,6 +239,7 @@ export const placeTrees = (
   posts: GardenPost[],
   count: number,
   seed: number,
+  scaleRange: [number, number] = GARDEN.trees.scaleRange,
 ): TreePlacement[] => {
   if (count <= 0) return [];
 
@@ -173,7 +271,7 @@ export const placeTrees = (
   for (let i = 0; i < maxAttempts && placements.length < count; i++) {
     const x = (rng() * 2 - 1) * halfWidth;
     const z = (rng() * 2 - 1) * halfHeight;
-    const scale = t.scaleRange[0] + rng() * (t.scaleRange[1] - t.scaleRange[0]);
+    const scale = scaleRange[0] + rng() * (scaleRange[1] - scaleRange[0]);
 
     const centerY = sampleHeight(terrain, x, z);
     if (centerY <= -999) continue; // off the heightmap

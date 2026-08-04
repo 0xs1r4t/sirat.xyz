@@ -87,14 +87,13 @@ export const GARDEN = {
     // the previous flat default of 8 trees at the current 20×20 terrain:
     // floor((400/50)*(10/10)) = 8.
     density: 10,
-    // fairy-forest-glade tree_manager.cpp's distScale(2,4) was calibrated
-    // for its 100×100 placement terrain (distX/distZ(-50,50)) — scaled down
-    // by this terrain's 20×20 footprint (0.2x linear) so a ~4.7-unit-tall
-    // unscaled branch model (confirmed by inspecting the converted .glb's
-    // vertex bounds) reads as a tree framing a small garden, not a giant
-    // dwarfing it. 0.4-0.8 -> ~1.9-3.8 units tall, comparable to the
-    // terrain's own heightScale=5 relief.
-    scaleRange: [0.4, 0.8] as [number, number],
+    // Originally derived from fairy-forest-glade tree_manager.cpp's
+    // distScale(2,4) scaled down 0.2x for this terrain's smaller 20×20
+    // footprint (giving 0.4-0.8, ~1.9-3.8 units tall). Since bumped to ~2x
+    // that on request — trees read as too small relative to the garden —
+    // no longer tied to the original's proportions, just a deliberate "much
+    // taller" call: 0.8-1.6 -> ~3.8-7.6 units tall.
+    scaleRange: [0.8, 1.6] as [number, number],
     minSpacing: 4.0, // fairy-forest-glade tree_manager.cpp: minSpacing=4.0f
     slopeThreshold: 0.7, // fairy-forest-glade tree_manager.cpp: normal.y > 0.7f
     // Camera-corridor exclusion (plan item 4.4): the strip camera looks
