@@ -1,0 +1,48 @@
+"use client";
+
+import React from "react";
+
+interface GardenSliderRowProps {
+  label: string;
+  value: number;
+  min: number;
+  max: number;
+  step: number;
+  onChange: (value: number) => void;
+}
+
+const decimalsForStep = (step: number) => {
+  const s = step.toString();
+  const i = s.indexOf(".");
+  return i === -1 ? 0 : s.length - i - 1;
+};
+
+const GardenSliderRow = ({
+  label,
+  value,
+  min,
+  max,
+  step,
+  onChange,
+}: GardenSliderRowProps) => (
+  <div className="flex flex-col gap-0.5 py-1">
+    <div className="flex items-center justify-between text-sm leading-snug">
+      <span>{label}</span>
+      <span className="tabular-nums text-muted-200">
+        {value.toFixed(decimalsForStep(step))}
+      </span>
+    </div>
+    <input
+      type="range"
+      aria-label={label}
+      min={min}
+      max={max}
+      step={step}
+      value={value}
+      onChange={(e) => onChange(Number(e.target.value))}
+      className="w-full accent-muted-200"
+    />
+  </div>
+);
+
+export default GardenSliderRow;
