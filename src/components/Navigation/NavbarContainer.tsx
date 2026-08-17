@@ -15,45 +15,46 @@ interface NavbarContainerProps {
 }
 
 const NavbarContainer = ({ isOpen }: NavbarContainerProps) => (
-    <AnimatePresence initial={false}>
-      {isOpen && (
-        <LazyMotion features={loadFeatures}>
-          <m.div
-            role="navigation"
-            aria-label="sidebar"
-            initial={{ x: -192, scaleX: 0.5 }} // -48 * 4 = -192
-            animate={{
-              x: 0,
-              scaleX: 1,
-              y: [0, -1, 0],
-              transition: {
-                y: {
-                  repeat: Infinity,
-                  duration: 1,
-                  ease: "easeInOut",
-                },
+  <AnimatePresence initial={false}>
+    {isOpen && (
+      <LazyMotion features={loadFeatures}>
+        <m.div
+          role="navigation"
+          aria-label="sidebar"
+          initial={{ x: -192, scaleX: 0.5 }} // -48 * 4 = -192
+          animate={{
+            x: 0,
+            scaleX: 1,
+            y: [0, -1, 0],
+            transition: {
+              y: {
+                repeat: Infinity,
+                duration: 1,
+                ease: "easeInOut",
               },
-            }}
-            exit={{ x: -192, scaleX: 0.5 }}
-            transition={{
-              type: "spring",
-              stiffness: 500,
-              damping: 50,
-              x: { type: "spring", duration: 0.5 },
-              scaleX: { type: "spring", duration: 0.5 },
-            }}
-            // bottom-11 (2.75rem = 8px bottom-2 inset + 36px w-9/h-9 button
-            // height) puts the panel's bottom edge exactly at the
-            // PopOutButton's top edge — 0px gap, matching PostSidebar's pair.
-            className={`flex flex-col fixed z-30 items-center justify-between bottom-11 sm:bottom-auto sm:top-16 left-2 py-1.5 lg:py-2 w-44 bg-muted-100 border-2 border-muted-200 rounded-lg overflow-hidden`}
-            aria-hidden={!isOpen}
-          >
-            <SpotifyPlayer />
-            <SocialLinks />
-          </m.div>
-        </LazyMotion>
-      )}
-    </AnimatePresence>
-  );
+            },
+          }}
+          exit={{ x: -192, scaleX: 0.5 }}
+          transition={{
+            type: "spring",
+            stiffness: 500,
+            damping: 50,
+            x: { type: "spring", duration: 0.5 },
+            scaleX: { type: "spring", duration: 0.5 },
+          }}
+          // Panel and button both sit at their own bottom-2/left-2 —
+          // the button's open-state slide distance (PopOutButton's
+          // sidebarWidth) is what tucks it 4px behind this panel's edge,
+          // not a vertical offset between the two.
+          className={`flex flex-col fixed z-30 items-center justify-between bottom-2 sm:bottom-auto sm:top-16 left-2 py-1.5 lg:py-2 w-44 bg-muted-100 border-2 border-muted-200 rounded-lg overflow-hidden`}
+          aria-hidden={!isOpen}
+        >
+          <SpotifyPlayer />
+          <SocialLinks />
+        </m.div>
+      </LazyMotion>
+    )}
+  </AnimatePresence>
+);
 
 export default NavbarContainer;

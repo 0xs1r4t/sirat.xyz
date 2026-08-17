@@ -12,9 +12,14 @@ interface PopOutButtonProps {
 }
 
 const PopOutButton = ({ isOpen, onToggle, placement }: PopOutButtonProps) => {
-  // Calculate the open position based on sidebar width
-  const leftSidebarWidth = "11.25rem"; // 180px
-  const rightSidebarWidth = "11.5rem"; // 184px (44 * 4 + margin)
+  // Slide distance when open: panel width (w-44 = 11rem) + a 0.25rem tuck,
+  // so the button ends up hidden 4px behind the panel's edge instead of
+  // sitting flush against it — two independent borders meeting exactly
+  // edge-to-edge (0 overlap) render as a doubled line at high DPR; tucked
+  // under, only the panel's border is visible. Left and right used to
+  // differ (11.25rem vs 11.5rem) for no real reason — that's exactly why
+  // only one side looked right.
+  const sidebarWidth = "11.25rem"; // 180px
 
   return (
     <Tooltip
@@ -29,8 +34,8 @@ const PopOutButton = ({ isOpen, onToggle, placement }: PopOutButtonProps) => {
             ? {
                 x:
                   placement === "left"
-                    ? leftSidebarWidth
-                    : `-${rightSidebarWidth}`,
+                    ? sidebarWidth
+                    : `-${sidebarWidth}`,
                 scale: 1.05,
                 y: [0, -1, 0],
                 transition: {
@@ -52,8 +57,8 @@ const PopOutButton = ({ isOpen, onToggle, placement }: PopOutButtonProps) => {
         className={`fixed z-20 flex justify-center items-center w-9 h-9 ${
           placement === "left" ? "rounded-e-md" : "rounded-s-md"
         } bg-muted-100 border-2 border-muted-200 transition-colors duration-200
-        bottom-2 sm:bottom-auto sm:top-18
-        ${placement === "left" ? "left-2 sm:left-0" : "right-2 sm:right-0"}`}
+        bottom-4 sm:bottom-auto sm:top-18
+        ${placement === "left" ? "left-0" : "right-0"}`}
       >
         <span
           aria-hidden="true"
