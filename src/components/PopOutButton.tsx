@@ -71,7 +71,7 @@ const PopOutButton = ({
           damping: 50,
           x: { type: "spring", duration: 0.5 },
         }}
-        className={`fixed z-20 flex justify-center items-center p-1 aspect-square ${
+        className={`fixed z-20 flex justify-center items-center w-6 h-6 lg:w-7 lg:h-7 ${
           placement === "left" ? "rounded-e-md" : "rounded-s-md"
         } bg-muted-100 border-2 border-muted-200 transition-colors duration-200`}
       >
