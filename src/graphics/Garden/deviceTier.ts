@@ -58,3 +58,19 @@ export const detectDeviceTier = (): DeviceTier => {
   }
   return "high";
 };
+
+/**
+ * Debug-only `?tier=high|mid|low` override (garden-screenshot-harness.md):
+ * pins a tier instead of hoping detectDeviceTier()'s heuristic lands on the
+ * right one, which otherwise varies by machine and would make screenshot/
+ * perf runs non-reproducible. Shared by Scene.tsx (Canvas LOD config) and
+ * useGardenControls.ts (initial grassDensity seed) — same override, one
+ * implementation.
+ */
+export const getTierOverride = (): DeviceTier | null => {
+  if (typeof window === "undefined") return null;
+  const params = new URLSearchParams(window.location.search);
+  if (!params.has("debug")) return null; // debug-only, see isGardenDebugMode
+  const raw = params.get("tier");
+  return raw === "high" || raw === "mid" || raw === "low" ? raw : null;
+};
