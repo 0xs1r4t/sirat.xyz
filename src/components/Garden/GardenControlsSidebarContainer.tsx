@@ -28,6 +28,15 @@ const GardenControlsSidebarContainer = ({
   <AnimatePresence initial={false}>
     {isOpen && (
       <LazyMotion features={loadFeatures}>
+        {/* Mobile anchor is bottom-11 (2.75rem = PopOutButton's 8px
+            bottom-2 inset + its 36px w-9/h-9 height) — the panel's bottom
+            edge sits exactly at the button's top edge, 0px gap. The
+            max-height's other end (9.25rem) is ThemeSwitcherButton's
+            3-button stack (8.75rem tall) + the same 0.5rem gap unit used
+            everywhere else (mt-2/bottom-2), so the panel's top edge clears
+            the last theme button by that same, consistent 0.5rem — not
+            just "doesn't overlap." 2.75+9.25=12rem reserved. Desktop keeps
+            the original top-16/5rem pair, unrelated to any of this. */}
         <m.div
           aria-label="garden controls sidebar"
           initial={{ x: 192, scaleX: 0.5 }}
@@ -47,7 +56,7 @@ const GardenControlsSidebarContainer = ({
             x: { type: "spring", duration: 0.5 },
             scaleX: { type: "spring", duration: 0.5 },
           }}
-          className="flex flex-col fixed z-30 top-16 right-2 py-1.5 lg:py-2 w-44 max-h-[calc(100vh-5rem)] bg-muted-100 border-2 border-muted-200 rounded-lg overflow-hidden"
+          className="flex flex-col fixed z-30 bottom-11 sm:bottom-auto sm:top-16 right-2 py-1.5 lg:py-2 w-44 max-h-[calc(100vh-12rem)] sm:max-h-[calc(100vh-5rem)] bg-muted-100 border-2 border-muted-200 rounded-lg overflow-hidden"
           aria-hidden={!isOpen}
         >
           {/* Single scroll region for the whole panel — sections are short

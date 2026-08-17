@@ -26,7 +26,6 @@ const GardenControlsSidebar = ({
         isOpen={rightOpen}
         onToggle={toggleRight}
         placement="right"
-        position="top"
       />
       <GardenControlsSidebarContainer
         isOpen={rightOpen}

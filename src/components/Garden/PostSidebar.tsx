@@ -19,7 +19,6 @@ const PostSidebar = ({ description, tocHtml }: PostSidebarProps) => {
         isOpen={rightOpen}
         onToggle={toggleRight}
         placement="right"
-        position="top"
       />
       <PostSidebarContainer
         isOpen={rightOpen}

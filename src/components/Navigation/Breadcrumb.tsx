@@ -83,7 +83,7 @@ const Breadcrumb = () => {
   return (
     <div
       aria-label="breadcrumb"
-      className="inline-flex self-center mt-2 ml-2 p-1 rounded-md bg-muted-100 border-2 border-muted-200"
+      className="inline-flex items-center h-9 self-center mt-2 ml-2 p-1 rounded-md bg-muted-100 border-2 border-muted-200"
       role="group"
     >
       <Link

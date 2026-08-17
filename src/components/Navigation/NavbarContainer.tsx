@@ -42,7 +42,10 @@ const NavbarContainer = ({ isOpen }: NavbarContainerProps) => (
               x: { type: "spring", duration: 0.5 },
               scaleX: { type: "spring", duration: 0.5 },
             }}
-            className={`flex flex-col fixed z-30 items-center justify-between top-16 left-2 py-1.5 lg:py-2 w-44 bg-muted-100 border-2 border-muted-200 rounded-lg overflow-hidden`}
+            // bottom-11 (2.75rem = 8px bottom-2 inset + 36px w-9/h-9 button
+            // height) puts the panel's bottom edge exactly at the
+            // PopOutButton's top edge — 0px gap, matching PostSidebar's pair.
+            className={`flex flex-col fixed z-30 items-center justify-between bottom-11 sm:bottom-auto sm:top-16 left-2 py-1.5 lg:py-2 w-44 bg-muted-100 border-2 border-muted-200 rounded-lg overflow-hidden`}
             aria-hidden={!isOpen}
           >
             <SpotifyPlayer />
