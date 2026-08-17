@@ -33,10 +33,12 @@ const rawToDisplayGrassDensity = (raw: number) =>
 const displayToRawGrassDensity = (display: number) =>
   (display * GRASS_DENSITY_LEGACY_MAX) / GRASS_DENSITY_DISPLAY_AT_LEGACY_MAX;
 
-/** Every slider the sidebar renders. Superset of `GardenControlValues` — it
+/**
+ * Every slider the sidebar renders. Superset of `GardenControlValues` — it
  * also tracks `treeDensity` (raw dial) and `grassDensity` in *display*
  * units, neither of which `GardenControlValues` carries (it only carries
- * the derived `treeCount`, and raw grassDensity instances/m²). */
+ * the derived `treeCount`, and raw grassDensity instances/m²).
+ */
 export type GardenControlKey =
   | "gridWidth"
   | "gridHeight"
@@ -60,6 +62,7 @@ export type GardenControlKey =
 
 export type GardenSliderState = Record<GardenControlKey, number>;
 
+/** One slider's schema: which value it edits, its label, and its range. */
 export interface GardenControlFieldSchema {
   key: GardenControlKey;
   label: string;
@@ -68,14 +71,17 @@ export interface GardenControlFieldSchema {
   step: number;
 }
 
+/** One sidebar section (e.g. "terrain") and the fields it renders. */
 export interface GardenControlSectionSchema {
   title: string;
   fields: GardenControlFieldSchema[];
 }
 
-/** Sidebar section/field schema — one source of truth for the labels,
+/**
+ * Sidebar section/field schema — one source of truth for the labels,
  * ranges, and step sizes, mirroring the `folder()` calls Controls.tsx used
- * to encode via Leva. Section order drives the sidebar's section order. */
+ * to encode via Leva. Section order drives the sidebar's section order.
+ */
 export const GARDEN_CONTROL_SECTIONS: GardenControlSectionSchema[] = [
   {
     title: "terrain",
@@ -210,19 +216,26 @@ const buildDefaultState = (): GardenSliderState => {
   };
 };
 
+/** Return shape of {@link useGardenControls}. */
 export interface UseGardenControlsResult {
-  /** Slider-space state — what the sidebar reads/writes (incl. treeDensity
-   * and display-unit grassDensity, neither of which GardenRig consumes directly). */
+  /**
+   * Slider-space state — what the sidebar reads/writes (incl. treeDensity
+   * and display-unit grassDensity, neither of which GardenRig consumes directly).
+   */
   sliderValues: GardenSliderState;
   setValue: (key: GardenControlKey, value: number) => void;
-  /** `GardenRig`-shape values — same derivation Controls.tsx did (treeCount
-   * from gridWidth/gridHeight/treeDensity, grassDensity converted to raw). */
+  /**
+   * `GardenRig`-shape values — same derivation Controls.tsx did (treeCount
+   * from gridWidth/gridHeight/treeDensity, grassDensity converted to raw).
+   */
   values: GardenControlValues;
 }
 
-/** Replaces the Leva-based `useGardenControls` in Controls.tsx — plain
+/**
+ * Replaces the Leva-based `useGardenControls` in Controls.tsx — plain
  * React state driving the same schema, read/written by the sidebar instead
- * of Leva's own panel. */
+ * of Leva's own panel.
+ */
 export const useGardenControls = (): UseGardenControlsResult => {
   const [sliderValues, setSliderValues] = useState<GardenSliderState>(
     buildDefaultState,

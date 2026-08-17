@@ -67,12 +67,13 @@ const GardenControlsSidebarContainer = ({
                   {section.fields.map((field) => (
                     <GardenSliderRow
                       key={field.key}
+                      fieldKey={field.key}
                       label={field.label}
                       min={field.min}
                       max={field.max}
                       step={field.step}
                       value={sliderValues[field.key]}
-                      onChange={(value) => onChange(field.key, value)}
+                      onChange={onChange}
                     />
                   ))}
                 </div>
