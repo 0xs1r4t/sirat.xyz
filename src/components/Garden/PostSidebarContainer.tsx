@@ -50,6 +50,14 @@ const PostSidebarContainer = ({
     <AnimatePresence initial={false}>
       {isOpen && (
         <LazyMotion features={loadFeatures}>
+          {/* Mobile max-height reserves 9.5rem at the top + bottom-2's
+              0.5rem = 10rem. The 9.5rem matches ThemeSwitcherButton's
+              3-button stack (8.75rem tall, measured) plus 0.75rem — the
+              same gap the theme buttons leave *between each other*
+              (gap-1's 0.25rem + each button's own mt-2 stacking on top of
+              it, not just gap-1 alone), so the panel's top edge reads as
+              "one more button-width away" rather than an arbitrary number.
+              Desktop keeps the original top-16/5rem pair, unrelated. */}
           <m.div
             aria-label="post sidebar"
             initial={{ x: 192, scaleX: 0.5 }}
@@ -69,11 +77,11 @@ const PostSidebarContainer = ({
               x: { type: "spring", duration: 0.5 },
               scaleX: { type: "spring", duration: 0.5 },
             }}
-            className="flex flex-col fixed z-30 top-16 right-2 py-1.5 lg:py-2 w-44 max-h-[calc(100vh-5rem)] bg-muted-100 border-2 border-muted-200 rounded-lg overflow-hidden"
+            className="flex flex-col fixed z-30 bottom-2 sm:bottom-auto sm:top-16 right-2 py-1.5 lg:py-2 w-44 max-h-[calc(100vh-10rem)] sm:max-h-[calc(100vh-5rem)] bg-muted-100 border-2 border-muted-200 rounded-lg overflow-hidden"
             aria-hidden={!isOpen}
           >
             {/* Description */}
-            <div className="flex flex-col border-b-2 border-muted-200 max-h-[38%] min-h-[80px]">
+            <div className="flex flex-col border-b-2 border-muted-200 max-h-[38%] min-h-20">
               <h3 className="sticky top-0 text-2xl italic font-bold font-that-that-new-pixel px-3 pt-2 pb-1 bg-muted-100 z-10 shrink-0">
                 about
               </h3>

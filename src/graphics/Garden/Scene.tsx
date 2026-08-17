@@ -36,29 +36,22 @@ import { useGardenTheme } from "@graphics/Garden/useGardenTheme";
 import Terrain from "@graphics/Garden/Terrain";
 import { Grass, Flowers } from "@graphics/Garden/Foliage";
 import Trees from "@graphics/Garden/Trees";
-import {
-  GARDEN_CONTROL_DEFAULTS,
-  type GardenControlValues,
-} from "@graphics/Garden/gardenControlValues";
+import type { GardenControlValues } from "@graphics/Garden/gardenControlValues";
 import {
   DEVICE_TIER_PARAMS,
   demoteTier,
   detectDeviceTier,
+  getTierOverride,
   type DeviceTier,
 } from "@graphics/Garden/deviceTier";
 import { gardenDebugState } from "@graphics/Garden/gardenDebug";
 
-// Dev-only: Leva's panel + bundle only loads for visitors who are actually
-// in debug mode (see the `debug` state in Scene below), not every hero load.
-// Plain React.lazy (not next/dynamic) on purpose — next/dynamic's compiler
-// adds a webpackPrefetch hint that fetches the chunk eagerly regardless of
-// whether the lazy component ever renders, defeating the point of gating it.
-const LevaGardenControls = lazy(
-  () => import("@graphics/Garden/LevaGardenControls"),
-);
-
-// Same reasoning as LevaGardenControls above — keep GPU-timestamp
-// instrumentation (docs/garden-perf-benchmark.md) out of the eager bundle.
+// Same reasoning the old LevaGardenControls lazy-import used to have — keep
+// GPU-timestamp instrumentation (docs/garden-perf-benchmark.md) out of the
+// eager bundle. Plain React.lazy (not next/dynamic) on purpose —
+// next/dynamic's compiler adds a webpackPrefetch hint that fetches the
+// chunk eagerly regardless of whether the lazy component ever renders,
+// defeating the point of gating it.
 const GpuTimer = lazy(() => import("@graphics/Garden/GpuTimer"));
 
 /** Props for {@link Scene} (and the rig/controls it renders internally). */
@@ -71,6 +64,8 @@ export interface GardenSceneProps {
   onHoverPost: (post: GardenPost | null) => void;
   /** fires when a flower is clicked/focused, or null when focus is cleared */
   onFocusPost: (post: GardenPost | null) => void;
+  /** Live values from the public controls sidebar (Garden.tsx's useGardenControls) — replaces the old debug-only Leva panel. */
+  controls: GardenControlValues;
 }
 
 const HIT_RADIUS = 0.55; // ≈ 44px at flower-band distance from the camera
@@ -89,7 +84,6 @@ const GardenRig = ({
   windOctaves,
   debug,
 }: GardenSceneProps & {
-  controls: GardenControlValues;
   /** LOD cull distance (plan 5.2), device-tier-driven (plan 5.4). */
   farDistance: number;
   /** Wind octave count (plan 5.4) — low tier passes 2 instead of 3. */
@@ -458,19 +452,6 @@ const isGardenDebugMode = () => {
   return new URLSearchParams(window.location.search).has("debug");
 };
 
-// Debug-only `?tier=high|mid|low` override (plan §6 "Perf budget" +
-// garden-screenshot-harness.md): pins farDistance/windOctaves instead of
-// hoping detectDeviceTier()'s heuristic lands on the right one, which
-// otherwise varies by machine (headless capture environments in particular)
-// and would make screenshot/perf runs non-reproducible.
-const getTierOverride = (): DeviceTier | null => {
-  if (typeof window === "undefined") return null;
-  const params = new URLSearchParams(window.location.search);
-  if (!params.has("debug")) return null; // debug-only, see isGardenDebugMode
-  const raw = params.get("tier");
-  return raw === "high" || raw === "mid" || raw === "low" ? raw : null;
-};
-
 /** WebGPU canvas root: sets up the renderer, then mounts the garden rig. */
 export default function Scene(props: GardenSceneProps) {
   const [debug] = useState(isGardenDebugMode);
@@ -483,18 +464,6 @@ export default function Scene(props: GardenSceneProps) {
     () => getTierOverride() ?? detectDeviceTier(),
   );
   const tierParams = DEVICE_TIER_PARAMS[tier];
-
-  // Production visitors get the tier-picked grass density; debug mode keeps
-  // full manual control via Leva regardless of tier (its grassDensity slider
-  // overrides this). farDistance/windOctaves/DPR are tier-driven either way
-  // — they're new knobs 5.4 adds, not previously exposed via Leva.
-  const nonDebugControls = useMemo(
-    () => ({
-      ...GARDEN_CONTROL_DEFAULTS,
-      grassDensity: tierParams.grassDensity,
-    }),
-    [tierParams.grassDensity],
-  );
 
   // Plan 5.5 — don't render what nobody sees. Tab hidden → stop the
   // frameloop entirely ("never"); reduced-motion (wind already zeroed
@@ -543,29 +512,16 @@ export default function Scene(props: GardenSceneProps) {
           in debug mode so manual Leva tuning stays deterministic instead of
           fighting an automatic demotion mid-session. */}
       {!debug && <PerformanceMonitor onDecline={() => setTier(demoteTier)} />}
-      {debug ? (
+      <GardenRig
+        {...props}
+        farDistance={tierParams.farDistance}
+        windOctaves={tierParams.windOctaves}
+        debug={debug}
+      />
+      {debug && (
         <Suspense fallback={null}>
-          <LevaGardenControls
-            render={(controls) => (
-              <GardenRig
-                {...props}
-                controls={controls}
-                farDistance={tierParams.farDistance}
-                windOctaves={tierParams.windOctaves}
-                debug={debug}
-              />
-            )}
-          />
           <GpuTimer />
         </Suspense>
-      ) : (
-        <GardenRig
-          {...props}
-          controls={nonDebugControls}
-          farDistance={tierParams.farDistance}
-          windOctaves={tierParams.windOctaves}
-          debug={debug}
-        />
       )}
     </Canvas>
   );

@@ -9,26 +9,17 @@ interface PopOutButtonProps {
   isOpen: boolean;
   onToggle: () => void;
   placement: "left" | "right";
-  position: "top" | "bottom";
-  offsetTop?: string;
-  offsetBottom?: string;
-  offsetRight?: string;
-  offsetLeft?: string;
 }
 
-const PopOutButton = ({
-  isOpen,
-  onToggle,
-  placement,
-  position = "top",
-  offsetTop = "4.5rem",
-  offsetBottom = "4.5rem",
-  offsetRight = "0rem", // Start close to right edge
-  offsetLeft = "0rem", // Start close to left edge
-}: PopOutButtonProps) => {
-  // Calculate the open position based on sidebar width
-  const leftSidebarWidth = "11.25rem"; // 180px
-  const rightSidebarWidth = "11.5rem"; // 184px (44 * 4 + margin)
+const PopOutButton = ({ isOpen, onToggle, placement }: PopOutButtonProps) => {
+  // Slide distance when open: panel width (w-44 = 11rem) + a 0.25rem tuck,
+  // so the button ends up hidden 4px behind the panel's edge instead of
+  // sitting flush against it — two independent borders meeting exactly
+  // edge-to-edge (0 overlap) render as a doubled line at high DPR; tucked
+  // under, only the panel's border is visible. Left and right used to
+  // differ (11.25rem vs 11.5rem) for no real reason — that's exactly why
+  // only one side looked right.
+  const sidebarWidth = "11.25rem"; // 180px
 
   return (
     <Tooltip
@@ -38,21 +29,13 @@ const PopOutButton = ({
       <motion.button
         onClick={onToggle}
         aria-label={`Click to ${isOpen ? "close" : "expand"} sidebar`}
-        style={{
-          top: position === "top" ? offsetTop : "auto",
-          bottom: position === "bottom" ? offsetBottom : "auto",
-          // Position from the correct side
-          ...(placement === "left"
-            ? { left: offsetLeft }
-            : { right: offsetRight }),
-        }}
         animate={
           isOpen
             ? {
                 x:
                   placement === "left"
-                    ? leftSidebarWidth
-                    : `-${rightSidebarWidth}`,
+                    ? sidebarWidth
+                    : `-${sidebarWidth}`,
                 scale: 1.05,
                 y: [0, -1, 0],
                 transition: {
@@ -71,9 +54,11 @@ const PopOutButton = ({
           damping: 50,
           x: { type: "spring", duration: 0.5 },
         }}
-        className={`fixed z-20 flex justify-center items-center p-1 aspect-square ${
+        className={`fixed z-20 flex justify-center items-center w-9 h-9 ${
           placement === "left" ? "rounded-e-md" : "rounded-s-md"
-        } bg-muted-100 border-2 border-muted-200 transition-colors duration-200`}
+        } bg-muted-100 border-2 border-muted-200 transition-colors duration-200
+        bottom-4 sm:bottom-auto sm:top-18
+        ${placement === "left" ? "left-0" : "right-0"}`}
       >
         <span
           aria-hidden="true"
@@ -87,7 +72,7 @@ const PopOutButton = ({
                 : "rotate-0"
           } transition-transform duration-500 ease-in-out`}
         >
-          <Icons.doubleChevron className="w-4 h-4 lg:w-5 lg:h-5" />
+          <Icons.doubleChevron className="w-5 h-5" />
         </span>
       </motion.button>
     </Tooltip>

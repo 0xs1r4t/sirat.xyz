@@ -36,7 +36,7 @@ const ThemeSwitcherButton = () => {
           <LazyMotion features={loadFeatures}>
             <m.button
               key={key}
-              className={`z-20 p-1.5 aspect-square self-end inline-flex justify-center items-center top-14 mt-2 mr-2 rounded-md bg-muted-100 border-2 border-muted-200 
+              className={`z-20 w-9 h-9 self-end inline-flex justify-center items-center top-14 mt-2 mr-2 rounded-md bg-muted-100 border-2 border-muted-200
               ${
                 mounted && theme === key
                   ? "scale-105 ring-2 ring-offset-0 ring-muted-200"

@@ -15,7 +15,6 @@ const Navbar = () => {
         isOpen={leftOpen}
         onToggle={toggleLeft}
         placement="left"
-        position="top"
       />
       <MusicPlayerContainer isOpen={leftOpen} />
     </Fragment>
