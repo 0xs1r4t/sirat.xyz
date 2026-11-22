@@ -37,6 +37,7 @@ const GardenControlsSidebarContainer = ({
             button-width away" rather than an arbitrary number. Desktop
             keeps the original top-16/5rem pair, unrelated. */}
         <m.div
+          id="garden-controls"
           role="region"
           aria-label="garden controls sidebar"
           initial={{ x: 192, scaleX: 0.5 }}

@@ -9,9 +9,19 @@ interface PopOutButtonProps {
   isOpen: boolean;
   onToggle: () => void;
   placement: "left" | "right";
+  /** Stable accessible name, e.g. "Site sidebar". */
+  label: string;
+  /** id of the panel this button controls, when mounted. */
+  controlsId?: string;
 }
 
-const PopOutButton = ({ isOpen, onToggle, placement }: PopOutButtonProps) => {
+const PopOutButton = ({
+  isOpen,
+  onToggle,
+  placement,
+  label,
+  controlsId,
+}: PopOutButtonProps) => {
   // Slide distance when open: panel width (w-44 = 11rem) + a 0.25rem tuck,
   // so the button ends up hidden 4px behind the panel's edge instead of
   // sitting flush against it — two independent borders meeting exactly
@@ -23,13 +33,14 @@ const PopOutButton = ({ isOpen, onToggle, placement }: PopOutButtonProps) => {
 
   return (
     <Tooltip
-      label={`click to ${isOpen ? "close" : "expand"} sidebar`}
+      label={`click to ${isOpen ? "close" : "open"} ${label.toLowerCase()}`}
       placement={placement}
     >
       <motion.button
         onClick={onToggle}
         aria-expanded={isOpen}
-        aria-label={`Click to ${isOpen ? "close" : "expand"} sidebar`}
+        aria-controls={isOpen ? controlsId : undefined}
+        aria-label={label}
         animate={
           isOpen
             ? {

@@ -44,6 +44,9 @@ const RootLayout = ({ children }: Readonly<{ children: React.ReactNode }>) => (
           Monaco.variable,
         )}
       >
+        <a href="#main" className="skip-link">
+          Skip to content
+        </a>
         <Suspense fallback={<></>}>
           <AnimatedCursor />
         </Suspense>
@@ -71,7 +74,11 @@ const RootLayout = ({ children }: Readonly<{ children: React.ReactNode }>) => (
             <div className="flex flex-row">
               <Navbar />
             </div>
-            <main className="container mx-auto relative flex flex-col items-center justify-between top-10 px-5">
+            <main
+              id="main"
+              tabIndex={-1}
+              className="container mx-auto relative flex flex-col items-center justify-between top-10 px-5"
+            >
               {children}
             </main>
           </SidebarProvider>
