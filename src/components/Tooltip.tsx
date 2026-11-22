@@ -48,7 +48,7 @@ export const Tooltip = ({ children, label, placement }: Props) => {
 
   const ref = useMergeRefs([
     refs.setReference,
-    (children as { ref?: Ref<unknown> }).ref,
+    (children.props as { ref?: Ref<unknown> }).ref,
   ]);
 
   return (
