@@ -24,6 +24,7 @@ import "@/styles/link-preview.css";
 import "@/styles/toc.css";
 
 import { cn } from "@/lib/utils";
+import { DEFAULT_THEME, THEMES } from "@/lib/themes";
 import Breadcrumb from "@/components/Navigation/Breadcrumb";
 import Navbar from "@/components/Navigation/Navbar";
 const MouseTrail = React.lazy(() => import("@/graphics/Trail/Mouse"));
@@ -48,13 +49,9 @@ const RootLayout = ({ children }: Readonly<{ children: React.ReactNode }>) => (
 
         <ThemeProvider
           attribute="class"
-          defaultTheme="strawberry-matcha"
+          defaultTheme={DEFAULT_THEME}
           enableColorScheme
-          themes={[
-            "strawberry-matcha",
-            "neopolitan-ice-cream",
-            "blueberry-lemon",
-          ]}
+          themes={[...THEMES]}
         >
           <SidebarProvider>
             <Suspense fallback={<></>}>

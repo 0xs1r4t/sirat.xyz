@@ -2,7 +2,9 @@
 
 import { useEffect } from "react";
 
-const DARK_THEMES = ["blueberry-lemon"];
+import { DARK_THEME } from "@/lib/themes";
+
+const DARK_THEMES = [DARK_THEME];
 
 const ExcalidrawTheme = () => {
   useEffect(() => {

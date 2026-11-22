@@ -3,19 +3,13 @@
 
 import { useRef, useEffect, useState, useMemo } from "react";
 import { Canvas, useThree } from "@react-three/fiber";
+import { useTheme as useNextTheme } from "next-themes";
 import * as THREE from "three";
 import vertexShader from "@graphics/Dither/dither.vert";
 import fragmentShader from "@graphics/Dither/dither.frag";
+import { DEFAULT_THEME, isTheme, type Theme } from "@/lib/themes";
 
 // Constants
-
-const VALID_THEMES = [
-  "strawberry-matcha",
-  "blueberry-lemon",
-  "neopolitan-ice-cream",
-] as const;
-const DEFAULT_THEME = "strawberry-matcha";
-type Theme = (typeof VALID_THEMES)[number];
 
 const PATTERN_INDEX: Record<"2x2" | "4x4" | "8x8", number> = {
   "2x2": 0,
@@ -47,27 +41,6 @@ export const isVideoSrc = (src: string): boolean =>
   VIDEO_EXTENSIONS.test(src);
 
 // Helpers
-
-const getActiveTheme = (): Theme => {
-  const found = Array.from(document.documentElement.classList).find(
-    (cls): cls is Theme => (VALID_THEMES as readonly string[]).includes(cls),
-  );
-  return found ?? DEFAULT_THEME;
-};
-
-const useTheme = (): Theme => {
-  const [theme, setTheme] = useState<Theme>(DEFAULT_THEME);
-  useEffect(() => {
-    setTheme(getActiveTheme());
-    const obs = new MutationObserver(() => setTheme(getActiveTheme()));
-    obs.observe(document.documentElement, {
-      attributes: true,
-      attributeFilter: ["class"],
-    });
-    return () => obs.disconnect();
-  }, []);
-  return theme;
-};
 
 const useContainerSize = (ref: React.RefObject<HTMLDivElement | null>) => {
   const [size, setSize] = useState({ width: 0, height: 0 });
@@ -117,7 +90,8 @@ export default function DitherMedia({
   isVideo,
   isDecorative,
 }: DitherMediaProps) {
-  const theme = useTheme();
+  const { resolvedTheme } = useNextTheme();
+  const theme: Theme = isTheme(resolvedTheme) ? resolvedTheme : DEFAULT_THEME;
   const imgRef = useRef<HTMLImageElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const wrapperRef = useRef<HTMLDivElement>(null);

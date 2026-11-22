@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo } from "react";
 import * as THREE from "three";
+import { DARK_THEME } from "@/lib/themes";
 
 /**
  * Live bridge from the site's CSS custom properties to shader uniforms.
@@ -40,9 +41,6 @@ const VAR_NAMES = [
   "--color-muted-100",
   "--color-muted-200",
 ] as const;
-
-/** The dark theme's html class (see ThemeSwitcherButton.tsx / layout.tsx). */
-const DARK_THEME_CLASS = "blueberry-lemon";
 
 /**
  * Parses "rgb(232 241 216)" / "rgb(232, 241, 216)" / "#aabbcc" into `out`
@@ -89,7 +87,7 @@ const refreshPalette = (palette: GardenPalette): void => {
   parseCssColor(m100, palette.muted100);
   parseCssColor(m200, palette.muted200);
   palette.isDark.current = document.documentElement.classList.contains(
-    DARK_THEME_CLASS,
+    DARK_THEME,
   );
 };
 

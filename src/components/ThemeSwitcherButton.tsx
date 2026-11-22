@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { useTheme } from "next-themes";
 import { Tooltip } from "@/components/Tooltip";
 import { Icons } from "@/components/Icons";
+import type { Theme } from "@/lib/themes";
 
 const ThemeSwitcherButton = () => {
   const { theme, setTheme } = useTheme();
@@ -14,7 +15,7 @@ const ThemeSwitcherButton = () => {
     setMounted(true);
   }, []);
 
-  const themes: Record<string, React.ReactNode> = {
+  const themes: Record<Theme, React.ReactNode> = {
     "strawberry-matcha": <Icons.matcha />,
     "neopolitan-ice-cream": <Icons.iceCream />,
     "blueberry-lemon": <Icons.cheesecake />,
