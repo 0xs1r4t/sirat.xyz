@@ -277,6 +277,26 @@
     text-wrap: balance;
   }
 
+  /* Subtle "alive" idle bob for a selected/active state — position only,
+     no scale, so it can't affect an element's measured size (see
+     ThemeSwitcherButton, which needs a static w-9/h-9 box at all times).
+     Matches the amplitude/timing of the framer-motion y:[0,-1,0] loop this
+     replaces elsewhere in the app (PostSidebarContainer etc. still animate
+     the same bob via motion since they don't have a fixed-size constraint). */
+  @keyframes bob {
+    0%,
+    100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-1px);
+    }
+  }
+
+  .animate-bob {
+    animation: bob 1s ease-in-out infinite;
+  }
+
   /* Pixel-art icons (public/icons/pixel/*-{size}px.PNG): force nearest-
      neighbor scaling so the browser never smooths/blurs the source pixels.
      Without this, browsers fall back to their own upscale filter when a
