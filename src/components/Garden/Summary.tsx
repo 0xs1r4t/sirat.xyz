@@ -50,7 +50,4 @@ const Summary = ({ summary, garden, ref }: SummaryProps) => (
     </section>
   );
 
-/** Empty-state shown when a garden has no published posts yet. */
-export const NoPostSummary = () => <div>no posts here</div>;
-
 export default Summary;

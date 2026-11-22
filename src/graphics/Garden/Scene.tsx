@@ -30,7 +30,6 @@ import { GARDEN, layoutFlowers, type GardenPost } from "@/lib/garden/meadow";
 import {
   flowerHeads,
   pickFlower,
-  pickFlowerOnClick,
 } from "@/lib/garden/picking";
 import { useGardenTheme } from "@graphics/Garden/useGardenTheme";
 import Terrain from "@graphics/Garden/Terrain";
@@ -40,8 +39,7 @@ import type { GardenControlValues } from "@graphics/Garden/gardenControlValues";
 import {
   DEVICE_TIER_PARAMS,
   demoteTier,
-  detectDeviceTier,
-  getTierOverride,
+  getInitialTier,
   type DeviceTier,
 } from "@graphics/Garden/deviceTier";
 import { gardenDebugState } from "@graphics/Garden/gardenDebug";
@@ -286,7 +284,7 @@ const GardenRig = ({
 
       if (isTap) {
         const hit =
-          pickFlowerOnClick(
+          pickFlower(
             raycaster.ray.origin,
             raycaster.ray.direction,
             heads,
@@ -460,9 +458,7 @@ export default function Scene(props: GardenSceneProps) {
   // PerformanceMonitor below if FPS actually sags — the heuristic doesn't
   // need to be perfect, it just needs a reasonable starting point. Debug-only
   // `?tier=` pins it instead, for reproducible perf/screenshot runs.
-  const [tier, setTier] = useState<DeviceTier>(
-    () => getTierOverride() ?? detectDeviceTier(),
-  );
+  const [tier, setTier] = useState<DeviceTier>(getInitialTier);
   const tierParams = DEVICE_TIER_PARAMS[tier];
 
   // Plan 5.5 — don't render what nobody sees. Tab hidden → stop the

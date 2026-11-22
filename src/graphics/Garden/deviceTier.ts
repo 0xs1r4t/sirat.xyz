@@ -74,3 +74,7 @@ export const getTierOverride = (): DeviceTier | null => {
   const raw = params.get("tier");
   return raw === "high" || raw === "mid" || raw === "low" ? raw : null;
 };
+
+/** Starting tier: debug override when present, else the capability heuristic. */
+export const getInitialTier = (): DeviceTier =>
+  getTierOverride() ?? detectDeviceTier();
