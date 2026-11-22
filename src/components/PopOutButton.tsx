@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 
 import { Icons } from "@/components/Icons";
@@ -22,6 +23,39 @@ const PopOutButton = ({
   label,
   controlsId,
 }: PopOutButtonProps) => {
+  const buttonRef = useRef<HTMLButtonElement>(null);
+  const hadFocusInside = useRef(false);
+
+  // Track whether focus entered the panel, and return it to the toggle if
+  // the panel closes while it (or the document body) still has focus.
+  useEffect(() => {
+    if (!isOpen || !controlsId) return;
+
+    const panel = document.getElementById(controlsId);
+    if (!panel) return;
+
+    const onFocusIn = () => {
+      hadFocusInside.current = true;
+    };
+    panel.addEventListener("focusin", onFocusIn);
+    return () => panel.removeEventListener("focusin", onFocusIn);
+  }, [isOpen, controlsId]);
+
+  useEffect(() => {
+    if (isOpen) {
+      hadFocusInside.current = false;
+      return;
+    }
+    if (!hadFocusInside.current) return;
+
+    const active = document.activeElement;
+    const panel = controlsId ? document.getElementById(controlsId) : null;
+    const focusWasLost = active === document.body || panel?.contains(active);
+
+    hadFocusInside.current = false;
+    if (focusWasLost) buttonRef.current?.focus();
+  }, [isOpen, controlsId]);
+
   // Slide distance when open: panel width (w-44 = 11rem) + a 0.25rem tuck,
   // so the button ends up hidden 4px behind the panel's edge instead of
   // sitting flush against it — two independent borders meeting exactly
@@ -37,6 +71,7 @@ const PopOutButton = ({
       placement={placement}
     >
       <motion.button
+        ref={buttonRef}
         onClick={onToggle}
         aria-expanded={isOpen}
         aria-controls={isOpen ? controlsId : undefined}
