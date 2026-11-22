@@ -10,7 +10,7 @@ const Date = ({ date, label }: { date: string; label?: string }) => (
     )}
   >
     {label ? <span>{label}&nbsp;</span> : ""}
-    <time>{date}</time>
+    <time dateTime={date}>{date}</time>
   </div>
 );
 
