@@ -8,7 +8,7 @@ import type { OrbitControls as OrbitControlsImpl } from "three-stdlib";
 // The webgpu entry point is a superset of "three" (same core classes —
 // Vector3, Color, Raycaster, etc. — plus WebGPURenderer and the Node
 // material system). Only this file needs it, since it's the only place
-// that constructs the renderer; Terrain/Foliage/etc. keep importing
+// that constructs the renderer; Terrain/Grass/Flowers/etc. keep importing
 // plain "three" for the shared core classes.
 import * as THREE from "three/webgpu";
 
@@ -20,7 +20,8 @@ extend(THREE as unknown as Record<string, ConstructorRepresentation>);
 import { GARDEN, type GardenPost } from "@/lib/garden/meadow";
 import { useGardenTheme } from "@graphics/Garden/useGardenTheme";
 import Terrain from "@graphics/Garden/Terrain";
-import { Grass, Flowers } from "@graphics/Garden/Foliage";
+import { Grass } from "@graphics/Garden/Grass";
+import { Flowers } from "@graphics/Garden/Flowers";
 import Trees from "@graphics/Garden/Trees";
 import type { GardenControlValues } from "@graphics/Garden/gardenControlValues";
 import {
@@ -78,7 +79,7 @@ const GardenRig = ({
   const camera = useThree((s) => s.camera);
   const gl = useThree((s) => s.gl);
   const scene = useThree((s) => s.scene);
-  // Same reasoning as Foliage.tsx's Flowers: under frameloop="demand" (plan
+  // Same reasoning as Flowers.tsx: under frameloop="demand" (plan
   // 5.5) the camera focus-lerp and tooltip DOM positioning below mutate
   // things the reconciler never sees, so they have to request their own
   // frames while there's still per-frame work to do.

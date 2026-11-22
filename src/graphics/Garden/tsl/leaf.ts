@@ -19,7 +19,7 @@ import { simplexNoise } from "@graphics/Garden/tsl/wind";
  * Leaf wind, ported from leaf.vert. Packed as a single vec4 (offset.xyz,
  * influence in .w) so the caller computes it once and reuses the same node
  * for both the position offset and the fragment shimmer term below —
- * matches Foliage.tsx's grass `computeWind` pattern (avoids recomputing
+ * matches Grass.tsx's `computeWind` pattern (avoids recomputing
  * the noise samples twice, and keeps vertex/fragment reading the exact
  * same values the way a GLSL varying would have).
  *
@@ -69,14 +69,14 @@ export const computeLeafWind = Fn(
 /**
  * Spherical billboard (camera right *and* up, from the view matrix's
  * columns) — distinct from grass's ground-locked cylindrical billboard and
- * flowers' Y-locked one (see Foliage.tsx). `windCenter` is the leaf's
+ * flowers' Y-locked one (see Flowers.tsx). `windCenter` is the leaf's
  * world position *after* `computeLeafWind`'s offset has already been
  * added.
  */
 export const computeLeafPosition = Fn(([windCenter, instanceScale]: [any, any]) => {
   // `: any` — bracket-indexing a mat4 node needs the cast (confirmed against
   // three's own `billboarding()` TSL helper source during the Phase 2 flower
-  // billboard port; see Foliage.tsx's identical pattern).
+  // billboard port; see Flowers.tsx's identical pattern).
   const viewMatrix: any = cameraViewMatrix;
   const cameraRight: any = vec3(viewMatrix[0][0], viewMatrix[1][0], viewMatrix[2][0]);
   const cameraUp: any = vec3(viewMatrix[0][1], viewMatrix[1][1], viewMatrix[2][1]);
