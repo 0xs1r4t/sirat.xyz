@@ -10,6 +10,7 @@
     "build": "next build",
     "start": "next start -H 0.0.0.0 -p 4321",
     "lint": "eslint .",
+    "test": "node --test src/lib/garden/*.test.ts",
     "generate:pixel-icons": "node scripts/generate-pixel-icon-sizes.mjs",
     "spotify:auth": "node --env-file=.env.local scripts/spotify-auth.mjs",
     "garden:capture": "node scripts/garden-capture.mjs",
