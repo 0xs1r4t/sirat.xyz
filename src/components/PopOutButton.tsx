@@ -28,6 +28,7 @@ const PopOutButton = ({ isOpen, onToggle, placement }: PopOutButtonProps) => {
     >
       <motion.button
         onClick={onToggle}
+        aria-expanded={isOpen}
         aria-label={`Click to ${isOpen ? "close" : "expand"} sidebar`}
         animate={
           isOpen

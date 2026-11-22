@@ -9,6 +9,7 @@ import {
 } from "react";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { useTheme as useNextTheme } from "next-themes";
+import { useReducedMotion } from "motion/react";
 import * as THREE from "three";
 import { usePathname } from "next/navigation";
 import vertexShader from "@graphics/Trail/trail.vert";
@@ -94,10 +95,11 @@ const MouseTrail = ({ className }: { className?: string }) => {
   const theme: Theme = isTheme(resolvedTheme) ? resolvedTheme : DEFAULT_THEME;
   const pointer = usePointer();
   const [mounted, setMounted] = useState(false);
+  const reducedMotion = useReducedMotion();
 
   useEffect(() => setMounted(true), []);
 
-  if (pathname === "/graphics" || !mounted) return null;
+  if (pathname === "/graphics" || !mounted || reducedMotion) return null;
 
   return (
     <div

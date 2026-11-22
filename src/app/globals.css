@@ -119,6 +119,22 @@
     scroll-padding-top: 5rem;
   }
 
+  /* Respect the OS reduced-motion setting for all CSS-driven motion: the
+     star cursor cycle, idle bobs, marquees, and smooth scrolling. Motion
+     components are covered separately by MotionPreferences. */
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+
+    *,
+    *::before,
+    *::after {
+      animation: none !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+
   html,
   body {
     overscroll-behavior: none;

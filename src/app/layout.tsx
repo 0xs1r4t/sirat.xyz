@@ -6,6 +6,7 @@ import type { Metadata, Viewport } from "next";
 import { myMetadata, myViewport } from "@/lib/metadata";
 import ThemeProvider from "@/components/ThemeProvider";
 import ThemeSwitcher from "@/components/ThemeSwitcherButton";
+import MotionPreferences from "@/components/MotionPreferences";
 import { SidebarProvider } from "@/contexts/SidebarContext";
 const AnimatedCursor = React.lazy(() => import("@/components/AnimatedCursor"));
 
@@ -47,12 +48,13 @@ const RootLayout = ({ children }: Readonly<{ children: React.ReactNode }>) => (
           <AnimatedCursor />
         </Suspense>
 
-        <ThemeProvider
-          attribute="class"
-          defaultTheme={DEFAULT_THEME}
-          enableColorScheme
-          themes={[...THEMES]}
-        >
+        <MotionPreferences>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme={DEFAULT_THEME}
+            enableColorScheme
+            themes={[...THEMES]}
+          >
           <SidebarProvider>
             <Suspense fallback={<></>}>
               <MouseTrail />
@@ -74,6 +76,7 @@ const RootLayout = ({ children }: Readonly<{ children: React.ReactNode }>) => (
             </main>
           </SidebarProvider>
         </ThemeProvider>
+        </MotionPreferences>
       </body>
     </html>
   );

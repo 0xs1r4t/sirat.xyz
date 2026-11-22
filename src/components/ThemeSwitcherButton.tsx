@@ -22,11 +22,15 @@ const ThemeSwitcherButton = () => {
   };
 
   return (
-    <div className="flex flex-col md:flex-row gap-1 top-0 right-0 absolute z-50">
+    <div
+      role="group"
+      aria-label="theme"
+      className="flex flex-col md:flex-row gap-1 top-0 right-0 absolute z-50"
+    >
       {Object.entries(themes).map(([key, value]) => (
         <Tooltip
           key={key}
-          label={`switch the theme to ${key.replace("-", " ")}!`}
+          label={`switch the theme to ${key.replaceAll("-", " ")}!`}
           placement="bottom"
         >
           {/* No scale anywhere here on purpose — a static w-9 h-9 box is
@@ -43,7 +47,8 @@ const ThemeSwitcherButton = () => {
             transition duration-200 ease-out
             hover:drop-shadow-muted-200 hover:drop-shadow-[0_0_2px]
             focus:border-2 focus:rounded-lg focus:border-muted-200 focus:ring-2 focus:ring-link focus:drop-shadow-muted-200 focus:drop-shadow-[0_0_2px]`}
-            aria-label={`${key.replace("-", " ")} theme`}
+            aria-label={`${key.replaceAll("-", " ")} theme`}
+            aria-pressed={mounted && theme === key}
             onClick={() => {
               setTheme(key);
             }}

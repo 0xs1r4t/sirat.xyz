@@ -35,6 +35,7 @@ const PostSidebarContainer = ({
               "one more button-width away" rather than an arbitrary number.
               Desktop keeps the original top-16/5rem pair, unrelated. */}
           <m.div
+            role="region"
             aria-label="post sidebar"
             initial={{ x: 192, scaleX: 0.5 }}
             animate={{

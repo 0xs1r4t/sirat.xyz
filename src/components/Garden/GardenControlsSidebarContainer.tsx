@@ -37,6 +37,7 @@ const GardenControlsSidebarContainer = ({
             button-width away" rather than an arbitrary number. Desktop
             keeps the original top-16/5rem pair, unrelated. */}
         <m.div
+          role="region"
           aria-label="garden controls sidebar"
           initial={{ x: 192, scaleX: 0.5 }}
           animate={{
@@ -66,9 +67,14 @@ const GardenControlsSidebarContainer = ({
             {GARDEN_CONTROL_SECTIONS.map((section) => (
               <div
                 key={section.title}
+                role="group"
+                aria-labelledby={`garden-controls-${section.title}`}
                 className="flex flex-col border-b-2 border-muted-200 shrink-0 last:border-b-0"
               >
-                <h3 className="sticky top-0 text-2xl italic font-bold font-that-that-new-pixel px-3 pt-2 pb-1 bg-muted-100 z-10 shrink-0">
+                <h3
+                  id={`garden-controls-${section.title}`}
+                  className="sticky top-0 text-2xl italic font-bold font-that-that-new-pixel px-3 pt-2 pb-1 bg-muted-100 z-10 shrink-0"
+                >
                   {section.title}
                 </h3>
                 <div className="px-3 pb-2 flex flex-col gap-1">

@@ -25,10 +25,13 @@ export const useActiveHeading = (enabled: boolean) => {
 
           document.querySelectorAll(TOC_LINK_SELECTOR).forEach((link) => {
             link.classList.remove(ACTIVE_CLASS);
+            link.removeAttribute("aria-current");
           });
-          document
-            .querySelector(`${TOC_LINK_SELECTOR}[href="#${entry.target.id}"]`)
-            ?.classList.add(ACTIVE_CLASS);
+          const active = document.querySelector(
+            `${TOC_LINK_SELECTOR}[href="#${entry.target.id}"]`,
+          );
+          active?.classList.add(ACTIVE_CLASS);
+          active?.setAttribute("aria-current", "location");
         });
       },
       { rootMargin: "0px 0px -60% 0px", threshold: 0.1 },
