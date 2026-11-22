@@ -56,7 +56,7 @@ const SocialLinks = () => (
           } ${key} page`}
           placement="right"
         >
-          <span className="text-lg rounded-md hover:bg-muted-200 transition-colors duration-300">
+          <span className="text-lg rounded-md hover:bg-highlight transition-colors duration-300">
             <Link
               aria-label={`link to ${
                 value.type === "external" ? "the" : "my"

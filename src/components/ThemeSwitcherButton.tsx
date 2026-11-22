@@ -39,10 +39,10 @@ const ThemeSwitcherButton = () => {
           <button
             key={key}
             className={`z-20 w-9 h-9 self-end inline-flex justify-center items-center top-14 mt-2 mr-2 rounded-md bg-muted-100 border-2 border-muted-200
-            ${mounted && theme === key ? "ring-2 ring-offset-0 ring-muted-200 animate-bob" : ""}
+            ${mounted && theme === key ? "ring-2 ring-offset-0 ring-link animate-bob" : ""}
             transition duration-200 ease-out
             hover:drop-shadow-muted-200 hover:drop-shadow-[0_0_2px]
-            focus:border-2 focus:rounded-lg focus:border-muted-200 focus:ring-2 focus:ring-muted-200 focus:drop-shadow-muted-200 focus:drop-shadow-[0_0_2px]`}
+            focus:border-2 focus:rounded-lg focus:border-muted-200 focus:ring-2 focus:ring-link focus:drop-shadow-muted-200 focus:drop-shadow-[0_0_2px]`}
             aria-label={`${key.replace("-", " ")} theme`}
             onClick={() => {
               setTheme(key);
