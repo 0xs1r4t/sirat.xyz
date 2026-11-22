@@ -56,17 +56,17 @@ const SocialLinks = () => (
           } ${key} page`}
           placement="right"
         >
-          <span className="text-lg rounded-md hover:bg-muted-200 transition-colors duration-300">
+          <span className="text-lg rounded-md hover:bg-highlight transition-colors duration-300">
             <Link
-              aria-label={`link to ${
-                value.type === "external" ? "the" : "my"
-              } ${key} page`}
               href={value.link}
               className="inline-flex items-center mx-1 cursor-pointer"
               target={value.type === "external" ? "_blank" : "_self"}
               rel={value.type === "external" ? "noopener noreferrer" : ""}
             >
               {value.icon}&nbsp;{value.name}
+              {value.type === "external" && (
+                <span className="sr-only"> (opens in a new tab)</span>
+              )}
             </Link>
           </span>
         </Tooltip>

@@ -1,8 +1,10 @@
 "use client";
 
-import React, { useEffect } from "react";
+import React from "react";
 import { AnimatePresence, LazyMotion } from "motion/react";
 import * as m from "motion/react-m";
+
+import { useActiveHeading } from "@/lib/use-active-heading";
 
 const loadFeatures = () =>
   import("@/lib/features/min").then((res) => res.default);
@@ -18,33 +20,7 @@ const PostSidebarContainer = ({
   description,
   tocHtml,
 }: PostSidebarContainerProps) => {
-  useEffect(() => {
-    if (!isOpen) return;
-
-    const headings = document.querySelectorAll(
-      "article h2, article h3, article h4, article h5, article h6",
-    );
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            document
-              .querySelectorAll(".toc-sidebar a")
-              .forEach((l) => l.classList.remove("toc-active"));
-            const active = document.querySelector(
-              `.toc-sidebar a[href="#${entry.target.id}"]`,
-            );
-            active?.classList.add("toc-active");
-          }
-        });
-      },
-      { rootMargin: "0px 0px -60% 0px", threshold: 0.1 },
-    );
-
-    headings.forEach((h) => observer.observe(h));
-    return () => observer.disconnect();
-  }, [isOpen]);
+  useActiveHeading(isOpen);
 
   return (
     <AnimatePresence initial={false}>
@@ -59,6 +35,8 @@ const PostSidebarContainer = ({
               "one more button-width away" rather than an arbitrary number.
               Desktop keeps the original top-16/5rem pair, unrelated. */}
           <m.div
+            id="post-sidebar"
+            role="region"
             aria-label="post sidebar"
             initial={{ x: 192, scaleX: 0.5 }}
             animate={{

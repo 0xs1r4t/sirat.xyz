@@ -1,4 +1,5 @@
 import React from "react";
+import Link from "next/link";
 import { getPublishedPosts } from "@/lib/markdown";
 import type { GardenPost } from "@/lib/garden/meadow";
 import Garden from "@graphics/Garden/Garden";
@@ -20,6 +21,29 @@ const Home = async () => {
 
   return (
     <div className="flex flex-col items-center justify-center h-[75vh]">
+      {/* Keyboard/screen-reader equivalent of the garden: hidden until a link
+          inside it receives focus, then shown as an overlay. The canvas is
+          aria-hidden and pointer-only, so this is the accessible way in. */}
+      <section
+        aria-labelledby="home-posts-title"
+        className="home-posts"
+      >
+        <h1 id="home-title" className="text-2xl font-bold">
+          Sirat Baweja
+        </h1>
+        <h2 id="home-posts-title" className="mt-3 text-xl font-bold">
+          Recent garden posts
+        </h2>
+        <ul className="mt-2 list-disc pl-5">
+          {gardenPosts.map((post) => (
+            <li key={post.slug}>
+              <Link className="underline" href={`/garden/${post.slug}`}>
+                {post.title}
+              </Link>
+            </li>
+          ))}
+        </ul>
+      </section>
       <Garden posts={gardenPosts} />
       {/* <p>
         <Link

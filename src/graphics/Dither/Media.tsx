@@ -3,19 +3,13 @@
 
 import { useRef, useEffect, useState, useMemo } from "react";
 import { Canvas, useThree } from "@react-three/fiber";
+import { useTheme as useNextTheme } from "next-themes";
 import * as THREE from "three";
 import vertexShader from "@graphics/Dither/dither.vert";
 import fragmentShader from "@graphics/Dither/dither.frag";
+import { DEFAULT_THEME, isTheme, type Theme } from "@/lib/themes";
 
 // Constants
-
-const VALID_THEMES = [
-  "strawberry-matcha",
-  "blueberry-lemon",
-  "neopolitan-ice-cream",
-] as const;
-const DEFAULT_THEME = "strawberry-matcha";
-type Theme = (typeof VALID_THEMES)[number];
 
 const PATTERN_INDEX: Record<"2x2" | "4x4" | "8x8", number> = {
   "2x2": 0,
@@ -47,27 +41,6 @@ export const isVideoSrc = (src: string): boolean =>
   VIDEO_EXTENSIONS.test(src);
 
 // Helpers
-
-const getActiveTheme = (): Theme => {
-  const found = Array.from(document.documentElement.classList).find(
-    (cls): cls is Theme => (VALID_THEMES as readonly string[]).includes(cls),
-  );
-  return found ?? DEFAULT_THEME;
-};
-
-const useTheme = (): Theme => {
-  const [theme, setTheme] = useState<Theme>(DEFAULT_THEME);
-  useEffect(() => {
-    setTheme(getActiveTheme());
-    const obs = new MutationObserver(() => setTheme(getActiveTheme()));
-    obs.observe(document.documentElement, {
-      attributes: true,
-      attributeFilter: ["class"],
-    });
-    return () => obs.disconnect();
-  }, []);
-  return theme;
-};
 
 const useContainerSize = (ref: React.RefObject<HTMLDivElement | null>) => {
   const [size, setSize] = useState({ width: 0, height: 0 });
@@ -117,13 +90,15 @@ export default function DitherMedia({
   isVideo,
   isDecorative,
 }: DitherMediaProps) {
-  const theme = useTheme();
+  const { resolvedTheme } = useNextTheme();
+  const theme: Theme = isTheme(resolvedTheme) ? resolvedTheme : DEFAULT_THEME;
   const imgRef = useRef<HTMLImageElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const wrapperRef = useRef<HTMLDivElement>(null);
   const [mediaReady, setMediaReady] = useState(false);
   // Natural dimensions of the mediam, used for correct UV mapping
   const [naturalSize, setNaturalSize] = useState({ width: 0, height: 0 });
+  const [paused, setPaused] = useState(false);
 
   const measured = useContainerSize(wrapperRef);
   const w = width ?? measured.width;
@@ -144,6 +119,7 @@ export default function DitherMedia({
   useEffect(() => {
     setMediaReady(false);
     setNaturalSize({ width: 0, height: 0 });
+    setPaused(false);
 
     if (treatAsVideo) {
       const v = videoRef.current;
@@ -178,6 +154,21 @@ export default function DitherMedia({
     }
   }, [src, treatAsVideo]);
 
+  const togglePlayback = () => {
+    const video = videoRef.current;
+    if (!video) return;
+
+    if (video.paused) {
+      void video
+        .play()
+        .then(() => setPaused(false))
+        .catch(() => setPaused(true));
+    } else {
+      video.pause();
+      setPaused(true);
+    }
+  };
+
   return (
     <div
       ref={wrapperRef}
@@ -187,69 +178,88 @@ export default function DitherMedia({
         height: height ?? "100%",
         ...style,
       }}
-      role={isDecorative ? "presentation" : "img"}
-      aria-label={isDecorative ? undefined : alt}
-      aria-hidden={isDecorative ? true : undefined}
     >
-      {treatAsVideo ? (
-        <video
-          ref={videoRef}
-          src={src}
-          autoPlay
-          loop
-          muted
-          playsInline
-          style={{ display: "none" }}
-        />
-      ) : (
-        // eslint-disable-next-line @next/next/no-img-element -- hidden texture source for WebGL, not a displayed image
-        <img
-          ref={imgRef}
-          src={src}
-          alt=""
-          width={w || undefined}
-          height={h || undefined}
-          crossOrigin="anonymous"
-          style={{ display: "none" }}
-          onLoad={() => setMediaReady(true)}
-        />
-      )}
-
-      {ready && (
-        <Canvas
-          orthographic
-          camera={{
-            position: [0, 0, 1],
-            near: 0,
-            far: 2,
-            left: -1,
-            right: 1,
-            top: 1,
-            bottom: -1,
-          }}
-          style={{ width: "100%", height: "100%", display: "block" }}
-          gl={{ antialias: false, alpha: true, powerPreference: "low-power" }}
-          frameloop={treatAsVideo ? "always" : "demand"}
-          onCreated={({ gl }) => {
-            gl.setPixelRatio(1);
-            gl.setSize(w, h);
-          }}
+      <div className="relative h-full w-full">
+        <div
+          role={isDecorative ? "presentation" : "img"}
+          aria-label={isDecorative ? undefined : alt}
+          aria-hidden={isDecorative ? true : undefined}
+          className="h-full w-full"
         >
-          <DitherMesh
-            mediaEl={treatAsVideo ? videoRef.current! : imgRef.current!}
-            pattern={pattern}
-            intensity={intensity}
-            useTint={useTint}
-            theme={theme}
-            canvasWidth={w}
-            canvasHeight={h}
-            mediaWidth={naturalSize.width}
-            mediaHeight={naturalSize.height}
-            isVideo={treatAsVideo}
-            isDecorative={isDecorative}
-          />
-        </Canvas>
-      )}
+          {treatAsVideo ? (
+            <video
+              ref={videoRef}
+              src={src}
+              autoPlay
+              loop
+              muted
+              playsInline
+              style={{ display: "none" }}
+            />
+          ) : (
+            // eslint-disable-next-line @next/next/no-img-element -- hidden texture source for WebGL, not a displayed image
+            <img
+              ref={imgRef}
+              src={src}
+              alt=""
+              width={w || undefined}
+              height={h || undefined}
+              crossOrigin="anonymous"
+              style={{ display: "none" }}
+              onLoad={() => setMediaReady(true)}
+            />
+          )}
+
+          {ready && (
+            <Canvas
+              orthographic
+              camera={{
+                position: [0, 0, 1],
+                near: 0,
+                far: 2,
+                left: -1,
+                right: 1,
+                top: 1,
+                bottom: -1,
+              }}
+              style={{ width: "100%", height: "100%", display: "block" }}
+              gl={{ antialias: false, alpha: true, powerPreference: "low-power" }}
+              frameloop={treatAsVideo ? "always" : "demand"}
+              onCreated={({ gl }) => {
+                gl.setPixelRatio(1);
+                gl.setSize(w, h);
+              }}
+            >
+              <DitherMesh
+                mediaEl={treatAsVideo ? videoRef.current! : imgRef.current!}
+                pattern={pattern}
+                intensity={intensity}
+                useTint={useTint}
+                theme={theme}
+                canvasWidth={w}
+                canvasHeight={h}
+                mediaWidth={naturalSize.width}
+                mediaHeight={naturalSize.height}
+                isVideo={treatAsVideo}
+                isDecorative={isDecorative}
+              />
+            </Canvas>
+          )}
+        </div>
+
+        {treatAsVideo && ready && (
+          <button
+            type="button"
+            onClick={togglePlayback}
+            aria-label={
+              paused ? "Play background video" : "Pause background video"
+            }
+            className="absolute bottom-1 right-1 z-20 rounded-md border-2 border-link bg-background/90 px-2 py-1 text-xs text-foreground focus-visible:ring-2 focus-visible:ring-link"
+          >
+            {paused ? "Play" : "Pause"}
+          </button>
+        )}
+      </div>
     </div>
   );
 }

@@ -1,22 +1,14 @@
 "use client";
 
-import React, {
-  Suspense,
-  lazy,
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
-import { Canvas, extend, useFrame, useThree } from "@react-three/fiber";
+import React, { Suspense, lazy, useEffect, useRef, useState } from "react";
+import { Canvas, extend, useThree } from "@react-three/fiber";
 import type { ConstructorRepresentation } from "@react-three/fiber";
 import { OrbitControls, PerformanceMonitor } from "@react-three/drei";
 import type { OrbitControls as OrbitControlsImpl } from "three-stdlib";
 // The webgpu entry point is a superset of "three" (same core classes —
 // Vector3, Color, Raycaster, etc. — plus WebGPURenderer and the Node
 // material system). Only this file needs it, since it's the only place
-// that constructs the renderer; Terrain/Foliage/etc. keep importing
+// that constructs the renderer; Terrain/Grass/Flowers/etc. keep importing
 // plain "three" for the shared core classes.
 import * as THREE from "three/webgpu";
 
@@ -25,26 +17,23 @@ import * as THREE from "three/webgpu";
 // stop using the plain "three" catalog r3f ships by default.
 extend(THREE as unknown as Record<string, ConstructorRepresentation>);
 
-import { sampleHeight, generateTerrain } from "@/lib/garden/terrain";
-import { GARDEN, layoutFlowers, type GardenPost } from "@/lib/garden/meadow";
-import {
-  flowerHeads,
-  pickFlower,
-  pickFlowerOnClick,
-} from "@/lib/garden/picking";
+import { GARDEN, type GardenPost } from "@/lib/garden/meadow";
 import { useGardenTheme } from "@graphics/Garden/useGardenTheme";
 import Terrain from "@graphics/Garden/Terrain";
-import { Grass, Flowers } from "@graphics/Garden/Foliage";
+import { Grass } from "@graphics/Garden/Grass";
+import { Flowers } from "@graphics/Garden/Flowers";
 import Trees from "@graphics/Garden/Trees";
 import type { GardenControlValues } from "@graphics/Garden/gardenControlValues";
 import {
   DEVICE_TIER_PARAMS,
   demoteTier,
-  detectDeviceTier,
-  getTierOverride,
+  getInitialTier,
   type DeviceTier,
 } from "@graphics/Garden/deviceTier";
-import { gardenDebugState } from "@graphics/Garden/gardenDebug";
+import { useGardenCamera } from "@graphics/Garden/useGardenCamera";
+import { useGardenDebugBridge } from "@graphics/Garden/useGardenDebugBridge";
+import { useGardenPicking } from "@graphics/Garden/useGardenPicking";
+import { useGardenWorld } from "@graphics/Garden/useGardenWorld";
 
 // Same reasoning the old LevaGardenControls lazy-import used to have — keep
 // GPU-timestamp instrumentation (docs/garden-perf-benchmark.md) out of the
@@ -68,11 +57,6 @@ export interface GardenSceneProps {
   controls: GardenControlValues;
 }
 
-const HIT_RADIUS = 0.55; // ≈ 44px at flower-band distance from the camera
-const FOCUS_LERP = 0.06; // camera easing per frame toward focus pose
-const FOCUS_DISTANCE = 3.2; // how far back the camera stands from a focused flower
-const FOCUS_HEIGHT = 1.3; // eye height above the flower's ground point when focused
-
 const GardenRig = ({
   posts,
   reducedMotion,
@@ -95,26 +79,49 @@ const GardenRig = ({
   const camera = useThree((s) => s.camera);
   const gl = useThree((s) => s.gl);
   const scene = useThree((s) => s.scene);
-  // Same reasoning as Foliage.tsx's Flowers: under frameloop="demand" (plan
+  // Same reasoning as Flowers.tsx: under frameloop="demand" (plan
   // 5.5) the camera focus-lerp and tooltip DOM positioning below mutate
   // things the reconciler never sees, so they have to request their own
   // frames while there's still per-frame work to do.
   const invalidate = useThree((s) => s.invalidate);
 
-  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
-  const hoveredRef = useRef<number | null>(null);
-
-  const [focusedIndex, setFocusedIndex] = useState<number | null>(null);
-  const focusedRef = useRef<number | null>(null);
-
   const controlsRef = useRef<OrbitControlsImpl | null>(null);
 
+  const { terrainData, heads, eye, target, focusPoses } = useGardenWorld(
+    posts,
+    controls,
+  );
+
+  const { hoveredIndex, focusedIndex, hoveredRef, focusedRef } =
+    useGardenPicking({
+      gl,
+      camera,
+      heads,
+      posts,
+      onHoverPost,
+      onFocusPost,
+      controlsRef,
+    });
+
+  // Registered before the debug bridge so its `ready` flag flips only after
+  // the camera hook's initial-pose effect has run.
+  useGardenCamera({
+    camera,
+    gl,
+    invalidate,
+    tooltipRef,
+    controlsRef,
+    eye,
+    target,
+    heads,
+    focusPoses,
+    hoveredRef,
+    focusedRef,
+  });
+
+  useGardenDebugBridge({ debug, gl, scene, invalidate });
+
   const {
-    gridWidth,
-    gridHeight,
-    heightScale,
-    octaves,
-    frequency,
     grassDensity,
     tuftWidth,
     tuftHeight,
@@ -130,258 +137,6 @@ const GardenRig = ({
     treeCount,
     treeSize,
   } = controls;
-
-  // ── Deterministic world data ───────────────────────────────────────────────
-  const terrainData = useMemo(
-    () =>
-      generateTerrain(gridWidth, gridHeight, heightScale, octaves, frequency),
-    [gridWidth, gridHeight, heightScale, octaves, frequency],
-  );
-
-  const { heads, eye, target } = useMemo(() => {
-    const placements = layoutFlowers(posts, terrainData);
-    const heads = flowerHeads(placements);
-
-    // The camera stands ON the terrain at eye level as its initial (resting) pose.
-    const c = GARDEN.camera;
-    const eyeGround = sampleHeight(terrainData, 0, c.stripZ);
-    const targetGround = sampleHeight(terrainData, 0, c.targetZ);
-    const eye = new THREE.Vector3(
-      0,
-      (eyeGround <= -999 ? 0 : eyeGround) + c.eyeHeight,
-      c.stripZ,
-    );
-    const target = new THREE.Vector3(
-      0,
-      (targetGround <= -999 ? 0 : targetGround) + c.targetHeight,
-      c.targetZ,
-    );
-    return { heads, eye, target };
-  }, [posts, terrainData]);
-
-  // ── Camera: set initial eye-level pose once; OrbitControls owns it after ──
-  useEffect(() => {
-    camera.position.copy(eye);
-    camera.lookAt(target);
-    if (controlsRef.current) {
-      controlsRef.current.target.copy(target);
-      controlsRef.current.update();
-    }
-  }, [camera, eye, target]);
-
-  // ── Screenshot harness bridge (docs/garden-screenshot-harness.md) ─────────
-  // Debug-only, same gate as Leva. Runs after the camera-pose effect above,
-  // so `ready` only ever flips true once the resting pose is actually set.
-  useEffect(() => {
-    if (!debug || typeof window === "undefined") return;
-    window.__gardenDebug = {
-      ready: true,
-      setFixedTime: (seconds) => {
-        gardenDebugState.fixedTime = seconds;
-        invalidate();
-      },
-      getRenderInfo: () => ({
-        drawCalls: gl.info.render.calls,
-        triangles: gl.info.render.triangles,
-      }),
-      // renderer.info above is known-unreliable for readiness checks (see
-      // docs/garden-perf-benchmark.md's draws=0/tris=0 gotcha — r3f drives
-      // its own render loop instead of calling setAnimationLoop, so three's
-      // per-frame info.reset() never fires). Counting actual mounted Mesh
-      // objects reflects what the React reconciler has committed instead,
-      // regardless of whether/when a GPU render call has run yet.
-      getMeshCount: () => {
-        let count = 0;
-        scene.traverse((obj) => {
-          if ((obj as THREE.Mesh).isMesh) count++;
-        });
-        return count;
-      },
-    };
-    return () => {
-      delete window.__gardenDebug;
-    };
-  }, [debug, gl, scene, invalidate, eye, target]);
-
-  // ── Focus poses: computed once per heads/terrain change ────────────────────
-  const focusPoses = useMemo(
-    () =>
-      heads.map((head) => {
-        const dirFromCenter = new THREE.Vector3(head.x, 0, head.z);
-        const len = dirFromCenter.length();
-        const backDir =
-          len > 0.001
-            ? dirFromCenter.clone().normalize()
-            : new THREE.Vector3(0, 0, 1);
-
-        const eyePos = new THREE.Vector3(
-          head.x + backDir.x * FOCUS_DISTANCE,
-          head.y + FOCUS_HEIGHT,
-          head.z + backDir.z * FOCUS_DISTANCE,
-        );
-        const lookAt = new THREE.Vector3(head.x, head.y, head.z);
-        return { eyePos, lookAt };
-      }),
-    [heads],
-  );
-
-  const clearFocus = useCallback(() => {
-    focusedRef.current = null;
-    setFocusedIndex(null);
-    onFocusPost(null);
-    if (controlsRef.current) controlsRef.current.enabled = true;
-  }, [onFocusPost]);
-
-  const setFocus = useCallback(
-    (index: number) => {
-      focusedRef.current = index;
-      setFocusedIndex(index);
-      onFocusPost(posts[index]);
-      if (controlsRef.current) controlsRef.current.enabled = false;
-    },
-    [onFocusPost, posts],
-  );
-
-  // ── Picking: pointermove (desktop hover) + pointerdown/up (tap resolves
-  //    hover before click) + click-to-focus (no more router navigation) ─────
-  useEffect(() => {
-    const el = gl.domElement;
-    const raycaster = new THREE.Raycaster();
-    const ndc = new THREE.Vector2();
-    let downAt: { x: number; y: number; index: number | null } | null = null;
-
-    const pickAt = (clientX: number, clientY: number) => {
-      const rect = el.getBoundingClientRect();
-      ndc.set(
-        ((clientX - rect.left) / rect.width) * 2 - 1,
-        -((clientY - rect.top) / rect.height) * 2 + 1,
-      );
-      raycaster.setFromCamera(ndc, camera);
-      const { origin, direction } = raycaster.ray;
-      return pickFlower(origin, direction, heads, HIT_RADIUS);
-    };
-
-    const setHover = (index: number | null) => {
-      if (hoveredRef.current === index) return;
-      hoveredRef.current = index;
-      setHoveredIndex(index);
-      onHoverPost(index === null ? null : posts[index]);
-      el.style.cursor = index === null ? "" : "pointer";
-    };
-
-    const onPointerMove = (e: PointerEvent) => {
-      if (focusedRef.current !== null) return; // freeze hover while focused
-      const hit = pickAt(e.clientX, e.clientY);
-      setHover(hit ? hit.index : null);
-    };
-    const onPointerDown = (e: PointerEvent) => {
-      const hit = pickAt(e.clientX, e.clientY);
-      if (focusedRef.current === null) setHover(hit ? hit.index : null);
-      downAt = { x: e.clientX, y: e.clientY, index: hit ? hit.index : null };
-    };
-    const onPointerUp = (e: PointerEvent) => {
-      if (!downAt) return;
-      const moved = Math.hypot(e.clientX - downAt.x, e.clientY - downAt.y);
-      const isTap = moved < 8;
-
-      if (isTap) {
-        const hit =
-          pickFlowerOnClick(
-            raycaster.ray.origin,
-            raycaster.ray.direction,
-            heads,
-            HIT_RADIUS,
-          ) ?? pickAt(e.clientX, e.clientY);
-
-        if (hit) {
-          // Tapping the already-focused flower again clears focus.
-          if (focusedRef.current === hit.index) {
-            clearFocus();
-          } else {
-            setFocus(hit.index);
-          }
-        } else if (focusedRef.current !== null) {
-          // Tapping empty ground while focused clears focus.
-          clearFocus();
-        }
-      }
-      downAt = null;
-    };
-    const onPointerLeave = () => {
-      if (focusedRef.current === null) setHover(null);
-    };
-
-    el.addEventListener("pointermove", onPointerMove);
-    el.addEventListener("pointerdown", onPointerDown);
-    el.addEventListener("pointerup", onPointerUp);
-    el.addEventListener("pointerleave", onPointerLeave);
-    return () => {
-      el.removeEventListener("pointermove", onPointerMove);
-      el.removeEventListener("pointerdown", onPointerDown);
-      el.removeEventListener("pointerup", onPointerUp);
-      el.removeEventListener("pointerleave", onPointerLeave);
-      el.style.cursor = "";
-    };
-  }, [gl, camera, heads, posts, onHoverPost, clearFocus, setFocus]);
-
-  // ── Escape key clears focus ─────────────────────────────────────────────
-  useEffect(() => {
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape" && focusedRef.current !== null) clearFocus();
-    };
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, [clearFocus]);
-
-  // ── Per-frame: lerp camera toward focus pose, or tooltip tracking ─────────
-  const worldPos = useMemo(() => new THREE.Vector3(), []);
-  const lookAtScratch = useMemo(() => new THREE.Vector3(), []);
-
-  useFrame(() => {
-    const index = focusedRef.current;
-
-    if (index !== null) {
-      const pose = focusPoses[index];
-      camera.position.lerp(pose.eyePos, FOCUS_LERP);
-      lookAtScratch.lerp(pose.lookAt, FOCUS_LERP);
-      camera.lookAt(lookAtScratch);
-
-      // Tooltip is centered via CSS when focused; Scene doesn't drive its transform.
-      const tip = tooltipRef.current;
-      if (tip) {
-        tip.style.transform = "";
-        tip.style.visibility = "visible";
-      }
-      invalidate(); // keep easing toward the focus pose under frameloop="demand"
-      return;
-    }
-
-    // Not focused: reset lookAt scratch to the resting target so re-focus starts clean.
-    lookAtScratch.copy(target);
-
-    const tip = tooltipRef.current;
-    if (!tip) return;
-    const hoverIdx = hoveredRef.current;
-    if (hoverIdx === null) return; // Garden hides it via state
-
-    const head = heads[hoverIdx];
-    worldPos.set(head.x, head.y + 0.25, head.z).project(camera);
-
-    const rect = gl.domElement.getBoundingClientRect();
-    const behind = worldPos.z > 1;
-    let px = (worldPos.x * 0.5 + 0.5) * rect.width;
-    let py = (-worldPos.y * 0.5 + 0.5) * rect.height;
-
-    const w = tip.offsetWidth || 240;
-    const h = tip.offsetHeight || 120;
-    const margin = 8;
-    px = Math.min(Math.max(px, w / 2 + margin), rect.width - w / 2 - margin);
-    py = Math.min(Math.max(py - h - 16, margin), rect.height - h - margin);
-
-    tip.style.transform = `translate(${px - w / 2}px, ${py}px)`;
-    tip.style.visibility = behind ? "hidden" : "visible";
-    invalidate(); // keep the tooltip tracking the flower under frameloop="demand"
-  });
 
   return (
     <>
@@ -460,9 +215,7 @@ export default function Scene(props: GardenSceneProps) {
   // PerformanceMonitor below if FPS actually sags — the heuristic doesn't
   // need to be perfect, it just needs a reasonable starting point. Debug-only
   // `?tier=` pins it instead, for reproducible perf/screenshot runs.
-  const [tier, setTier] = useState<DeviceTier>(
-    () => getTierOverride() ?? detectDeviceTier(),
-  );
+  const [tier, setTier] = useState<DeviceTier>(getInitialTier);
   const tierParams = DEVICE_TIER_PARAMS[tier];
 
   // Plan 5.5 — don't render what nobody sees. Tab hidden → stop the

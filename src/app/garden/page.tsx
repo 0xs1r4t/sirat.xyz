@@ -30,21 +30,22 @@ const Page = async ({ searchParams }: Props) => {
   const styles = "lowercase";
   // const styles="font-authentic-sans-condensed";
 
-  if (posts.length === 0) {
-    return (
-      <Fragment>
-        <Heading title={title} styles={styles} />
-        <Search placeholder="Search this garden" />
-        <NoPostSummary />
-      </Fragment>
-    );
-  }
+  const status = `${posts.length} ${posts.length === 1 ? "post" : "posts"}${
+    params?.q ? ` matching "${params.q}"` : ""
+  }${params?.tag ? ` tagged ${params.tag}` : ""}`;
 
   return (
     <Fragment>
       <Heading title={title} styles={styles} />
       <Search placeholder="Search this garden" />
-      <Summary summary={posts} garden={false} />
+      <p role="status" className="sr-only">
+        {status}
+      </p>
+      {posts.length === 0 ? (
+        <NoPostSummary />
+      ) : (
+        <Summary summary={posts} garden={false} />
+      )}
     </Fragment>
   );
 };

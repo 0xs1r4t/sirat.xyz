@@ -73,11 +73,3 @@ export const pickFlower = (
   }
   return best;
 };
-
-/** Same hit-test as {@link pickFlower}, for the tap/click path. */
-export const pickFlowerOnClick = (
-  origin: Vec3,
-  dir: Vec3,
-  heads: FlowerHead[],
-  radius = 0.55,
-): FlowerHead | null => pickFlower(origin, dir, heads, radius);

@@ -86,7 +86,11 @@ const eslintConfig = [...compat.extends("next/core-web-vitals", "next/typescript
   // pick the wrong overload instead of propagating the type — producing
   // incorrectly-typed results that are worse than honest `any`. Real
   // mismatches still fail loudly at three's node-builder stage.
-  files: ["src/graphics/Garden/tsl/**/*.ts", "src/graphics/Garden/Foliage.tsx"],
+  files: [
+    "src/graphics/Garden/tsl/**/*.ts",
+    "src/graphics/Garden/Grass.tsx",
+    "src/graphics/Garden/Flowers.tsx",
+  ],
   rules: {
     "@typescript-eslint/no-explicit-any": "off",
   },

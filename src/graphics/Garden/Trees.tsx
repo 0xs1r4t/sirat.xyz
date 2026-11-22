@@ -112,7 +112,7 @@ const computeInstancedBoundingSphere = (
   return box.getBoundingSphere(new THREE.Sphere());
 };
 
-/** Small quad centered at its origin (-0.5..0.5), matching tree_foliage.cpp's `setupQuadMesh` — distinct from Foliage.tsx's base-anchored grass/flower quad. */
+/** Small quad centered at its origin (-0.5..0.5), matching tree_foliage.cpp's `setupQuadMesh` — distinct from geometry.ts's base-anchored grass/flower quad. */
 const makeCenteredQuad = (): THREE.InstancedBufferGeometry => {
   const geo = new THREE.InstancedBufferGeometry();
   geo.setAttribute(
@@ -145,7 +145,7 @@ interface TreesProps {
   treeSize?: number;
   fogNear?: number;
   fogFar?: number;
-  /** Zeroes branch/leaf wind, matching Foliage.tsx's grass/flowers — also required for screenshot-harness determinism, see computeLeafWind's note. */
+  /** Zeroes branch/leaf wind, matching Grass.tsx/Flowers.tsx — also required for screenshot-harness determinism, see computeLeafWind's note. */
   reducedMotion?: boolean;
 }
 
@@ -412,7 +412,7 @@ export default function Trees({
       // Leaves: for every tree of this type, transform that type's shared
       // local leaf-cluster template by the tree's world transform (rotateY
       // + uniform scale + translate) and pack into one big instance buffer
-      // — same precompute-once-per-scene approach Foliage.tsx uses for
+      // — same precompute-once-per-scene approach Grass.tsx/Flowers.tsx use for
       // grass chunks, keyed by tree instead of spatial chunk.
       const template = leafTemplateByType[type];
       const leafCount = treesOfType.length * template.length;
@@ -488,7 +488,7 @@ export default function Trees({
       leafWindStrengthUniform,
     };
     // fogNear/fogFar intentionally omitted: live-mutated uniforms, see the
-    // useFrame below — matches Foliage.tsx's Grass/Flowers pattern.
+    // useFrame below — matches Grass.tsx/Flowers.tsx's pattern.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     placements,

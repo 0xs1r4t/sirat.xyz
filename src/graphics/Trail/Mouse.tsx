@@ -8,23 +8,18 @@ import {
   Suspense,
 } from "react";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
+import { useTheme as useNextTheme } from "next-themes";
+import { useReducedMotion } from "motion/react";
 import * as THREE from "three";
 import { usePathname } from "next/navigation";
 import vertexShader from "@graphics/Trail/trail.vert";
 import fragmentShader from "@graphics/Trail/trail.frag";
+import { DEFAULT_THEME, isTheme, type Theme } from "@/lib/themes";
 
 // Constants
 
 const TRAIL_LENGTH = 25;
 const TRAIL_RADIUS = 80;
-const DEFAULT_THEME = "strawberry-matcha";
-const VALID_THEMES = [
-  "strawberry-matcha",
-  "blueberry-lemon",
-  "neopolitan-ice-cream",
-] as const;
-
-type Theme = (typeof VALID_THEMES)[number];
 
 const THEME_VALUES: Record<Theme, { saturation: number; brightness: number }> =
   {
@@ -35,7 +30,7 @@ const THEME_VALUES: Record<Theme, { saturation: number; brightness: number }> =
 
 const INTERACTIVE_SELECTOR = "button, a, input, textarea";
 
-// Helpers: color conversion, device detection, theme detection
+// Helpers: color conversion, device detection
 
 const hsbToRgb = (h: number, s: number, b: number): [number, number, number] => {
   h /= 360;
@@ -64,31 +59,7 @@ const isMobileDevice = (): boolean =>
   "ontouchstart" in window ||
   window.innerWidth <= 768;
 
-const getActiveTheme = (): Theme => {
-  const found = Array.from(document.documentElement.classList).find(
-    (cls): cls is Theme => (VALID_THEMES as readonly string[]).includes(cls),
-  );
-  return found ?? DEFAULT_THEME;
-};
-
-// Hooks: theme detection and pointer tracking
-
-const useTheme = (): Theme => {
-  const [theme, setTheme] = useState<Theme>(DEFAULT_THEME);
-
-  useEffect(() => {
-    setTheme(getActiveTheme());
-
-    const observer = new MutationObserver(() => setTheme(getActiveTheme()));
-    observer.observe(document.documentElement, {
-      attributes: true,
-      attributeFilter: ["class"],
-    });
-    return () => observer.disconnect();
-  }, []);
-
-  return theme;
-};
+// Hooks: pointer tracking
 
 const usePointer = (): React.MutableRefObject<{ x: number; y: number }> => {
   const pointer = useRef({ x: 0, y: 0 });
@@ -120,13 +91,15 @@ const usePointer = (): React.MutableRefObject<{ x: number; y: number }> => {
 
 const MouseTrail = ({ className }: { className?: string }) => {
   const pathname = usePathname();
-  const theme = useTheme();
+  const { resolvedTheme } = useNextTheme();
+  const theme: Theme = isTheme(resolvedTheme) ? resolvedTheme : DEFAULT_THEME;
   const pointer = usePointer();
   const [mounted, setMounted] = useState(false);
+  const reducedMotion = useReducedMotion();
 
   useEffect(() => setMounted(true), []);
 
-  if (pathname === "/graphics" || !mounted) return null;
+  if (pathname === "/graphics" || !mounted || reducedMotion) return null;
 
   return (
     <div

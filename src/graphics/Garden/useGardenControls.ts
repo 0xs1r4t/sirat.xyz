@@ -10,8 +10,7 @@ import {
 } from "@/lib/garden/trees";
 import {
   DEVICE_TIER_PARAMS,
-  detectDeviceTier,
-  getTierOverride,
+  getInitialTier,
 } from "@graphics/Garden/deviceTier";
 import type { GardenControlValues } from "@graphics/Garden/gardenControlValues";
 
@@ -190,7 +189,7 @@ export const GARDEN_CONTROL_SECTIONS: GardenControlSectionSchema[] = [
 // for a general audience. PerformanceMonitor (Scene.tsx) is still the
 // runtime safety net if a visitor's settings actually tank their FPS.
 const buildDefaultState = (): GardenSliderState => {
-  const tier = getTierOverride() ?? detectDeviceTier();
+  const tier = getInitialTier();
   return {
     gridWidth: GARDEN.terrain.gridWidth,
     gridHeight: GARDEN.terrain.gridHeight,

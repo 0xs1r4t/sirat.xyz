@@ -15,6 +15,8 @@ const Navbar = () => {
         isOpen={leftOpen}
         onToggle={toggleLeft}
         placement="left"
+        label="Site sidebar"
+        controlsId="site-sidebar"
       />
       <MusicPlayerContainer isOpen={leftOpen} />
     </Fragment>

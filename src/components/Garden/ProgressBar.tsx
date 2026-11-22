@@ -20,6 +20,7 @@ const ProgressBar = (props: { children: ReactNode }) => {
       <LazyMotion features={loadFeatures}>
         <m.div
           id="scroll-indicator"
+          aria-hidden="true"
           style={{
             scaleX,
             position: "fixed",

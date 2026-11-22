@@ -32,7 +32,7 @@ const rotateY = Fn(([v, rotationY]: [any, any]) => {
 
 /**
  * Branch instance world position, ported from branch.vert. Manual
- * instancing (matching Foliage.tsx's grass/flower pattern, not
+ * instancing (matching Grass.tsx/Flowers.tsx's pattern, not
  * THREE.InstancedMesh) — `instanceOffset`/`instanceRotationY`/
  * `instanceScale` are per-tree attributes, one entry per placed tree of
  * this branch type.
@@ -42,7 +42,7 @@ const rotateY = Fn(([v, rotationY]: [any, any]) => {
  * C++ original's `aPos.y` exactly (not a bug — same asymmetry as the
  * source). `windSpeed`/`windStrength` are uniform nodes rather than the
  * C++ original's hardcoded 0.5/0.04 — Trees.tsx zeroes them under
- * `reducedMotion`, matching how Foliage.tsx's grass/flowers zero their own
+ * `reducedMotion`, matching how Grass.tsx/Flowers.tsx zero their own
  * wind amplitude (that path also matters for the screenshot harness: `time`
  * isn't something `window.__gardenDebug.setFixedTime` freezes, so
  * leaving tree wind always-on made captures non-deterministic — confirmed

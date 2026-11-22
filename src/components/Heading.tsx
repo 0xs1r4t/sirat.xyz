@@ -18,7 +18,6 @@ const Heading = ({
   post?: boolean;
 }) => (
     <h1
-      aria-label="page title"
       className={cn(
         "relative overflow-hidden rounded-xl",
         "text-6xl font-that-that-new-pixel italic font-bold text-center p-4 pb-4 not-prose lg:text-7xl",

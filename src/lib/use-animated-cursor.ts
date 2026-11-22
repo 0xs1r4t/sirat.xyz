@@ -3,6 +3,7 @@ import { useEffect } from "react";
 const useAnimatedCursor = (frames: string[], interval = 150) => {
   useEffect(() => {
     if (!frames || frames.length === 0) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
     let i = 0;
     let raf: number | null = null;

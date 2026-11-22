@@ -39,7 +39,7 @@ const GardenSliderRow = memo(function GardenSliderRow({
     <div className="flex flex-col gap-0.5 py-1">
       <div className="flex items-center justify-between text-sm leading-snug">
         <span>{label}</span>
-        <span className="tabular-nums text-muted-200">
+        <span className="tabular-nums text-foreground">
           {value.toFixed(decimalsForStep(step))}
         </span>
       </div>
@@ -51,7 +51,7 @@ const GardenSliderRow = memo(function GardenSliderRow({
         step={step}
         value={value}
         onChange={(e) => onChange(fieldKey, Number(e.target.value))}
-        className="w-full accent-muted-200"
+        className="w-full accent-link"
       />
     </div>
   );

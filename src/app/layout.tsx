@@ -6,6 +6,7 @@ import type { Metadata, Viewport } from "next";
 import { myMetadata, myViewport } from "@/lib/metadata";
 import ThemeProvider from "@/components/ThemeProvider";
 import ThemeSwitcher from "@/components/ThemeSwitcherButton";
+import MotionPreferences from "@/components/MotionPreferences";
 import { SidebarProvider } from "@/contexts/SidebarContext";
 const AnimatedCursor = React.lazy(() => import("@/components/AnimatedCursor"));
 
@@ -24,6 +25,7 @@ import "@/styles/link-preview.css";
 import "@/styles/toc.css";
 
 import { cn } from "@/lib/utils";
+import { DEFAULT_THEME, THEMES } from "@/lib/themes";
 import Breadcrumb from "@/components/Navigation/Breadcrumb";
 import Navbar from "@/components/Navigation/Navbar";
 const MouseTrail = React.lazy(() => import("@/graphics/Trail/Mouse"));
@@ -42,20 +44,20 @@ const RootLayout = ({ children }: Readonly<{ children: React.ReactNode }>) => (
           Monaco.variable,
         )}
       >
+        <a href="#main" className="skip-link">
+          Skip to content
+        </a>
         <Suspense fallback={<></>}>
           <AnimatedCursor />
         </Suspense>
 
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="strawberry-matcha"
-          enableColorScheme
-          themes={[
-            "strawberry-matcha",
-            "neopolitan-ice-cream",
-            "blueberry-lemon",
-          ]}
-        >
+        <MotionPreferences>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme={DEFAULT_THEME}
+            enableColorScheme
+            themes={[...THEMES]}
+          >
           <SidebarProvider>
             <Suspense fallback={<></>}>
               <MouseTrail />
@@ -72,11 +74,16 @@ const RootLayout = ({ children }: Readonly<{ children: React.ReactNode }>) => (
             <div className="flex flex-row">
               <Navbar />
             </div>
-            <main className="container mx-auto relative flex flex-col items-center justify-between top-10 px-5">
+            <main
+              id="main"
+              tabIndex={-1}
+              className="container mx-auto relative flex flex-col items-center justify-between top-10 px-5"
+            >
               {children}
             </main>
           </SidebarProvider>
         </ThemeProvider>
+        </MotionPreferences>
       </body>
     </html>
   );

@@ -43,6 +43,7 @@ const Spotify = ({ song }: { song: Song | null }) => {
         <Link
           href={song.songUrl}
           target="_blank"
+          rel="noopener noreferrer"
           className="flex flex-col items-center justify-center p-2"
         >
           <AlbumArt
@@ -55,6 +56,7 @@ const Spotify = ({ song }: { song: Song | null }) => {
               {song.title} by {song.artist} {song.message}
             </div>
           </span>
+          <span className="sr-only"> (opens in a new tab)</span>
         </Link>
       </Tooltip>
     );

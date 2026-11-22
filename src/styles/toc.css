@@ -29,7 +29,7 @@
 }
 
 .toc a:hover {
-  color: var(--color-muted-200);
+  color: var(--color-link);
 }
 
 /* Sidebar TOC specific styles - match navbar text size */
@@ -61,12 +61,12 @@ article h2#table-of-contents + ol {
 }
 
 .toc-sidebar a:hover {
-  background-color: var(--color-muted-200);
+  background-color: var(--color-highlight);
   color: var(--color-foreground);
 }
 
 .toc-sidebar a.toc-active {
-  background-color: var(--color-muted-200);
+  background-color: var(--color-highlight);
   color: var(--color-foreground);
   font-style: italic;
 }
@@ -136,12 +136,12 @@ article h2#table-of-contents + ol {
 }
 
 .toc-sidebar a:hover {
-  background-color: var(--color-muted-200);
+  background-color: var(--color-highlight);
   color: var(--color-foreground);
 }
 
 .toc-sidebar a.toc-active {
-  background-color: var(--color-muted-200);
+  background-color: var(--color-highlight);
   color: var(--color-foreground);
   font-style: italic;
 }
